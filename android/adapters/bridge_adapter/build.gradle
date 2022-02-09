@@ -8,7 +8,7 @@ buildscript {
     repositories {
         maven { url 'https://maven.aliyun.com/repository/google' }
         maven { url 'https://maven.aliyun.com/repository/jcenter' }
-        maven { url 'http://maven.aliyun.com/nexus/content/groups/public' }
+        maven { url 'https://maven.aliyun.com/nexus/content/groups/public' }
         //本地库，local repository(${user.home}/.m2/repository)
         jcenter()
         mavenCentral()
