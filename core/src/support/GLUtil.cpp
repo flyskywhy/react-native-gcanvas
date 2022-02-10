@@ -82,7 +82,7 @@ namespace gcanvas {
         } else {
             for (int y = 0; y < outHeight; ++y) {
                 int inY = y * inHeight / outHeight;
-                int revertY = inHeight - inY - 1;
+                int revertY = (inHeight - 1) - inY - 1;
                 for (int x = 0; x < outWidth; ++x) {
                     int inX = x * inWidth / outWidth + 1;
                     RGBA pixel;
