@@ -68,22 +68,35 @@ namespace gcanvas {
 
     void PixelsSampler(int inWidth, int inHeight, int *inPixels, int outWidth, int outHeight,
                        int *outPixels) {
-        for (int y = 0; y < outHeight; ++y) {
-            int inY = y * inHeight / outHeight;
-            int revertY = inHeight - inY - 1;
-            for (int x = 0; x < outWidth; ++x) {
-                int inX = x * inWidth / outWidth + 1;
-                RGBA pixel;
-                pixel += GetPixel(inPixels, inX, revertY, inWidth, inHeight);
-                pixel += GetPixel(inPixels, inX - 1, revertY - 1, inWidth, inHeight);
-                pixel += GetPixel(inPixels, inX, revertY - 1, inWidth, inHeight);
-                pixel += GetPixel(inPixels, inX + 1, revertY - 1, inWidth, inHeight);
-                pixel += GetPixel(inPixels, inX - 1, revertY, inWidth, inHeight);
-                pixel += GetPixel(inPixels, inX + 1, revertY, inWidth, inHeight);
-                pixel += GetPixel(inPixels, inX - 1, revertY + 1, inWidth, inHeight);
-                pixel += GetPixel(inPixels, inX, revertY + 1, inWidth, inHeight);
-                pixel += GetPixel(inPixels, inX - 1, revertY + 1, inWidth, inHeight);
-                outPixels[y * outWidth + x] = pixel / 9;
+        if (outWidth == 1 && outHeight == 1) {
+            // when GetImageData 1x1 , it means APP want color pick 1 pixel, so
+            // it's better not `pixel / 9` below but just pick 1 pixel exactly
+            // in PixelsSampler() after GCanvasContext::GetImageData(), and since
+            // float x y from PanResponder event which be divided by devicePixelRatio
+            // (so that can be float), is converted to int x y in GCanvasWeex::GetImageData(),
+            // so the exact pixel is inPixels[left bottom] while considering flip Y
+            int inY = 0;
+            int revertY = (inHeight - 1) - inY; // bottom is (3 - 1) - 0 = 2
+            int inX = 0; // left is 0
+            outPixels[0] = GetPixel(inPixels, inX, revertY, inWidth, inHeight);
+        } else {
+            for (int y = 0; y < outHeight; ++y) {
+                int inY = y * inHeight / outHeight;
+                int revertY = inHeight - inY - 1;
+                for (int x = 0; x < outWidth; ++x) {
+                    int inX = x * inWidth / outWidth + 1;
+                    RGBA pixel;
+                    pixel += GetPixel(inPixels, inX, revertY, inWidth, inHeight);
+                    pixel += GetPixel(inPixels, inX - 1, revertY - 1, inWidth, inHeight);
+                    pixel += GetPixel(inPixels, inX, revertY - 1, inWidth, inHeight);
+                    pixel += GetPixel(inPixels, inX + 1, revertY - 1, inWidth, inHeight);
+                    pixel += GetPixel(inPixels, inX - 1, revertY, inWidth, inHeight);
+                    pixel += GetPixel(inPixels, inX + 1, revertY, inWidth, inHeight);
+                    pixel += GetPixel(inPixels, inX - 1, revertY + 1, inWidth, inHeight);
+                    pixel += GetPixel(inPixels, inX, revertY + 1, inWidth, inHeight);
+                    pixel += GetPixel(inPixels, inX - 1, revertY + 1, inWidth, inHeight);
+                    outPixels[y * outWidth + x] = pixel / 9;
+                }
             }
         }
     }
