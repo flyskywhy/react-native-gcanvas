@@ -3,6 +3,15 @@
 All notable changes of this project will be documented in.
 
 
+## [2.3.15] - 2022-02-10
+
+### Changed
+
+* React Native GCanvas Component
+	* refactor: let color picker in APP more accurate in PixelsSampler() after GetImageData() when devicePixelRatio > 1
+	* fix: flip y boundary value bug in PixelsSampler() which is used by GetImageData()
+
+
 ## [2.3.13] - 2022-02-08
 
 ### Changed
