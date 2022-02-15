@@ -223,19 +223,19 @@ export default class CanvasRenderingContext2D {
         mode = 5;
         break;
       case 'source-in':
-        mode = 0;
+        mode = 0; // TODO
         break;
       case 'source-out':
-        mode = 2;
+        mode = 10;
         break;
       case 'destination-over':
         mode = 4;
         break;
       case 'destination-atop':
-        mode = 4;
+        mode = 4; // TODO
         break;
       case 'destination-in':
-        mode = 4;
+        mode = 11;
         break;
       case 'destination-out':
         mode = 3;
@@ -244,11 +244,15 @@ export default class CanvasRenderingContext2D {
         mode = 1;
         break;
       case 'copy':
-        mode = 2;
+        mode = 7;
         break;
       case 'xor':
         mode = 6;
         break;
+      // TODO: add more mode ref to
+      // https://developer.mozilla.org/zh-CN/docs/Web/API/CanvasRenderingContext2D/globalCompositeOperation
+      // GCompositeOperation in core/src/gcanvas/GContext2dType.h
+      // GBlendOperationFuncs in core/src/gcanvas/GCanvas2dContext.cpp
       default:
         mode = 0;
     }
