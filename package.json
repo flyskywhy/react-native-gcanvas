@@ -1,6 +1,6 @@
 {
   "name": "@flyskywhy/react-native-gcanvas",
-  "version": "2.3.15",
+  "version": "2.3.16",
   "description": "A C++ native canvas 2D/WebGL component based on gpu opengl glsl shader GCanvas",
   "main": "index",
   "scripts": {
