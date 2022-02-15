@@ -174,7 +174,7 @@ export default class App extends Component {
         for (let entry of entries) {
           if (entry.target.id === 'canvasExample') {
             let {width, height} = entry.contentRect;
-            this.onCanvasResize({width, height});
+            this.onCanvasResize({width, height, canvas: entry.target});
           }
         }
       });
