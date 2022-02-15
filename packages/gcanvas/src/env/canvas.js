@@ -20,10 +20,11 @@ export default class GCanvas extends Element {
 
   _needRender = true;
 
-  constructor(id, {disableAutoSwap, style}) {
+  constructor(id, {isAutoClearRectBeforePutImageData, disableAutoSwap, style}) {
     super('canvas');
     this.id = id;
 
+    this._isAutoClearRectBeforePutImageData = isAutoClearRectBeforePutImageData;
     this._disableAutoSwap = disableAutoSwap;
     this._swapBuffers = () => {
       this._context && this._context.flushJsCommands2CallNative();

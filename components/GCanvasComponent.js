@@ -77,6 +77,13 @@ export default class GCanvasView extends Component {
     // when isGestureResponsible is false.
     // Default is true, so that zdog can be "mousemove".
     isGestureResponsible: true,
+    // only affect 2d
+    // on Web, putImageData looks like will auto clearRect before,
+    // but I think it's more convenient to not clearRect before
+    // putImageData when imageData has some transparent pixels,
+    // so the default value is false, and if you want to be exactly
+    // compatible with Web, you can set it to true
+    isAutoClearRectBeforePutImageData: false,
     // only affect webgl
     // false: use AutoSwap, means gcanvas use a setInterval(render, 16) to exec cached cmds
     //        to generate and display graphics
@@ -154,6 +161,7 @@ export default class GCanvasView extends Component {
         },
       },
       {
+        isAutoClearRectBeforePutImageData: this.props.isAutoClearRectBeforePutImageData,
         disableAutoSwap: this.props.disableAutoSwap,
         bridge: ReactNativeBridge,
       },

@@ -12,7 +12,7 @@ export let Image = GImage;
 export let WeexBridge = GBridgeWeex;
 export let ReactNativeBridge = GBridgeReactNative;
 
-export function enable(el, { bridge, debug, disableAutoSwap, disableComboCommands } = {}) {
+export function enable(el, { bridge, debug, isAutoClearRectBeforePutImageData, disableAutoSwap, disableComboCommands } = {}) {
   const GBridge = GImage.GBridge = GCanvas.GBridge = GWebGLRenderingContext.GBridge = GContext2D.GBridge = bridge;
 
   GBridge.callEnable(el.ref, [
@@ -32,7 +32,7 @@ export function enable(el, { bridge, debug, disableAutoSwap, disableComboCommand
     GBridge.callEnableDisableCombo();
   }
 
-  var canvas = new GCanvas(el.ref, {disableAutoSwap, style: el.style});
+  var canvas = new GCanvas(el.ref, {isAutoClearRectBeforePutImageData, disableAutoSwap, style: el.style});
 
   return canvas;
 }

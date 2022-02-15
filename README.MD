@@ -215,8 +215,6 @@ export default class App extends Component {
       this.ctx.clearRect(0, 0, this.canvas.width, this.canvas.height);
 
       this.ctx.beginPath();
-      this.ctx.fillStyle = 'grey';
-      this.ctx.fillRect(0, 0, this.canvas.width, this.canvas.height);
 
       //rect
       this.ctx.fillStyle = 'red';
@@ -258,7 +256,7 @@ export default class App extends Component {
         'https://gw.alicdn.com/tfs/TB1KwRTlh6I8KJjy0FgXXXXzVXa-225-75.png';
 
       let imagedata = this.ctx.getImageData(25, 25, 50, 50);
-      this.ctx.putImageData(imagedata, 100, 0, 12, 12, 25, 25);
+      this.ctx.putImageData(imagedata, 100, 100, 12, 12, 25, 25);
 
       let imageRequire = Platform.OS === 'web' ? new Image() : new GImage();
       imageRequire.onload = () => {
@@ -306,6 +304,7 @@ export default class App extends Component {
             onCanvasCreate={this.initCanvas}
             onIsReady={(value) => (this.isGReactTextureViewReady = value)}
             isGestureResponsible={true /* Here is just for example, you can remove this line because default is true */}
+            isAutoClearRectBeforePutImageData={false /* default is false, if you want to be exactly compatible with Web, you can set it to true*/}
             style={styles.gcanvas}
           />
         )}

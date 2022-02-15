@@ -9,9 +9,12 @@ export default class GOffScreenCanvas {
 
   _needRender = true;
 
-  constructor(id) {
+  constructor(id, {isAutoClearRectBeforePutImageData, disableAutoSwap}) {
     this.id = id;
     this.className = 'GOffScreenCanvas';
+
+    this._isAutoClearRectBeforePutImageData = isAutoClearRectBeforePutImageData;
+    this._disableAutoSwap = disableAutoSwap;
   }
 
   getContext(type) {
