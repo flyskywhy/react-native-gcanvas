@@ -3,6 +3,14 @@
 All notable changes of this project will be documented in.
 
 
+## [2.3.17] - 2022-02-15 Happy Lantern Festival
+
+### Changed
+
+* React Native GCanvas Component
+	* feat: add prop isAutoClearRectBeforePutImageData
+
+
 ## [2.3.16] - 2022-02-15 Happy Lantern Festival
 
 ### Changed
