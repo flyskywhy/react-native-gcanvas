@@ -210,6 +210,9 @@ export default class CanvasRenderingContext2D {
   }
 
   set globalCompositeOperation(value) {
+    // to avoid blinks, ref to https://github.com/flyskywhy/react-native-gcanvas/issues/31
+    this.flushJsCommands2CallNative('sync', 'execWithoutDisplay');
+
     this._globalCompositeOperation = value;
     let mode = 0;
     switch (value) {
