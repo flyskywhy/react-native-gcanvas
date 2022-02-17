@@ -189,10 +189,15 @@ export default class App extends Component {
 
     this.canvas = canvas;
     if (Platform.OS === 'web') {
-      // canvas.width not equal canvas.clientWidth, so have to assign again
+      // canvas.width not equal canvas.clientWidth but "Defaults to 300" ref
+      // to https://developer.mozilla.org/en-US/docs/Web/HTML/Element/canvas,
+      // so have to assign again, unless <canvas width=SOME_NUMBER/> in render()
       this.canvas.width = this.canvas.clientWidth;
       this.canvas.height = this.canvas.clientHeight;
     }
+    // should not name this.context because this.context is already be {} here and will
+    // be {} again after componentDidUpdate() on react-native or react-native-web, so
+    // name this.ctx
     this.ctx = this.canvas.getContext('2d');
   };
 
