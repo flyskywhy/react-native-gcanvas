@@ -624,9 +624,6 @@ export default class CanvasRenderingContext2D {
   // no need ctx.getImageData(imageData, x * PixelRatio.get(), y * PixelRatio.get())
   // and the imageData is also not `w * PixelRatio.get(), h * PixelRatio.get()`
   putImageData(imageData, x, y, dirtyX, dirtyY, dirtyWidth, dirtyHeight) {
-    if (this._canvas._isAutoClearRectBeforePutImageData) {
-      this.clearRect(x + dirtyX, y + dirtyY, dirtyWidth, dirtyHeight);
-    }
     const base64Data = base64.fromByteArray(imageData.data);
     let tw = imageData.width; // textureWidth
     let th = imageData.height;
@@ -645,6 +642,10 @@ export default class CanvasRenderingContext2D {
       // means the width of the (src) image data
       sw = dirtyWidth;
       sh = dirtyHeight;
+    }
+
+    if (this._canvas._isAutoClearRectBeforePutImageData) {
+      this.clearRect(x + sx, y + sy, sw, sh);
     }
 
     this._drawCommands = this._drawCommands.concat('P' + base64Data + ',' + tw + ',' + th + ','
