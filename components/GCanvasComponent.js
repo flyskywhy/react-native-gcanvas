@@ -84,6 +84,8 @@ export default class GCanvasView extends Component {
     // so the default value is false, and if you want to be exactly
     // compatible with Web, you can set it to true
     isAutoClearRectBeforePutImageData: false,
+    // devicePixelRatio default is undefined and means default is PixelRatio.get()
+    devicePixelRatio: undefined,
     // only affect webgl
     // false: use AutoSwap, means gcanvas use a setInterval(render, 16) to exec cached cmds
     //        to generate and display graphics
@@ -162,6 +164,7 @@ export default class GCanvasView extends Component {
       },
       {
         isAutoClearRectBeforePutImageData: this.props.isAutoClearRectBeforePutImageData,
+        devicePixelRatio: this.props.devicePixelRatio,
         disableAutoSwap: this.props.disableAutoSwap,
         bridge: ReactNativeBridge,
       },

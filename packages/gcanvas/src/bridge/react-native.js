@@ -69,6 +69,10 @@ const GBridge = {
     GBridge.GCanvasModule.setContextType(context_type, componentId);
   },
 
+  callSetDevicePixelRatio: function(componentId, ratio) {
+    GBridge.GCanvasModule.setDevicePixelRatio(componentId, ratio);
+  },
+
   callResetGlViewport: function(componentId) {
     GBridge.GCanvasModule.resetGlViewport(componentId);
   },

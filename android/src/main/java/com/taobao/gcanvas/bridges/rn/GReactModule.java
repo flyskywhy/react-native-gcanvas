@@ -535,6 +535,21 @@ public class GReactModule extends ReactContextBaseJavaModule implements Lifecycl
         mImpl.setContextType(refId, type);
     }
 
+    @ReactMethod
+    public void setDevicePixelRatio(String refId, double ratio) {
+        if (TextUtils.isEmpty(refId)) {
+            return;
+        }
+
+        GReactTextureView textureView = mViews.get(refId);
+        if (null == textureView) {
+            GLog.w(TAG, "setDevicePixelRatio can not find canvas with id ===> " + refId);
+            return;
+        }
+
+        mImpl.setDevicePixelRatio(refId, ratio);
+    }
+
     @ReactMethod(isBlockingSynchronousMethod = true)
     public void resetGlViewport(String refId) {
         if (TextUtils.isEmpty(refId)) {

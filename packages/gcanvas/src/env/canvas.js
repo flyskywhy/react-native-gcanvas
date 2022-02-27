@@ -20,11 +20,14 @@ export default class GCanvas extends Element {
 
   _needRender = true;
 
-  constructor(id, {isAutoClearRectBeforePutImageData, disableAutoSwap, style}) {
+  constructor(id, {isAutoClearRectBeforePutImageData, devicePixelRatio, disableAutoSwap, style}) {
     super('canvas');
     this.id = id;
 
     this._isAutoClearRectBeforePutImageData = isAutoClearRectBeforePutImageData;
+    if (devicePixelRatio !== undefined) {
+      this._devicePixelRatio = parseInt(devicePixelRatio, 10);
+    }
     this._disableAutoSwap = disableAutoSwap;
     this._swapBuffers = () => {
       this._context && this._context.flushJsCommands2CallNative();
@@ -103,10 +106,20 @@ export default class GCanvas extends Element {
       // at the very first, otherwise can't `gl.clearColor` right away on canvas.getContext('webgl')
       // like https://github.com/flyskywhy/react-native-gcanvas/issues/24
       sleepMs(100);
+      if (this._devicePixelRatio > 0) {
+        GCanvas.GBridge.callSetDevicePixelRatio(this.id, this._devicePixelRatio);
+      }
     } else if (type.match(/2d/i)) {
       this._context = new GContext2D(this);
       this._context.componentId = this.id;
       GCanvas.GBridge.callSetContextType(this.id, 0);
+
+      // need `sleepMs()` by `for(;;)` to let callSetDevicePixelRatio take effect
+      sleepMs(100);
+      if (this._devicePixelRatio > 0) {
+        GCanvas.GBridge.callSetDevicePixelRatio(this.id, this._devicePixelRatio);
+      }
+
       this._renderLoopId = requestAnimationFrame(this._renderLoop.bind(this));
     } else {
       throw new Error('not supported context ' + type);
