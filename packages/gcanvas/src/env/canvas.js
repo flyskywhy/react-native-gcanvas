@@ -65,6 +65,7 @@ export default class GCanvas extends Element {
     }
     this._width = value;
     GCanvas.GBridge.callResetGlViewport(this.id);
+    this._context.drawingBufferWidth = this._clientWidth * PixelRatio.get();
   }
 
   get height() {
@@ -77,15 +78,14 @@ export default class GCanvas extends Element {
     }
     this._height = value;
     GCanvas.GBridge.callResetGlViewport(this.id);
+    this._context.drawingBufferHeight = this._clientHeight * PixelRatio.get();
   }
 
   getContext(type) {
     if (type.match(/webgl/i)) {
       this._context = new GContextWebGL(this);
-
       this._context.drawingBufferWidth = this._clientWidth * PixelRatio.get();
       this._context.drawingBufferHeight = this._clientHeight * PixelRatio.get();
-
       this._context.componentId = this.id;
 
       GCanvas.GBridge.callSetContextType(this.id, 1); // 0 for 2d; 1 for webgl
@@ -111,6 +111,8 @@ export default class GCanvas extends Element {
       }
     } else if (type.match(/2d/i)) {
       this._context = new GContext2D(this);
+      this._context.drawingBufferWidth = this._clientWidth * PixelRatio.get();
+      this._context.drawingBufferHeight = this._clientHeight * PixelRatio.get();
       this._context.componentId = this.id;
       GCanvas.GBridge.callSetContextType(this.id, 0);
 
