@@ -102,6 +102,11 @@ RCT_EXPORT_METHOD(setContextType:(NSUInteger)type componentId:(NSString*)compone
     [self.gcanvasModule setContextType:type componentId:componentId];
 }
 
+RCT_EXPORT_METHOD(setDevicePixelRatio:(NSString*)componentId ratio:(CGFloat)ratio)
+{
+    [self.gcanvasModule setDevicePixelRatio:componentId ratio:ratio];
+}
+
 RCT_EXPORT_METHOD(resetGlViewport:(NSString*)componentId)
 {
     [self.gcanvasModule resetGlViewport:componentId];

@@ -91,6 +91,8 @@ typedef void (^GCanvasModuleCallback)(id result);
  */
 - (void)setContextType:(NSUInteger)type componentId:(NSString*)componentId;
 
+- (void)setDevicePixelRatio:(NSString*)componentId ratio:(CGFloat)ratio;
+
 - (void)resetGlViewport:(NSString*)componentId;
 
 - (NSString*)toDataURL:(NSString*)componentId mimeType:(NSString*)mimeType quality:(CGFloat)quality;

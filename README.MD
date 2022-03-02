@@ -310,6 +310,7 @@ export default class App extends Component {
             onIsReady={(value) => (this.isGReactTextureViewReady = value)}
             isGestureResponsible={true /* Here is just for example, you can remove this line because default is true */}
             isAutoClearRectBeforePutImageData={false /* default is false, if you want to be exactly compatible with Web, you can set it to true*/}
+            devicePixelRatio={undefined /* Here is just for example, you can remove this line because default is undefined and means default is PixelRatio.get(), ref to "About devicePixelRatio" below */}
             style={styles.gcanvas}
           />
         )}
@@ -340,6 +341,35 @@ const styles = StyleSheet.create({
   },
 });
 ```
+
+## About devicePixelRatio
+Take width as example, in [Window.devicePixelRatio](https://developer.mozilla.org/en-US/docs/Web/API/Window/devicePixelRatio):
+
+* "display size (css pixels)" means `canvas.clientWidth`
+* "actual size in memory" of GPU means `canvas._context.drawingBufferHeight`
+
+To avoid "blurry canvas" described in [Window.devicePixelRatio
+](https://developer.mozilla.org/en-US/docs/Web/API/Window/devicePixelRatio), `@flyskywhy/react-native-gcanvas` always set "actual size in memory" of GPU with physical pixels (despite of values into `canvas.width =` and `canvas.height =`), so `canvas._context.drawingBufferHeight` always equals `canvas.clientWidth * PixelRatio.get()` .
+
+### with no devicePixelRatio prop, or devicePixelRatio={PixelRatio.get()}
+To be here if you want to code with css pixels, in other words, to code like the device full view width is `(full physical width)/PixelRatio.get()`, and iOS and Android will have the same x y scale with Web against same JS code. FE designer may prefer it.
+
+Replace code in [Window.devicePixelRatio
+](https://developer.mozilla.org/en-US/docs/Web/API/Window/devicePixelRatio) with
+```
+canvas.width = Math.floor(size * scale);
+canvas.height = Math.floor(size * scale);
+if (Platform.OS === 'web') {
+  ctx.scale(scale, scale);
+}
+```
+and the rest code will works well.
+
+### width devicePixelRatio={1}
+To be here if you want to code with physical pixels. Game designer may prefer it.
+
+Without modification, code in [Window.devicePixelRatio
+](https://developer.mozilla.org/en-US/docs/Web/API/Window/devicePixelRatio) will works well.
 
 ## Features
 - Cross-platform, support popular iOS and Android.

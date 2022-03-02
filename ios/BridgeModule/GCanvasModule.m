@@ -49,6 +49,8 @@
  */
 @property (nonatomic, strong) NSMutableDictionary *gcanvasObjectDict;
 
+@property (nonatomic, assign) CGFloat devicePixelRatio;
+
 /**
  * enter background flag
  */
@@ -166,6 +168,7 @@ static NSMutableDictionary  *_staticModuleExistDict;
     GCVWeakSelf
     id<GCanvasViewProtocol> component = [self.deletage gcanvasComponentById:componentId];
     if( component ){
+        self.devicePixelRatio = component.devicePixelRatio;
         dispatch_sync([self gcanvasExecuteQueue], ^{
             EAGLContext *context = [GCanvasModule createEAGLContextWithModuleInstance:[weakSelf.deletage gcanvasModuleInstanceId]];
             context.multiThreaded = YES;
@@ -576,23 +579,27 @@ static NSMutableDictionary  *_staticModuleExistDict;
  * @param   component   id<GCanvasViewProtocol component bind with plugin
  */
 - (void)refreshPlugin:(GCanvasPlugin*)plugin withComponent:(id<GCanvasViewProtocol>)component{
-    CGFloat devicePixelRatio = 1.0;
-//    if( plugin.contextType == GCVContextType2D ){
-        // To let iOS has the same x y scale with Android and Web against same JS code
-        devicePixelRatio = component.devicePixelRatio;
-//    }
-
-    GCVLOG_METHOD(@"enable devicePixelRatio %f", devicePixelRatio);
-    [plugin setDevicePixelRatio:devicePixelRatio];
-
     dispatch_main_sync_safe(^{
         CGRect compFrame = component.componetFrame;
         CGRect gcanvasFrame = CGRectMake(compFrame.origin.x, compFrame.origin.y,
-                                         compFrame.size.width*devicePixelRatio,
-                                         compFrame.size.height*devicePixelRatio);
+                                         compFrame.size.width*component.devicePixelRatio,
+                                         compFrame.size.height*component.devicePixelRatio);
         [plugin setClearColor:component.glkview.backgroundColor];
         [plugin setFrame:gcanvasFrame];
     });
+
+    GCVLOG_METHOD(@"enable devicePixelRatio %f", self.devicePixelRatio);
+    [plugin setDevicePixelRatio:self.devicePixelRatio];
+}
+
+- (void)setDevicePixelRatio:(NSString*)componentId ratio:(CGFloat)ratio {
+    GCVLOG_METHOD(@"setDevicePixelRatio:componentId:%@, ratio:%f", componentId, ratio);
+    self.devicePixelRatio = ratio;
+    GCanvasObject *gcanvasInst = self.gcanvasObjectDict[componentId];
+    GCanvasPlugin *plugin = gcanvasInst.plugin;
+    if (plugin) {
+        [plugin setDevicePixelRatio:self.devicePixelRatio];
+    }
 }
 
 #pragma mark - GLKViewDelegate

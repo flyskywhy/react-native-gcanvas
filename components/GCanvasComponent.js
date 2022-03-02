@@ -84,7 +84,8 @@ export default class GCanvasView extends Component {
     // so the default value is false, and if you want to be exactly
     // compatible with Web, you can set it to true
     isAutoClearRectBeforePutImageData: false,
-    // devicePixelRatio default is undefined and means default is PixelRatio.get()
+    // devicePixelRatio default is undefined and means default is PixelRatio.get() ,
+    // ref to "About devicePixelRatio" in README.md
     devicePixelRatio: undefined,
     // only affect webgl
     // false: use AutoSwap, means gcanvas use a setInterval(render, 16) to exec cached cmds
