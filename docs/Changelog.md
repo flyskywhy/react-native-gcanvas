@@ -3,6 +3,14 @@
 All notable changes of this project will be documented in.
 
 
+## [2.3.19] - 2022-03-02
+
+### Changed
+
+* React Native GCanvas Component
+	* feat: add prop devicePixelRatio, so that game designer/engine can code with physical pixels not just css pixels
+
+
 ## [2.3.17] - 2022-02-15 Happy Lantern Festival
 
 ### Changed
