@@ -30,7 +30,7 @@
     "zdog"
   ],
   "dependencies": {
-    "@flyskywhy/react-native-browser-polyfill": "^1.0.3"
+    "@flyskywhy/react-native-browser-polyfill": "^1.0.4"
   },
   "private": false,
   "funding": [{
