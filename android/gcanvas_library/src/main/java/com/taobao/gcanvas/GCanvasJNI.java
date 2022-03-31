@@ -220,7 +220,7 @@ public class GCanvasJNI {
     public static native void setPreCompilePath(String path);
 
     public static native void bindTexture(String contextId, Bitmap bitmap, int id,
-                                          int target, int level, int internalformat, int width, int height, int border, int format, int type);
+                                          int target, int level, int internalformat, int format, int type);
 
     public static native void texSubImage2D(String contextId, Bitmap bitmap, int id,
                                             int target, int level, int xoffset, int yoffset, int format, int type);

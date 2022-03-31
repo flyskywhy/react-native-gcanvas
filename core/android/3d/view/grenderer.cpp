@@ -378,13 +378,13 @@ void GRenderer::requestViewportChanged() {
 
 void GRenderer::bindTexture(JNIEnv *env, jobject bitmap, int id, int target, int level,
                             int internalformat,
-                            int width, int height, int border, int format, int type) {
+                            int format, int type) {
 
     AndroidBitmapInfo info;
     memset(&info, 0, sizeof(info));
     AndroidBitmap_getInfo(env, bitmap, &info);
     // Check format, only RGB565 & RGBA are supported
-    if (width <= 0 || height <= 0 ||
+    if (info.width <= 0 || info.height <= 0 ||
         (info.format != ANDROID_BITMAP_FORMAT_RGB_565 &&
          info.format != ANDROID_BITMAP_FORMAT_RGBA_8888) &&
         info.format != ANDROID_BITMAP_FORMAT_RGBA_4444) {
@@ -416,8 +416,8 @@ void GRenderer::bindTexture(JNIEnv *env, jobject bitmap, int id, int target, int
 
     struct BitmapCmd *p = new struct BitmapCmd();
     p->Bitmap = pixels;
-    p->width = width;
-    p->height = height;
+    p->width = info.width;
+    p->height = info.height;
     p->target = target;
     p->level = level;
     p->interformat = internalformat;

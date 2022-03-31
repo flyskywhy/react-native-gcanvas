@@ -112,17 +112,14 @@ public class GReactModule extends ReactContextBaseJavaModule implements Lifecycl
 
     private class TexImage2DCmd implements IReactCacheCmd {
         private String refid;
-        private int target, level, internalformat, width, height, border, format, type;
+        private int target, level, internalformat, format, type;
         private String path;
 
-        public TexImage2DCmd(String refid, int target, int level, int internalformat, int width, int height, int border, int format, int type, String path) {
+        public TexImage2DCmd(String refid, int target, int level, int internalformat, int format, int type, String path) {
             this.refid = refid;
             this.target = target;
             this.level = level;
             this.internalformat = internalformat;
-            this.width = width;
-            this.height = height;
-            this.border = border;
             this.format = format;
             this.type = type;
             this.path = path;
@@ -130,7 +127,7 @@ public class GReactModule extends ReactContextBaseJavaModule implements Lifecycl
 
         @Override
         public void execute() {
-            texImage2D(refid, target, level, internalformat, width, height, border, format, type, path);
+            texImage2D(refid, target, level, internalformat, format, type, path);
         }
     }
 
@@ -596,16 +593,17 @@ public class GReactModule extends ReactContextBaseJavaModule implements Lifecycl
     public void setAlpha(String refId, float alpha) {
     }
 
+
     @ReactMethod
-    public void texImage2D(final String refId, final int target, final int level, final int internalformat, final int width, final int height, final int border, final int format, final int type, String path) {
+    public void texImage2D(final String refId, final int target, final int level, final int internalformat, final int format, final int type, String path) {
         if (!TextUtils.isEmpty(path)) {
             GReactTextureView textureView = mViews.get(refId);
             if (null == textureView) {
                 GLog.w(TAG, " texImage2D ===> can not find canvas with id ===> " + refId);
-                addCacheCommand(refId, new TexImage2DCmd(refId, target, level, internalformat, width, height, border, format, type, path));
+                addCacheCommand(refId, new TexImage2DCmd(refId, target, level, internalformat, format, type, path));
                 return;
             }
-            mImpl.texImage2D(textureView.getCanvasKey(), target, level, internalformat, width, height, border, format, type, path);
+            mImpl.texImage2D(textureView.getCanvasKey(), target, level, internalformat, format, type, path);
         }
     }
 

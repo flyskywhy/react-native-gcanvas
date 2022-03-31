@@ -48,7 +48,7 @@ public:
     void waitResponse();
 
     void bindTexture(JNIEnv *env, jobject bitmap, int id, int target, int level, int internalformat,
-                     int width, int height, int border, int format, int type);
+                     int format, int type);
 
     void texSubImage2D(JNIEnv *env, jobject bitmap, int id, int target, int level, int xoffset,
                        int yoffset,

@@ -575,9 +575,9 @@ JNIEXPORT void JNICALL Java_com_taobao_gcanvas_GCanvasJNI_setConfig(
 
 JNIEXPORT void JNICALL Java_com_taobao_gcanvas_GCanvasJNI_bindTexture(
         JNIEnv *je, jclass jc, jstring contextId, jobject bitmap, jint id,
-        jint target, jint level, jint internalformat, jint width, jint height, jint border, jint format, jint type) {
+        jint target, jint level, jint internalformat, jint format, jint type) {
 
-    LOG_D("bindTexture in gcanvasjni.");
+    LOG_D("bindtexture in gcanvasjni.");
 
     if (!contextId) {
         return;
@@ -592,7 +592,7 @@ JNIEXPORT void JNICALL Java_com_taobao_gcanvas_GCanvasJNI_bindTexture(
 
     GRenderer *render = GManager::getSingleton()->findRenderer(cxx_string);
     if (render != nullptr) {
-        render->bindTexture(je, bitmap, id, target, level, internalformat, width, height, border, format, type);
+        render->bindTexture(je, bitmap, id, target, level, internalformat, format, type);
     }
 }
 

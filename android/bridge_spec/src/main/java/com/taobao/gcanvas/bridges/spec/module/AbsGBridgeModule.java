@@ -93,7 +93,7 @@ public abstract class AbsGBridgeModule<JSCallback> implements IGBridgeModule<JSC
                 if (src.startsWith("data:image")) {
                     Bitmap bmp = handleBase64Texture(src.substring(src.indexOf("base64,") + "base64,".length()));
                     if (bmp != null) {
-                        GCanvasJNI.bindTexture(canvasId, bmp, id, GLES20.GL_TEXTURE_2D, 0, GLES20.GL_RGBA, bmp.getWidth(), bmp.getHeight(), 0, GLES20.GL_RGBA, GLES20.GL_UNSIGNED_BYTE);
+                        GCanvasJNI.bindTexture(canvasId, bmp, id, GLES20.GL_TEXTURE_2D, 0, GLES20.GL_RGBA, GLES20.GL_RGBA, GLES20.GL_UNSIGNED_BYTE);
                     } else {
                         GLog.d("decode base64 texture failed,bitmap is null.");
                     }
@@ -104,9 +104,9 @@ public abstract class AbsGBridgeModule<JSCallback> implements IGBridgeModule<JSC
                         @Override
                         protected void doSuccessAction(Bitmap bitmap) {
                             if (null != bitmap) {
-                                GCanvasJNI.bindTexture(canvasId, bitmap, id, GLES20.GL_TEXTURE_2D, 0, GLES20.GL_RGBA, bitmap.getWidth(), bitmap.getHeight(), 0, GLES20.GL_RGBA, GLES20.GL_UNSIGNED_BYTE);
+                                GCanvasJNI.bindTexture(canvasId, bitmap, id, GLES20.GL_TEXTURE_2D, 0, GLES20.GL_RGBA, GLES20.GL_RGBA, GLES20.GL_UNSIGNED_BYTE);
                             } else {
-                                GLog.d("bitmap is null in bindImageTexture.");
+                                GLog.d("bitmap is null in teximage2D.");
                             }
 
                             if (null != callback && bitmap != null) {
@@ -189,17 +189,13 @@ public abstract class AbsGBridgeModule<JSCallback> implements IGBridgeModule<JSC
 
     @Override
     public void texImage2D(final String canvasId, final int target, final int level, final int internalformat,
-                           final int width, final int height, final int border, final int format, final int type, final String path) {
+                           final int format, final int type, final String path) {
         if (!TextUtils.isEmpty(path)) {
             try {
                 if (path.startsWith("data:image")) {
                     Bitmap bmp = handleBase64Texture(path.substring(path.indexOf("base64,") + "base64,".length()));
                     if (bmp != null) {
-                        if (width > 0 && height > 0) {
-                            GCanvasJNI.bindTexture(canvasId, bmp, 0, target, level, internalformat, width, height, 0, format, type);
-                        } else {
-                            GCanvasJNI.bindTexture(canvasId, bmp, 0, target, level, internalformat, bmp.getWidth(), bmp.getHeight(), 0, format, type);
-                        }
+                        GCanvasJNI.bindTexture(canvasId, bmp, 0, target, level, internalformat, format, type);
                     } else {
                         GLog.d("decode base64 texture failed,bitmap is null.");
                     }
@@ -209,11 +205,7 @@ public abstract class AbsGBridgeModule<JSCallback> implements IGBridgeModule<JSC
                         @Override
                         protected void doSuccessAction(Bitmap bitmap) {
                             if (null != bitmap) {
-                                if (width > 0 && height > 0) {
-                                    GCanvasJNI.bindTexture(canvasId, bitmap, 0, target, level, internalformat, width, height, 0, format, type);
-                                } else {
-                                    GCanvasJNI.bindTexture(canvasId, bitmap, 0, target, level, internalformat, bitmap.getWidth(), bitmap.getHeight(), 0, format, type);
-                                }
+                                GCanvasJNI.bindTexture(canvasId, bitmap, 0, target, level, internalformat, format, type);
                             } else {
                                 GLog.d("bitmap is null in teximage2D.");
                             }

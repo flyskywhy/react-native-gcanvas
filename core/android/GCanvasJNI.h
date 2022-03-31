@@ -174,7 +174,7 @@ JNIEXPORT jstring JNICALL Java_com_taobao_gcanvas_GCanvasJNI_exeSyncCmd
 
 JNIEXPORT void JNICALL Java_com_taobao_gcanvas_GCanvasJNI_bindTexture(
         JNIEnv *je, jclass jc, jstring contextId, jobject bitmap, jint id,
-        jint target, jint level, jint internalformat, jint width, jint height, jint border, jint format, jint type);
+        jint target, jint level, jint internalformat, jint format, jint type);
 
 JNIEXPORT void JNICALL Java_com_taobao_gcanvas_GCanvasJNI_texSubImage2D(
         JNIEnv *je, jclass jc, jstring contextId, jobject bitmap, jint id,

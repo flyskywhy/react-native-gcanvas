@@ -99,15 +99,12 @@ public interface IGBridgeModule<JSCallback> {
      * @param target
      * @param level
      * @param internalformat
-     * @param width
-     * @param height
-     * @param border
      * @param format
      * @param type
      * @param path
      */
     @AndroidOnly
-    void texImage2D(final String canvasId, final int target, final int level, final int internalformat, final int width, final int height, final int border, final int format, final int type, String path);
+    void texImage2D(final String canvasId, final int target, final int level, final int internalformat, final int format, final int type, String path);
 
     /**
      * <p>Load specified image into bitmap cache, send result to callback. </p>

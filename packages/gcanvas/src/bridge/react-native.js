@@ -233,10 +233,10 @@ const GBridge = {
     } else if (isReactNativeAndroid()) {
       if (args.length === 6) {
         const [target, level, internalformat, format, type, image] = args;
-        GBridge.GCanvasModule.texImage2D(componentId, target, level, internalformat, -1, -1, 0, format, type, image ? image.src : '0');
+        GBridge.GCanvasModule.texImage2D(componentId, target, level, internalformat, format, type, image.src);
       } else if (args.length === 9) {
         const [target, level, internalformat, width, height, border, format, type, image] = args;
-        GBridge.GCanvasModule.texImage2D(componentId, target, level, internalformat, width, height, border, format, type, image ? image.src : '0');
+        GBridge.GCanvasModule.texImage2D(componentId, target, level, internalformat, width, height, border, format, type, image ? image.src : 0);
       }
     }
   },
