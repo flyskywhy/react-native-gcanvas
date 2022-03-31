@@ -26,7 +26,7 @@ class GImage extends Element {
 
     this._src = value;
 
-    GImage.GBridge.perloadImage([this._src, this._id], (data) => {
+    GImage.GBridge.preloadImage([this._src, this._id], (data) => {
       if (typeof data === 'string') {
         data = JSON.parse(data);
       }

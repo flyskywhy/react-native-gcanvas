@@ -215,41 +215,15 @@ const GBridge = {
 
 
   texImage2D(componentId, ...args) {
-    if (isReactNativeIOS()) {
-      if (args.length === 6) {
-        const [target, level, internalformat, format, type, image] = args;
-        GBridge.callNative(
-          componentId,
-          GLmethod.texImage2D + ',' + 6 + ',' + target + ',' + level + ',' + internalformat + ',' + format + ',' + type + ',' + image.src
-        );
-      } else if (args.length === 9) {
-        const [target, level, internalformat, width, height, border, format, type, image] = args;
-        GBridge.callNative(
-          componentId,
-          GLmethod.texImage2D + ',' + 9 + ',' + target + ',' + level + ',' + internalformat + ',' + width + ',' + height + ',' + border + ',' +
-                    + format + ',' + type + ',' + (image ? image.src : 0)
-        );
-      }
-    } else if (isReactNativeAndroid()) {
-      if (args.length === 6) {
-        const [target, level, internalformat, format, type, image] = args;
-        GBridge.GCanvasModule.texImage2D(componentId, target, level, internalformat, format, type, image.src);
-      } else if (args.length === 9) {
-        const [target, level, internalformat, width, height, border, format, type, image] = args;
-        GBridge.GCanvasModule.texImage2D(componentId, target, level, internalformat, width, height, border, format, type, image ? image.src : 0);
-      }
+    if (isReactNativeAndroid()) {
+      const [target, level, internalformat, format, type, image] = args;
+      GBridge.GCanvasModule.texImage2D(componentId, target, level, internalformat, format, type, image.src);
     }
   },
 
-  texSubImage2D(componentId, target, level, xoffset, yoffset, format, type, image) {
-    if (isReactNativeIOS() ) {
-      if (arguments.length === 8) {
-        GBridge.callNative(
-          componentId,
-          GLmethod.texSubImage2D + ',' + 6 + ',' + target + ',' + level + ',' + xoffset + ',' + yoffset, + ',' + format + ',' + type + ',' + image.src
-        );
-      }
-    } else if (isReactNativeAndroid()) {
+  texSubImage2D(componentId, ...args) {
+    if (isReactNativeAndroid()) {
+      const [target, level, xoffset, yoffset, format, type, image] = args;
       GBridge.GCanvasModule.texSubImage2D(componentId, target, level, xoffset, yoffset, format, type, image.src);
     }
   },
@@ -260,7 +234,7 @@ const GBridge = {
     });
   },
 
-  perloadImage([url, id], callback) {
+  preloadImage([url, id], callback) {
     GBridge.GCanvasModule.preLoadImage([url, id], function(image) {
       image.url = url;
       image.id = id;

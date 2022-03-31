@@ -1,6 +1,7 @@
 package com.taobao.gcanvas.bridges.spec.module;
 
 
+import com.taobao.gcanvas.adapters.img.IGImageLoader;
 import com.taobao.gcanvas.bridges.spec.AndroidOnly;
 
 import org.json.JSONArray;
@@ -80,39 +81,14 @@ public interface IGBridgeModule<JSCallback> {
     void setLogLevel(int level);
 
     /**
-     * Load texture sub image for webgl
-     * @param canvasid
-     * @param target
-     * @param level
-     * @param xoffset
-     * @param yoffset
-     * @param format
-     * @param type
-     * @param path
-     */
-    @AndroidOnly
-    void texSubImage2D(final String canvasid, final int target, final int level, final int xoffset, final int yoffset, final int format, final int type, String path);
-
-    /**
-     *
-     * @param canvasId
-     * @param target
-     * @param level
-     * @param internalformat
-     * @param format
-     * @param type
-     * @param path
-     */
-    @AndroidOnly
-    void texImage2D(final String canvasId, final int target, final int level, final int internalformat, final int format, final int type, String path);
-
-    /**
      * <p>Load specified image into bitmap cache, send result to callback. </p>
      * <p>Result is some map-like data. If failed, it contains "error" key, otherwise succeed.</p>
      * @param imageInfo index 0 is url, index 1 is image id
      * @param success callback to handle result
      */
     void preLoadImage(JSONArray imageInfo, final JSCallback success);
+
+    public GImageLoadInfo fetchLoadImage(String imageStrkey);
 
     /**
      *

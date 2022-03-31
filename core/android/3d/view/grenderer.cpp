@@ -284,19 +284,6 @@ void GRenderer::renderLoop() {
             sem_post(&m_SyncSem);
         }
 
-        if (m_subImage2D && m_egl_surface != EGL_NO_SURFACE) {
-            while (!mBitmapQueue.empty()) {
-                struct BitmapCmd *p = reinterpret_cast<struct BitmapCmd * >(mBitmapQueue.front());
-                mProxy->texSubImage2D(*p);
-
-                mBitmapQueue.pop();
-                delete p;
-            }
-
-            m_subImage2D = false;
-            sem_post(&m_SyncSem);
-        }
-
         if (m_egl_display) {
             drawFrame();
             if (m_refresh) {
@@ -439,59 +426,6 @@ void GRenderer::bindTexture(JNIEnv *env, jobject bitmap, int id, int target, int
     } else {
         delete p;
         LOG_D("the proxy is null when binding texture.");
-    }
-}
-
-void
-GRenderer::texSubImage2D(JNIEnv *env, jobject bitmap, int id, int target, int level, int xoffset,
-                         int yoffset,
-                         int format, int type) {
-
-    AndroidBitmapInfo info;
-    memset(&info, 0, sizeof(info));
-    AndroidBitmap_getInfo(env, bitmap, &info);
-    // Check format, only RGB565 & RGBA are supported
-    if (info.width <= 0 || info.height <= 0 ||
-        (info.format != ANDROID_BITMAP_FORMAT_RGB_565 &&
-         info.format != ANDROID_BITMAP_FORMAT_RGBA_8888)) {
-        return;
-    }
-
-    // Lock the bitmap to get the buffer
-    void *pixels = NULL;
-    int res = AndroidBitmap_lockPixels(env, bitmap, &pixels);
-    if (pixels == NULL) {
-        return;
-    }
-
-    AndroidBitmap_unlockPixels(env, bitmap);
-
-    struct BitmapCmd *p = new struct BitmapCmd();
-    p->Bitmap = pixels;
-    p->width = info.width;
-    p->height = info.height;
-    p->target = target;
-    p->level = level;
-    p->xoffset = xoffset;
-    p->yoffset = yoffset;
-    p->format = format;
-    p->type = type;
-    p->id = id;
-
-    if (this->mProxy != nullptr) {
-        mBitmapQueue.push(p);
-        m_subImage2D = true;
-
-        LOG_D("start to require texSubImage2D,width=%d,height=%d,target=%d,level=%d,xoffset=%d,yoffset=%d,format=%d,type=%d\n",
-              info.width, info.height, target, level, xoffset, yoffset, format, type);
-        pthread_cond_signal(&m_cond);
-
-        gcanvas::waitUtilTimeout(&m_SyncSem, GCANVAS_TIMEOUT);
-
-        LOG_D("finish wait in texSubImage2D.");
-    } else {
-        delete p;
-        LOG_D("the proxy is null when texSubImage2D texture.");
     }
 }
 

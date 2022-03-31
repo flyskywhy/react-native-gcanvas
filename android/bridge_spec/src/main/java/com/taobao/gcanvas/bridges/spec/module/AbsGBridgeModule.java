@@ -154,73 +154,6 @@ public abstract class AbsGBridgeModule<JSCallback> implements IGBridgeModule<JSC
     }
 
     @Override
-    public void texSubImage2D(final String canvasid, final int target, final int level, final int xoffset, final int yoffset,
-                              final int format, final int type, String path) {
-        if (!TextUtils.isEmpty(path)) {
-            try {
-                if (path.startsWith("data:image")) {
-                    Bitmap bmp = handleBase64Texture(path.substring(path.indexOf("base64," + "base64,".length())));
-                    if (bmp != null) {
-                        GCanvasJNI.texSubImage2D(canvasid, bmp, 0, target, level, xoffset, yoffset, format, type);
-                    } else {
-                        GLog.d("[texSubImage2D] decode base64 texture failed,bitmap is null.");
-                    }
-                } else {
-                    AbsImageCallback imgCb = new AbsImageCallback() {
-                        @Override
-                        protected void doSuccessAction(Bitmap bitmap) {
-                            if (null != bitmap) {
-                                GLog.d("[texSubImage2D] start to bindtexture in 3dmodule.");
-                                GCanvasJNI.texSubImage2D(canvasid, bitmap, 0, target, level, xoffset, yoffset, format, type);
-                            } else {
-                                GLog.d("[texSubImage2D] bitmap is null.");
-                            }
-                        }
-                    };
-
-                    mImageLoader.load(getContext(), path, imgCb);
-                    imgCb.waitTillFinish();
-                }
-            } catch (Throwable e) {
-                GLog.e(TAG, e.getMessage(), e);
-            }
-        }
-    }
-
-    @Override
-    public void texImage2D(final String canvasId, final int target, final int level, final int internalformat,
-                           final int format, final int type, final String path) {
-        if (!TextUtils.isEmpty(path)) {
-            try {
-                if (path.startsWith("data:image")) {
-                    Bitmap bmp = handleBase64Texture(path.substring(path.indexOf("base64,") + "base64,".length()));
-                    if (bmp != null) {
-                        GCanvasJNI.bindTexture(canvasId, bmp, 0, target, level, internalformat, format, type);
-                    } else {
-                        GLog.d("decode base64 texture failed,bitmap is null.");
-                    }
-                } else {
-
-                    AbsImageCallback imgCb = new AbsImageCallback() {
-                        @Override
-                        protected void doSuccessAction(Bitmap bitmap) {
-                            if (null != bitmap) {
-                                GCanvasJNI.bindTexture(canvasId, bitmap, 0, target, level, internalformat, format, type);
-                            } else {
-                                GLog.d("bitmap is null in teximage2D.");
-                            }
-                        }
-                    };
-                    mImageLoader.load(getContext(), path, imgCb);
-                    imgCb.waitTillFinish();
-                }
-            } catch (Throwable e) {
-                GLog.e(TAG, e.getMessage(), e);
-            }
-        }
-    }
-
-    @Override
     public void preLoadImage(JSONArray arrayPara, final JSCallback callback) {
         IJSCallbackMap result = getDataFactory().createJSCallbackMap();
         if (null == arrayPara || arrayPara.length() != 2) {
@@ -287,6 +220,7 @@ public abstract class AbsGBridgeModule<JSCallback> implements IGBridgeModule<JSC
                     public void onSuccess(Bitmap bitmap) {
                         if (null != bitmap) {
                             GImageLoadInfo imageInfo = mImageIdCache.get(urlFinal);
+                            imageInfo.image = bitmap;
                             imageInfo.width = bitmap.getWidth();
                             imageInfo.height = bitmap.getHeight();
                             resultMap.putInt("id", imageIdFinal);
@@ -365,6 +299,11 @@ public abstract class AbsGBridgeModule<JSCallback> implements IGBridgeModule<JSC
         } catch (Throwable e) {
             Log.e(TAG, e.getMessage(), e);
         }
+    }
+
+    @Override
+    public GImageLoadInfo fetchLoadImage(String imageStrkey) {
+        return mImageIdCache.get(imageStrkey);
     }
 
 

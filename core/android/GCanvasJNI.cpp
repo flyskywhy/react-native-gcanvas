@@ -596,30 +596,6 @@ JNIEXPORT void JNICALL Java_com_taobao_gcanvas_GCanvasJNI_bindTexture(
     }
 }
 
-JNIEXPORT void JNICALL Java_com_taobao_gcanvas_GCanvasJNI_texSubImage2D(
-        JNIEnv *je, jclass jc, jstring contextId, jobject bitmap,
-        jint id, jint target, jint level, jint xoffset, jint yoffset, jint format, jint type) {
-
-    LOG_D("texSubImage2D in gcanvasjni.");
-
-    if (!contextId) {
-        return;
-    }
-    const char *str_chars = je->GetStringUTFChars(contextId, NULL);
-    if (!str_chars) {
-        je->ReleaseStringUTFChars(contextId, str_chars);
-        return;
-    }
-
-    string cxx_string = string(str_chars);
-
-    GRenderer *render = GManager::getSingleton()->findRenderer(cxx_string);
-    if (render != nullptr) {
-        render->texSubImage2D(je, bitmap, id, target, level, xoffset, yoffset, format, type);
-    }
-}
-
-
 JNIEXPORT bool JNICALL Java_com_taobao_gcanvas_GCanvasJNI_sendEvent(
         JNIEnv *je, jclass jc, jstring contextId) {
     if (!contextId) {

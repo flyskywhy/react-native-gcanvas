@@ -222,9 +222,6 @@ public class GCanvasJNI {
     public static native void bindTexture(String contextId, Bitmap bitmap, int id,
                                           int target, int level, int internalformat, int format, int type);
 
-    public static native void texSubImage2D(String contextId, Bitmap bitmap, int id,
-                                            int target, int level, int xoffset, int yoffset, int format, int type);
-
     public static native void registerCallback(String soPath, int version);
 
     public static native int getNativeFps(String contextId);

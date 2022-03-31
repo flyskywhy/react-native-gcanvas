@@ -1,5 +1,7 @@
 package com.taobao.gcanvas.bridges.spec.module;
 
+import android.graphics.Bitmap;
+
 import java.util.concurrent.atomic.AtomicInteger;
 
 /**
@@ -20,6 +22,7 @@ public class GImageLoadInfo {
      * Image has been successfully loaded.
      */
     public static final int LOADED = 0x200;
+    public Bitmap image;
     public int width;
     public int height;
     public int id;

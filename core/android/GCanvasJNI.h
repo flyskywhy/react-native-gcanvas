@@ -176,11 +176,6 @@ JNIEXPORT void JNICALL Java_com_taobao_gcanvas_GCanvasJNI_bindTexture(
         JNIEnv *je, jclass jc, jstring contextId, jobject bitmap, jint id,
         jint target, jint level, jint internalformat, jint format, jint type);
 
-JNIEXPORT void JNICALL Java_com_taobao_gcanvas_GCanvasJNI_texSubImage2D(
-        JNIEnv *je, jclass jc, jstring contextId, jobject bitmap, jint id,
-        jint target, jint level, jint xoffset, jint yoffset, jint format, jint type);
-
-
 JNIEXPORT bool JNICALL Java_com_taobao_gcanvas_GCanvasJNI_sendEvent(
 		JNIEnv *je, jclass jc, jstring contextId);
 

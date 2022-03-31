@@ -198,7 +198,7 @@ const GBridge = {
     GCanvasModule.bindImageTexture([src, imageId], componentId);
   },
 
-  perloadImage([url, id], callback) {
+  preloadImage([url, id], callback) {
     GCanvasModule.preLoadImage([url, id], function(image) {
       image.url = url;
       image.id = id;

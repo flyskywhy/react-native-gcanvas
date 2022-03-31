@@ -952,7 +952,60 @@ export default class WebGLRenderingContext {
   }
 
   texImage2D = function(...args) {
-    WebGLRenderingContext.GBridge.texImage2D(this._canvas.id, ...args);
+    this.flushJsCommands2CallNative();
+
+    if (!args[args.length - 1]) {
+      return;
+    }
+
+    let isImagePreLoadedInNative = false;
+    if (args.length === 6) {
+      let image = args[5];
+      // TODO: image start with 'data:image'
+      if (image && image.src) {
+        if (image.complete) {
+          // HTMLImageElement
+          isImagePreLoadedInNative = true;
+        } else {
+          // TODO: do we need automatically load Image here then go on?
+          console.warn('HTMLImageElement not loaded!');
+          return;
+        }
+      }
+    }
+
+    if (isImagePreLoadedInNative) {
+      if (WebGLRenderingContext.GBridge.Platform.OS === 'ios') {
+        const [target, level, internalformat, format, type, image] = args;
+        WebGLRenderingContext.GBridge.callNative(
+          this._canvas.id,
+          GLmethod.texImage2D + ',' + 6 + ',' + target + ',' + level + ',' + internalformat + ',' + format + ',' + type + ',' + image.src
+        );
+      } else {
+        WebGLRenderingContext.GBridge.texImage2D(this._canvas.id, ...args);
+      }
+    } else {
+      if (args.length === 6) {
+        const [target, level, internalformat, format, type, image] = args;
+        if (image.data && image.width > 0 && image.height > 0) {
+          // ImageData
+          WebGLRenderingContext.GBridge.callNative(
+            this._canvas.id,
+            GLmethod.texImage2D + ',' + 9 + ',' + target + ',' + level + ',' + internalformat + ',' +
+                image.width + ',' + image.height + ',' + 0 + ',' + format + ',' + type + ',' + processArray(image.data, true),
+            true,
+          );
+        }
+      } else if (args.length === 9) {
+        const [target, level, internalformat, width, height, border, format, type, image] = args;
+        WebGLRenderingContext.GBridge.callNative(
+          this._canvas.id,
+          GLmethod.texImage2D + ',' + 9 + ',' + target + ',' + level + ',' + internalformat + ',' +
+              width + ',' + height + ',' + border + ',' + format + ',' + type + ',' + processArray(image, true),
+          true,
+        );
+      }
+    }
   }
 
 
@@ -973,7 +1026,60 @@ export default class WebGLRenderingContext {
   }
 
   texSubImage2D = function(...args) {
-    WebGLRenderingContext.GBridge.texSubImage2D(this._canvas.id, ...args);
+    this.flushJsCommands2CallNative();
+
+    if (!args[args.length - 1]) {
+      return;
+    }
+
+    let isImagePreLoadedInNative = false;
+    if (args.length === 7) {
+      let image = args[6];
+      // TODO: image start with 'data:image'
+      if (image && image.src) {
+        if (image.complete) {
+          // HTMLImageElement
+          isImagePreLoadedInNative = true;
+        } else {
+          // TODO: do we need automatically load Image here then go on?
+          console.warn('HTMLImageElement not loaded!');
+          return;
+        }
+      }
+    }
+
+    if (isImagePreLoadedInNative) {
+      if (WebGLRenderingContext.GBridge.Platform.OS === 'ios') {
+        const [target, level, xoffset, yoffset, format, type, image] = args;
+        WebGLRenderingContext.GBridge.callNative(
+          this._canvas.id,
+          GLmethod.texSubImage2D + ',' + 7 + ',' + target + ',' + level + ',' + xoffset + ',' + yoffset + ',' + format + ',' + type + ',' + image.src
+        );
+      } else {
+        WebGLRenderingContext.GBridge.texSubImage2D(this._canvas.id, ...args);
+      }
+    } else {
+      if (args.length === 7) {
+        const [target, level, xoffset, yoffset, format, type, image] = args;
+        if (image.data && image.width > 0 && image.height > 0) {
+          // ImageData
+          WebGLRenderingContext.GBridge.callNative(
+            this._canvas.id,
+            GLmethod.texSubImage2D + ',' + 9 + ',' + target + ',' + level + ',' + xoffset + ',' + yoffset + ',' +
+                image.width + ',' + image.height + ',' + format + ',' + type + ',' + processArray(image.data, true),
+            true,
+          );
+        }
+      } else if (args.length === 9) {
+        const [target, level, xoffset, yoffset, width, height, format, type, image] = args;
+        WebGLRenderingContext.GBridge.callNative(
+          this._canvas.id,
+          GLmethod.texSubImage2D + ',' + 9 + ',' + target + ',' + level + ',' + xoffset + ',' + yoffset + ',' +
+              width + ',' + height + ',' + format + ',' + type + ',' + processArray(image, true),
+          true,
+        );
+      }
+    }
   }
 
   uniform1f = function(location, v0) {

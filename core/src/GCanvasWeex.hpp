@@ -201,7 +201,6 @@ public:
      void addBitmapQueue(struct BitmapCmd *p);
      void bindTexture(struct BitmapCmd cmd);
      void bindTexture(GTexture *texture);
-     void texSubImage2D(struct BitmapCmd cmd);
      void setContextLost(bool lost);
 #endif
 

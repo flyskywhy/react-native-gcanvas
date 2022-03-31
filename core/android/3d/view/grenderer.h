@@ -50,10 +50,6 @@ public:
     void bindTexture(JNIEnv *env, jobject bitmap, int id, int target, int level, int internalformat,
                      int format, int type);
 
-    void texSubImage2D(JNIEnv *env, jobject bitmap, int id, int target, int level, int xoffset,
-                       int yoffset,
-                       int format, int type);
-
     void surfaceDestroy();
 
     void contextExit();
@@ -84,7 +80,6 @@ public:
     bool m_started = false;
     bool m_viewportchanged = false;
     bool m_bindtexture = false;
-    bool m_subImage2D = false;
     GColorRGBA mClearColor;
     float m_device_pixel_ratio = 1.0f;
 

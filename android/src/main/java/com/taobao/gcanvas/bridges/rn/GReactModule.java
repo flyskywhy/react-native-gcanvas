@@ -4,6 +4,7 @@ import android.app.Activity;
 import android.content.Context;
 import android.graphics.Bitmap;
 import android.graphics.Point;
+import android.opengl.GLES20;
 import android.os.Handler;
 import android.os.Looper;
 import android.text.TextUtils;
@@ -37,14 +38,16 @@ import org.json.JSONException;
 import org.json.JSONObject;
 
 import java.io.ByteArrayOutputStream;
+import java.nio.ByteBuffer;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.HashMap;
 import java.util.Iterator;
 import java.util.Map;
 import java.util.concurrent.atomic.AtomicReference;
 
 import static com.taobao.gcanvas.bridges.spec.module.IGBridgeModule.ContextType._2D;
-
+import com.taobao.gcanvas.bridges.spec.module.GImageLoadInfo;
 
 /**
  * ReactNative bridge.
@@ -107,50 +110,6 @@ public class GReactModule extends ReactContextBaseJavaModule implements Lifecycl
         @Override
         public void execute() {
             bindImageTexture(array, refId, callback);
-        }
-    }
-
-    private class TexImage2DCmd implements IReactCacheCmd {
-        private String refid;
-        private int target, level, internalformat, format, type;
-        private String path;
-
-        public TexImage2DCmd(String refid, int target, int level, int internalformat, int format, int type, String path) {
-            this.refid = refid;
-            this.target = target;
-            this.level = level;
-            this.internalformat = internalformat;
-            this.format = format;
-            this.type = type;
-            this.path = path;
-        }
-
-        @Override
-        public void execute() {
-            texImage2D(refid, target, level, internalformat, format, type, path);
-        }
-    }
-
-    private class TexSubImage2DCmd implements IReactCacheCmd {
-
-        private String refid;
-        private int target, level, xoffset, yoffset, format, type;
-        private String path;
-
-        public TexSubImage2DCmd(String refid, int target, int level, int xoffset, int yoffset, int format, int type, String path) {
-            this.refid = refid;
-            this.target = target;
-            this.level = level;
-            this.xoffset = xoffset;
-            this.yoffset = yoffset;
-            this.format = format;
-            this.type = type;
-            this.path = path;
-        }
-
-        @Override
-        public void execute() {
-            texSubImage2D(refid, target, level, xoffset, yoffset, format, type, path);
         }
     }
 
@@ -594,30 +553,102 @@ public class GReactModule extends ReactContextBaseJavaModule implements Lifecycl
     }
 
 
-    @ReactMethod
+    @ReactMethod(isBlockingSynchronousMethod = true)
     public void texImage2D(final String refId, final int target, final int level, final int internalformat, final int format, final int type, String path) {
-        if (!TextUtils.isEmpty(path)) {
-            GReactTextureView textureView = mViews.get(refId);
-            if (null == textureView) {
-                GLog.w(TAG, " texImage2D ===> can not find canvas with id ===> " + refId);
-                addCacheCommand(refId, new TexImage2DCmd(refId, target, level, internalformat, format, type, path));
+        GImageLoadInfo imgInfo = mImpl.fetchLoadImage(path);
+        if (imgInfo == null) {
+            return;
+        }
+
+        Bitmap bmp = imgInfo.image;
+
+        int bmpWidth = bmp.getWidth();
+        int bmpHeight = bmp.getHeight();
+        Bitmap.Config bmpFormat = bmp.getConfig();
+
+        int glInternalformat = internalformat;
+        int glFormat = format;
+
+        if (bmpWidth <= 0 || bmpHeight <= 0 ||
+            (bmpFormat != Bitmap.Config.RGB_565 &&
+             bmpFormat != Bitmap.Config.ARGB_8888) &&
+             bmpFormat != Bitmap.Config.ARGB_4444) {
+            GLog.w("the bitmap is not support, width=" + bmpWidth + " height=" + bmpHeight + " format=" + bmpFormat);
+            return;
+        } else {
+            if (bmpFormat == Bitmap.Config.RGB_565) {
+                GLog.d("the bitmap is rgb format.");
+                glInternalformat = GLES20.GL_RGB;
+                glFormat = GLES20.GL_RGB;
+            } else if (bmpFormat == Bitmap.Config.ARGB_8888 ||
+                       bmpFormat == Bitmap.Config.ARGB_4444) {
+                GLog.d("the bitmap is rgba format.");
+                glInternalformat = GLES20.GL_RGBA;
+                glFormat = GLES20.GL_RGBA;
+            } else {
+                GLog.w("the bitmap format=" + bmpFormat + " not support.");
                 return;
             }
-            mImpl.texImage2D(textureView.getCanvasKey(), target, level, internalformat, format, type, path);
         }
+
+        int bytes = bmp.getAllocationByteCount();
+        ByteBuffer buf = ByteBuffer.allocate(bytes);
+        bmp.copyPixelsToBuffer(buf);
+        byte[] byteArray = buf.array();
+        for (int i = 0; i < byteArray.length; i++) {
+            byteArray[i] &= 0xff;
+        }
+
+        // ref to processArray() in packages/gcanvas/src/context/webgl/RenderingContext.js
+        int arrayType = 1;
+        String pixelStr = Arrays.toString(byteArray).replace("[","").replace("]","").replace(" ","");
+        String base64Str = Base64.encodeToString(pixelStr.getBytes(), Base64.NO_WRAP);
+
+        int border = 0;
+
+        String cmd = "102,9," + target + "," + level + "," + glInternalformat + "," + bmpWidth + "," + bmpHeight + "," + border + "," +
+                + glFormat + "," + type + "," + arrayType +  "," + base64Str;
+
+        mImpl.extendCallNative(refId, cmd, 0x60000000); // 0x60000000 ref to packages/gcanvas/src/bridge/react-native.js
     }
 
-    @ReactMethod
+    @ReactMethod(isBlockingSynchronousMethod = true)
     public void texSubImage2D(final String refId, final int target, final int level, final int xoffset, final int yoffset, final int format, final int type, String path) {
-        if (!TextUtils.isEmpty(path)) {
-            GReactTextureView textureView = mViews.get(refId);
-            if (null == textureView) {
-                GLog.w(TAG, "texSubImage2D ===> can not find canvas with id ===> " + refId);
-                addCacheCommand(refId, new TexSubImage2DCmd(refId, target, level, xoffset, yoffset, format, type, path));
-                return;
-            }
-            mImpl.texSubImage2D(textureView.getCanvasKey(), target, level, xoffset, yoffset, format, type, path);
+        GImageLoadInfo imgInfo = mImpl.fetchLoadImage(path);
+        if (imgInfo == null) {
+            return;
         }
+
+        Bitmap bmp = imgInfo.image;
+
+        int bmpWidth = bmp.getWidth();
+        int bmpHeight = bmp.getHeight();
+        Bitmap.Config bmpFormat = bmp.getConfig();
+
+        if (bmpWidth <= 0 || bmpHeight <= 0 ||
+            (bmpFormat != Bitmap.Config.RGB_565 &&
+             bmpFormat != Bitmap.Config.ARGB_8888)) {
+            GLog.w("the bitmap is not support, width=" + bmpWidth + " height=" + bmpHeight + " format=" + bmpFormat);
+            return;
+        }
+
+        int bytes = bmp.getAllocationByteCount();
+        ByteBuffer buf = ByteBuffer.allocate(bytes);
+        bmp.copyPixelsToBuffer(buf);
+        byte[] byteArray = buf.array();
+        for (int i = 0; i < byteArray.length; i++) {
+            byteArray[i] &= 0xff;
+        }
+
+        // ref to processArray() in packages/gcanvas/src/context/webgl/RenderingContext.js
+        int arrayType = 1;
+        String pixelStr = Arrays.toString(byteArray).replace("[","").replace("]","").replace(" ","");
+        String base64Str = Base64.encodeToString(pixelStr.getBytes(), Base64.NO_WRAP);
+
+        String cmd = "105,9," + target + "," + level + "," + xoffset + ',' + yoffset + "," + bmpWidth + "," + bmpHeight + "," +
+                + format + "," + type + "," + arrayType +  "," + base64Str;
+
+        mImpl.extendCallNative(refId, cmd, 0x60000000); // 0x60000000 ref to packages/gcanvas/src/bridge/react-native.js
     }
 
     public GReactModule(ReactApplicationContext reactContext) {

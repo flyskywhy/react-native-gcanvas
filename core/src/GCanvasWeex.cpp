@@ -1675,28 +1675,24 @@ void GCanvasWeex::bindTexture(struct BitmapCmd cmd) {
     LOG_D("DO BIND TEXTURE. context type = %d", GetContextType());
 
     //step 1:bindtexture
-    if (GetContextType() == 0) {
-        glGenTextures(1, &glID);
-        glBindTexture(GL_TEXTURE_2D, glID);
-        glTexParameterf(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER,
-                        GL_LINEAR_MIPMAP_NEAREST);
-        glTexParameterf(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER,
-                        GL_LINEAR);
-        glTexParameterf(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S,
-                        GL_CLAMP_TO_EDGE);
-        glTexParameterf(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T,
-                        GL_CLAMP_TO_EDGE);
-    }
+    glGenTextures(1, &glID);
+    glBindTexture(GL_TEXTURE_2D, glID);
+    glTexParameterf(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER,
+                    GL_LINEAR_MIPMAP_NEAREST);
+    glTexParameterf(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER,
+                    GL_LINEAR);
+    glTexParameterf(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S,
+                    GL_CLAMP_TO_EDGE);
+    glTexParameterf(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T,
+                    GL_CLAMP_TO_EDGE);
 
     glTexImage2D(cmd.target, cmd.level, cmd.interformat, cmd.width,
                  cmd.height, 0, cmd.format,
                  cmd.type, cmd.Bitmap);
 
     //step 2:save textureid
-    if (GetContextType() == 0) {
-        glGenerateMipmap(GL_TEXTURE_2D);
-        AddTexture(cmd.id, glID, cmd.width, cmd.height);
-    }
+    glGenerateMipmap(GL_TEXTURE_2D);
+    AddTexture(cmd.id, glID, cmd.width, cmd.height);
 }
 
 void GCanvasWeex::bindTexture(GTexture *texture) {
@@ -1710,15 +1706,6 @@ void GCanvasWeex::bindTexture(GTexture *texture) {
 
 
 }
-
-void GCanvasWeex::texSubImage2D(struct BitmapCmd cmd) {
-    LOG_D("start to texSubImage2D in grenderer.");
-    glTexSubImage2D(cmd.target, cmd.level, cmd.xoffset, cmd.yoffset,
-                    cmd.width, cmd.height,
-                    cmd.format,
-                    cmd.type, cmd.Bitmap);
-}
-
 
 bool GCanvasWeex::continueProcess() {
 
