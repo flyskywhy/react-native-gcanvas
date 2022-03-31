@@ -503,6 +503,7 @@ public class GReactModule extends ReactContextBaseJavaModule implements Lifecycl
             return;
         }
 
+        GLog.d(TAG, "setDevicePixelRatio " + ratio);
         mImpl.setDevicePixelRatio(refId, ratio);
     }
 

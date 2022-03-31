@@ -272,6 +272,9 @@ export default class App extends Component {
           debugInfo: error.message,
         });
       };
+      // `await Asset.fromModule` needs `expo-file-system`, and `expo-file-system` needs `react-native-unimodules` ,
+      // the installation of `react-native-unimodules` can ref to this commit [expo -> react-native: add react-native-unimodules]
+      // (https://github.com/flyskywhy/snakeRN/commit/90983816de3ad2a4da47ffa0f6d1659c2688be3e)
       let asset = await Asset.fromModule(
         require('@flyskywhy/react-native-gcanvas/tools/build_website/assets/logo-gcanvas.png'),
       );
