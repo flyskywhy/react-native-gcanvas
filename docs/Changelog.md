@@ -3,6 +3,14 @@
 All notable changes of this project will be documented in.
 
 
+## [2.3.21] - 2022-04-01
+
+### Changed
+
+* React Native GCanvas Component
+	* feat: support ImageData to texImage2D and texSubImage2D; fix display blank image when second call of texImage2D() on Android
+
+
 ## [2.3.19] - 2022-03-02
 
 ### Changed
