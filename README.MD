@@ -153,7 +153,8 @@ import {
   TouchableOpacity,
   View,
 } from 'react-native';
-import {GCanvasView, GImage} from '@flyskywhy/react-native-gcanvas';
+import {GCanvasView} from '@flyskywhy/react-native-gcanvas';
+import {Loader} from 'resource-loader';
 import {Asset} from 'expo-asset';
 
 export default class App extends Component {
@@ -240,45 +241,57 @@ export default class App extends Component {
 
       this.ctx.fill();
 
-      // if `import '@flyskywhy/react-native-browser-polyfill';`, can just `let imageHttp = new Image()` here
-      let imageHttp = Platform.OS === 'web' ? new Image() : new GImage();
-      imageHttp.crossOrigin = true; // need this to solve `Uncaught DOMException: Failed to execute 'toDataURL' on 'HTMLCanvasElement': Tainted canvases may not be exported.` on Web
-      imageHttp.onload = () => {
-        this.ctx.drawImage(imageHttp, 70, 0, 112, 37);
-      };
-      imageHttp.onerror = (error) => {
-        this.setState({
-          debugInfo: error.message,
-        });
-      };
-      // imageHttp.src =
+      const imagedata = this.ctx.getImageData(25, 25, 50, 50);
+      this.ctx.putImageData(imagedata, 100, 100, 12, 12, 25, 25);
+
+      // const imageHttpSrc =
       //   '//gw.alicdn.com/tfs/TB1KwRTlh6I8KJjy0FgXXXXzVXa-225-75.png';
       // if use `//` above, will be convert to `http:` in `packages/gcanvas/src/env/image.js`,
       // then in Android release mode, will cause error:
       // `CLEARTEXT communication to gw.alicdn.com not permitted by network security policy`,
       // so use `https://` below
-      imageHttp.src =
+      const imageHttpSrc =
         'https://gw.alicdn.com/tfs/TB1KwRTlh6I8KJjy0FgXXXXzVXa-225-75.png';
-
-      let imagedata = this.ctx.getImageData(25, 25, 50, 50);
-      this.ctx.putImageData(imagedata, 100, 100, 12, 12, 25, 25);
-
-      let imageRequire = Platform.OS === 'web' ? new Image() : new GImage();
-      imageRequire.onload = () => {
-        this.ctx.drawImage(imageRequire, 0, 100, 120, 120);
-      };
-      imageRequire.onerror = (error) => {
-        this.setState({
-          debugInfo: error.message,
-        });
-      };
       // `await Asset.fromModule` needs `expo-file-system`, and `expo-file-system` needs `react-native-unimodules` ,
       // the installation of `react-native-unimodules` can ref to this commit [expo -> react-native: add react-native-unimodules]
       // (https://github.com/flyskywhy/snakeRN/commit/90983816de3ad2a4da47ffa0f6d1659c2688be3e)
-      let asset = await Asset.fromModule(
+      const imageRequireAsset = await Asset.fromModule(
         require('@flyskywhy/react-native-gcanvas/tools/build_website/assets/logo-gcanvas.png'),
       );
-      imageRequire.src = asset.uri;
+      const imageRequireSrc = imageRequireAsset.uri;
+
+      const loader = new Loader();
+      const setup = (loader, resources) => {
+        this.ctx.drawImage(resources[imageHttpSrc].data, 70, 0, 112, 37);
+        this.ctx.drawImage(resources[imageRequireSrc].data, 0, 100, 120, 120);
+      };
+      loader.add(imageHttpSrc).add(imageRequireAsset.uri).load(setup);
+
+      // you can use Loader() above instead of Image() below, or vice versa
+
+      // // because already `import '@flyskywhy/react-native-browser-polyfill';` in GCanvasView, so can `new Image()` here
+      // const imageHttp = new Image();
+      // imageHttp.crossOrigin = true; // need this to solve `Uncaught DOMException: Failed to execute 'toDataURL' on 'HTMLCanvasElement': Tainted canvases may not be exported.` on Web in production mode
+      // imageHttp.onload = () => {
+      //   this.ctx.drawImage(imageHttp, 70, 0, 112, 37);
+      // };
+      // imageHttp.onerror = (error) => {
+      //   this.setState({
+      //     debugInfo: error.message,
+      //   });
+      // };
+      // imageHttp.src = imageHttpSrc;
+
+      // const imageRequire = new Image();
+      // imageRequire.onload = () => {
+      //   this.ctx.drawImage(imageRequire, 0, 100, 120, 120);
+      // };
+      // imageRequire.onerror = (error) => {
+      //   this.setState({
+      //     debugInfo: error.message,
+      //   });
+      // };
+      // imageRequire.src = imageRequireSrc;
     }
   };
 
