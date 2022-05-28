@@ -55,6 +55,8 @@ typedef void (^GCanvasModuleCallback)(id result);
  */
 - (NSString*)enable:(NSDictionary *)args;
 
+- (void)disable:(NSString*)componentId;
+
 #pragma mark - Export Method of Context2D
 /**
  * Export JS method for reset GCanvas component while disappear

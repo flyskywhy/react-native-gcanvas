@@ -78,6 +78,7 @@ RCT_EXPORT_BLOCKING_SYNCHRONOUS_METHOD(enable:(NSDictionary*) args)
 
 RCT_EXPORT_METHOD(disable:(NSString*) componentId)
 {
+    [self.gcanvasModule disable:componentId];
 }
 
 //preload image

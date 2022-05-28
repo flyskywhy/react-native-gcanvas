@@ -182,6 +182,14 @@ static NSMutableDictionary  *_staticModuleExistDict;
     return @"true";
 }
 
+- (void)disable:(NSString*)componentId{
+    GCVLOG_METHOD(@"disable:, componentId=%@", componentId);
+
+    [[NSNotificationCenter defaultCenter] postNotificationName:kGCanvasDestroyNotification
+                                                        object:nil
+                                                      userInfo:@{@"instanceId":[self.deletage gcanvasModuleInstanceId]}];
+}
+
 #pragma mark - Need Export Context2D Method
 /**
  * Export JS method for reset GCanvas component while disappear
