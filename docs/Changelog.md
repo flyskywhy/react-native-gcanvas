@@ -3,6 +3,14 @@
 All notable changes of this project will be documented in.
 
 
+## [2.3.22] - 2022-05-28
+
+### Changed
+
+* React Native GCanvas Component
+        * fix: iOS memory leak when recreate canvas #42
+
+
 ## [2.3.21] - 2022-04-01
 
 ### Changed
