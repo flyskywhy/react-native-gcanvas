@@ -157,6 +157,10 @@ import {GCanvasView} from '@flyskywhy/react-native-gcanvas';
 import {Loader} from 'resource-loader';
 import {Asset} from 'expo-asset';
 
+function sleepMs(ms) {
+  return new Promise((resolve) => setTimeout(resolve, ms));
+}
+
 export default class App extends Component {
   constructor(props) {
     super(props);
@@ -269,7 +273,8 @@ export default class App extends Component {
 
       // you can use Loader() above instead of Image() below, or vice versa
 
-      // // because already `import '@flyskywhy/react-native-browser-polyfill';` in GCanvasView, so can `new Image()` here
+      // // because already `import '@flyskywhy/react-native-browser-polyfill';` in GCanvasView, so can `new Image()`
+      // // not `Platform.OS === 'web' ? new Image() : new GImage()` here
       // const imageHttp = new Image();
       // imageHttp.crossOrigin = true; // need this to solve `Uncaught DOMException: Failed to execute 'toDataURL' on 'HTMLCanvasElement': Tainted canvases may not be exported.` on Web in production mode
       // imageHttp.onload = () => {
@@ -281,6 +286,18 @@ export default class App extends Component {
       //   });
       // };
       // imageHttp.src = imageHttpSrc;
+
+      // // to [Call drawImage() in loop with only one GImage instance](https://github.com/flyskywhy/react-native-gcanvas/issues/41)
+      // for (let i = 0; i < 10; i++) {
+      //   await sleepMs(1000);
+      //   if (i % 2) {
+      //     imageHttp.src =
+      //       'data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAAIAAAACCAIAAAD91JpzAAAADklEQVR4AWP4nwZCUAoAKxYFld+CjjoAAAAASUVORK5CYII=';
+      //   } else {
+      //     imageHttp.src =
+      //       'https://gw.alicdn.com/tfs/TB1KwRTlh6I8KJjy0FgXXXXzVXa-225-75.png';
+      //   }
+      // }
 
       // const imageRequire = new Image();
       // imageRequire.onload = () => {
