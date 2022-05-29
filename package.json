@@ -1,6 +1,6 @@
 {
   "name": "@flyskywhy/react-native-gcanvas",
-  "version": "2.3.22",
+  "version": "2.3.23",
   "description": "A C++ native canvas 2D/WebGL component based on gpu opengl glsl shader GCanvas",
   "main": "index",
   "scripts": {
@@ -22,6 +22,12 @@
     "ios",
     "native",
     "particles-bg",
+    "pixel-animation-editor",
+    "pixel-art-animation-editor",
+    "pixel-art-editor",
+    "pixel-gif-editor",
+    "pixel-editor",
+    "pixi",
     "proton",
     "react-native",
     "shader",

@@ -3,6 +3,14 @@
 All notable changes of this project will be documented in.
 
 
+## [2.3.23] - 2022-05-29
+
+### Changed
+
+* React Native GCanvas Component
+        * feat: call drawImage() in loop with only one GImage instance #41, just like what Web can do
+
+
 ## [2.3.22] - 2022-05-28
 
 ### Changed
