@@ -106,6 +106,14 @@ export default class GCanvas extends Element {
       // at the very first, otherwise can't `gl.clearColor` right away on canvas.getContext('webgl')
       // like https://github.com/flyskywhy/react-native-gcanvas/issues/24
       sleepMs(100);
+
+      if (__DEV__) {
+        // https://github.com/flyskywhy/snakeRN/tree/v3.0.0 sometimes (1st load js on new installed debug apk)
+        // will cause `Error: Invalid value of `0` passed to `checkMaxIfStatementsInShader` in
+        // `node_modules/pixi.js/lib/core/renderers/webgl/utils/checkMaxIfStatmentsInShader.js` ,
+        // `sleepMs()` by `for(;;)` wait enough can fix it, don't know why.
+        sleepMs(130);
+      }
       if (this._devicePixelRatio > 0) {
         GCanvas.GBridge.callSetDevicePixelRatio(this.id, this._devicePixelRatio);
       }
