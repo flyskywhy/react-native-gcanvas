@@ -119,6 +119,8 @@ Sometimes will meet compile error `java.io.FileNotFoundException: SOME_PATH/.cxx
 
     ./android/gradlew assembleDebug --rerun-tasks -p ./android/
 
+if get `Could not get resource 'https://maven.google.com/com/facebook/react/react-native/maven-metadata.xml'`, you can remove `'https://maven.google.com/'` in `react-native-gcanvas/build.gradle` .
+
 #### iOS
 
 Add below into `/ios/Podfile`
@@ -264,9 +266,8 @@ export default class App extends Component {
       // so use `https://` below
       const imageHttpSrc =
         'https://gw.alicdn.com/tfs/TB1KwRTlh6I8KJjy0FgXXXXzVXa-225-75.png';
-      // `await Asset.fromModule` needs `expo-file-system`, and `expo-file-system` needs `react-native-unimodules` ,
-      // the installation of `react-native-unimodules` can ref to this commit [expo -> react-native: add react-native-unimodules]
-      // (https://github.com/flyskywhy/snakeRN/commit/90983816de3ad2a4da47ffa0f6d1659c2688be3e)
+      // `await Asset.fromModule` needs `expo-file-system`, and `expo-file-system` needs
+      // [install react-native-unimodules without install expo](https://github.com/flyskywhy/g/blob/master/i%E4%B8%BB%E8%A7%82%E7%9A%84%E4%BD%93%E9%AA%8C%E6%96%B9%E5%BC%8F/t%E5%BF%AB%E4%B9%90%E7%9A%84%E4%BD%93%E9%AA%8C/%E7%94%B5%E4%BF%A1/Tool/%E7%BC%96%E7%A8%8B%E8%AF%AD%E8%A8%80/JavaScript/React%E4%BD%BF%E7%94%A8%E8%AF%A6%E8%A7%A3.md#install-react-native-unimodules-without-install-expo)
       const imageRequireAsset = await Asset.fromModule(
         require('@flyskywhy/react-native-gcanvas/tools/build_website/assets/logo-gcanvas.png'),
       );
