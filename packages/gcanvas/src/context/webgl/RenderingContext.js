@@ -255,7 +255,7 @@ export default class WebGLRenderingContext {
   colorMask = function(r, g, b, a) {
     WebGLRenderingContext.GBridge.callNative(
       this._canvas.id,
-      GLmethod.colorMask + ',' + r + ',' + g + ',' + b + ',' + a
+      GLmethod.colorMask + ',' + Number(r) + ',' + Number(g) + ',' + Number(b) + ',' + Number(a),
     );
   }
 
