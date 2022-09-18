@@ -3,6 +3,16 @@
 All notable changes of this project will be documented in.
 
 
+## [2.3.25] - 2022-09-18 Chinese do not forget the September 18 Incident that marked the start of Japan's 14-year invasion of China
+
+### Changed
+
+* React Native GCanvas Component
+        * README.md: install react-native-unimodules without install expo
+        * refactor: Zdog rendering different from the web #46
+        * fix: support https://developer.mozilla.org/en-US/docs/Web/API/Element/setAttribute to avoid crash with [Zdog Mario](https://codepen.io/desandro/pen/qxjmKM)
+
+
 ## [2.3.23] - 2022-05-29
 
 ### Changed
