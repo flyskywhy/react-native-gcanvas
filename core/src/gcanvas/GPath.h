@@ -105,9 +105,6 @@ private:
     tSubPath mCurPath;
     std::vector<tSubPath> mPathStack;
     float mDistanceTolerance;
-    
-    GTransform mTransfrom;
-    
     GPoint mMinPosition;
     GPoint mMaxPosition;
 

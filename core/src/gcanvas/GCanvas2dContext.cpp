@@ -170,6 +170,23 @@ float GCanvasContext::GetCurrentScaleY()
     }
 }
 
+float GCanvasContext::GetPixelScale()
+{
+    float scaleX = fabs(GetCurrentScaleX());
+    float scaleY = fabs(GetCurrentScaleY());
+
+    if (scaleX == scaleY)
+    {
+        // oh, that's simple
+        return mDevicePixelRatio * scaleX;
+    }
+    else
+    {
+        // oh, maybe sqrt is enough, ref to GTransformGetScale() in GTransform.h
+        return mDevicePixelRatio * sqrtf(scaleX * scaleX + scaleY * scaleY);;
+    }
+}
+
 void GCanvasContext::SetDevicePixelRatio(const float ratio)
 {
     mDevicePixelRatio = ratio;

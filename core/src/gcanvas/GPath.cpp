@@ -593,7 +593,7 @@ void GPath::drawArcToContext(GCanvasContext *context, GPoint point,
     }
 
     float width2 = context->LineWidth();
-    if (width2 >= 2)
+    if (width2 * context->GetPixelScale() >= 2)
     {
         width2 /= 2.f;
     }
@@ -624,7 +624,7 @@ void GPath::drawArcToContext(GCanvasContext *context, GPoint point,
     }
 
     // 1 step per 5 pixel
-    float needStep = (angle2 * width2) / 5.0f;
+    float needStep = (angle2 * width2 * context->GetPixelScale()) / 5.0f;
     int numSteps = 0;
     if (fixAndroidCompatible)
     {
@@ -890,8 +890,8 @@ void GPath::CreateLinesFromPoints(GCanvasContext *context, GColorRGBA color, std
             // step1: draw line
             context->PushQuad(miter11, miter21, miter22, miter12, color, vertexVec);
 
-            // if lineWidth > 1, draw mitter
-            if (context->LineWidth() <= 1)
+            // if display lineWidth (state lineWidth plus pixelRatio and state scale) > 1, draw mitter
+            if (context->LineWidth() * context->GetPixelScale() <= 1)
             {
                 continue;
             }

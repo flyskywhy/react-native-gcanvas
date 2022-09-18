@@ -108,6 +108,8 @@ public:
     API_EXPORT float GetCurrentScaleX();
     API_EXPORT float GetCurrentScaleY();
 
+    API_EXPORT float GetPixelScale();
+
     API_EXPORT void SetDevicePixelRatio(const float ratio);
     API_EXPORT float GetDevicePixelRatio();
 
