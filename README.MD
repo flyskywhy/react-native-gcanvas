@@ -130,6 +130,14 @@ Add below into `/ios/Podfile`
     cd YOUR_PROJECT/ios
     pod install
 
+##### About on iOS warning 'Sending `GCanvasReady` with no listeners registered.'
+The root cause is described beside 'GCanvasReady' in `components/GCanvasComponent.js`, to suppress this warning, you can add below into your APP code:
+```
+  require('react-native').LogBox.ignoreLogs([
+    '`GCanvasReady` with no listeners',
+  ]);
+```
+
 #### Web
 When I use react-native-web, I also use react-app-rewired as described in my blog:
 

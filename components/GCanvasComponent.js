@@ -181,12 +181,15 @@ export default class GCanvasView extends Component {
     // will not cause APP stuck if not running in damn Xcode, tested in https://github.com/flyskywhy/snakeRN
     // ReactNativeBridge.GCanvasModule.setLogLevel(0); // 0 means DEBUG
 
-    if (Platform.OS === 'ios') {
-      // while always true in _onIsReady(), here is just to suppress warning
-      // on iOS Sending `GCanvasReady` with no listeners registered.
-      const emitter = new NativeEventEmitter(ReactNativeBridge.GCanvasModule);
-      emitter.addListener('GCanvasReady', this._onIsReady);
-    }
+    // since https://github.com/flyskywhy/react-native-gcanvas/issues/44 said latest RN
+    // will warning `EventEmitter.removeListener ... Method has been deprecated` and
+    // only iOS use EventEmitter and on iOS always true in _onIsReady(), so just comment below
+    // if (Platform.OS === 'ios') {
+    //   // while always true in _onIsReady(), here is just to suppress warning
+    //   // on iOS Sending `GCanvasReady` with no listeners registered.
+    //   const emitter = new NativeEventEmitter(ReactNativeBridge.GCanvasModule);
+    //   emitter.addListener('GCanvasReady', this._onIsReady);
+    // }
   }
 
   componentWillUnmount() {
@@ -194,10 +197,10 @@ export default class GCanvasView extends Component {
       '' + findNodeHandle(this.refCanvasView),
     );
 
-    if (Platform.OS === 'ios') {
-      const emitter = new NativeEventEmitter(ReactNativeBridge.GCanvasModule);
-      emitter.removeListener('GCanvasReady', this._onIsReady);
-    }
+    // if (Platform.OS === 'ios') {
+    //   const emitter = new NativeEventEmitter(ReactNativeBridge.GCanvasModule);
+    //   emitter.removeListener('GCanvasReady', this._onIsReady);
+    // }
   }
 
   render() {
