@@ -407,7 +407,7 @@ if (Platform.OS === 'web') {
 ```
 and the rest code will works well.
 
-### width devicePixelRatio={1}
+### with devicePixelRatio={1}
 To be here if you want to code with physical pixels. Game designer may prefer it.
 
 Without modification, code in [Window.devicePixelRatio
