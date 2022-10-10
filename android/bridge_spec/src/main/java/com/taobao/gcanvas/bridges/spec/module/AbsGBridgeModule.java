@@ -186,6 +186,13 @@ public abstract class AbsGBridgeModule<JSCallback> implements IGBridgeModule<JSC
             return;
         }
         try {
+            GImageLoadInfo imgInfo = mImageIdCache.get(url);
+
+            if (null == imgInfo) {
+                imgInfo = new GImageLoadInfo();
+                mImageIdCache.put(url, imgInfo);
+            }
+
             final IJSCallbackMap resultMap = getDataFactory().createJSCallbackMap();
             if (url.startsWith("data:image")) {
                 Bitmap bmp = handleBase64Texture(url.substring(url.indexOf("base64,") + "base64,".length()));
@@ -194,6 +201,12 @@ public abstract class AbsGBridgeModule<JSCallback> implements IGBridgeModule<JSC
                     resultMap.putString("url", url);
                     resultMap.putInt("width", bmp.getWidth());
                     resultMap.putInt("height", bmp.getHeight());
+
+                    imgInfo.status.set(GImageLoadInfo.LOADED);
+                    imgInfo.id = imageId;
+                    imgInfo.image = bmp;
+                    imgInfo.width = bmp.getWidth();
+                    imgInfo.height = bmp.getHeight();
                 } else {
                     resultMap.putString("error", "process base64 failed,url=" + url);
                 }
@@ -203,12 +216,6 @@ public abstract class AbsGBridgeModule<JSCallback> implements IGBridgeModule<JSC
                 return;
             }
 
-            GImageLoadInfo imgInfo = mImageIdCache.get(url);
-
-            if (null == imgInfo) {
-                imgInfo = new GImageLoadInfo();
-                mImageIdCache.put(url, imgInfo);
-            }
             if (imgInfo.status.get() == GImageLoadInfo.IDLE) {
                 imgInfo.status.set(GImageLoadInfo.LOADING);
                 imgInfo.id = imageId;
