@@ -638,7 +638,7 @@ export default class WebGLRenderingContext {
     );
     switch (pname) {
       case GLenum.VERSION:
-        return this._version;
+        return this._version + result.replace(/.,/, ' ');
       case GLenum.ARRAY_BUFFER_BINDING: // buffer
       case GLenum.ELEMENT_ARRAY_BUFFER_BINDING: // buffer
         return this._map.get(Buffer.uuid(result)) || null;
