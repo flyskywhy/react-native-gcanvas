@@ -3197,6 +3197,11 @@ int GCanvasWeex::executeWebGLCommands(const char *&cmd, int length) {
                 return -1;
             };
             g_webglFuncMap[index](this, cmd);
+
+            // GLenum error = glGetError();
+            // if (error > 0) {
+            //     LOG_D("[webgl::exec] glGetError()=%s cmd=%s", GetMacroValDebug(error), cmd);
+            // }
         } else if (index >= WEBGL_EXT_API_OFFSET && index < WEBGL_EXT_API_MAX_INDEX) //extension
         {
             ParseTokensSkip(cmd);
@@ -3205,8 +3210,12 @@ int GCanvasWeex::executeWebGLCommands(const char *&cmd, int length) {
                 LOG_W("[executeWebGLCommands] uncomplete ext cmd index:%d", index);
                 return -1;
             }
-
             g_webglExtFuncMap[extFuncIndex](this, cmd);
+
+            // GLenum error = glGetError();
+            // if (error > 0) {
+            //     LOG_D("[webgl::exec] glGetError()=%s cmd=%s", GetMacroValDebug(error), cmd);
+            // }
         } else {
             return -1;
         }
