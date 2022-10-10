@@ -743,10 +743,10 @@ export default class WebGLRenderingContext {
       this._canvas.id,
       GLmethod.getUniformLocation + ',' + program.id + ',' + name
     );
-    if (id === -1) {
+    if (id === 'null' || id === -1) {
       return null;
     } else {
-      return new UniformLocation(Number(id));
+      return new UniformLocation(Number(id), name);
     }
   }
 
