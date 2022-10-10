@@ -130,7 +130,8 @@ export default class GCanvasView extends Component {
   };
 
   _onLayout = (event) => {
-    let {width, height} = event.nativeEvent.layout;
+    let width = event.nativeEvent.layout.width | 0; // width is fixed not float just like Web
+    let height = event.nativeEvent.layout.height | 0;
     let ref = '' + findNodeHandle(this.refCanvasView);
 
     // When onLayout is invoked again (e.g. change phone orientation), if assign

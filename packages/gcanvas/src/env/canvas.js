@@ -33,10 +33,10 @@ export default class GCanvas extends Element {
       this._context && this._context.flushJsCommands2CallNative();
     };
 
-    this._clientWidth = style.width;
-    this._clientHeight = style.height;
-    this._width = style.width;
-    this._height = style.height;
+    this._clientWidth = style.width | 0; // width is fixed not float just like Web
+    this._clientHeight = style.height | 0;
+    this._width = style.width | 0; // width is fixed not float just like Web
+    this._height = style.height | 0;
   }
 
   get clientWidth() {
@@ -48,11 +48,11 @@ export default class GCanvas extends Element {
   }
 
   set clientWidth(value) {
-    this._clientWidth = value;
+    this._clientWidth = value | 0; // width is fixed not float just like Web
   }
 
   set clientHeight(value) {
-    this._clientHeight = value;
+    this._clientHeight = value | 0;
   }
 
   get width() {
@@ -63,7 +63,7 @@ export default class GCanvas extends Element {
     if (this._context && this._context.className === 'CanvasRenderingContext2D') {
       this._context.clearRect(0, 0, this._clientWidth, this._clientHeight);
     }
-    this._width = value;
+    this._width = value | 0; // width is fixed not float just like Web
     GCanvas.GBridge.callResetGlViewport(this.id);
     this._context.drawingBufferWidth = this._clientWidth * PixelRatio.get();
   }
@@ -76,7 +76,7 @@ export default class GCanvas extends Element {
     if (this._context && this._context.className === 'CanvasRenderingContext2D') {
       this._context.clearRect(0, 0, this._clientWidth, this._clientHeight);
     }
-    this._height = value;
+    this._height = value | 0;
     GCanvas.GBridge.callResetGlViewport(this.id);
     this._context.drawingBufferHeight = this._clientHeight * PixelRatio.get();
   }
