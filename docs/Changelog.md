@@ -3,6 +3,14 @@
 All notable changes of this project will be documented in.
 
 
+## [2.3.27] - 2022-10-11
+
+### Changed
+
+* React Native GCanvas Component
+        * fix: width and height of canvas is fixed not float just like Web, now resizeCanvasToDisplaySize() in `node_modules/webgl-utils.js/` works well
+
+
 ## [2.3.26] - 2022-09-30 Happy National Day (10-01) of the People's Republic of China
 
 ### Changed
