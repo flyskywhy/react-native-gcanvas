@@ -90,7 +90,7 @@ RCT_EXPORT_METHOD(preLoadImage:(NSArray *)data callback:(RCTResponseSenderBlock)
 }
 
 //bind image texture
-RCT_EXPORT_METHOD(bindImageTexture:(NSArray *)data componentId:(NSString*)componentId callback:(RCTResponseSenderBlock)callback)
+RCT_EXPORT_BLOCKING_SYNCHRONOUS_METHOD(bindImageTexture:(NSArray *)data componentId:(NSString*)componentId callback:(RCTResponseSenderBlock)callback)
 {
     [self.gcanvasModule bindImageTexture:data componentId:componentId callback:^(id result) {
         callback(@[result?:@""]);

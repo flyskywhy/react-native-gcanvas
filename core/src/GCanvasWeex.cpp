@@ -1510,9 +1510,16 @@ const char *GCanvasWeex::CallNative(int type, const std::string &args) {
     p->type = type;
     p->args = args;
 
-    // if (sync == SYNC) {
-    //     while (!mCmdQueue.empty()) {} // TODO: remove this line if webgl also don't need this
-    // }
+    if (sync == SYNC) {
+        // TODO: remove this mCmdQueue.empty line if webgl also don't need this since the job is done by mCallNative
+        // while (!mCmdQueue.empty()) {}
+
+        // because bindImageTexture is async with mBitmapQueue and don't know why texture will display
+        // black if just replace mBitmapQueue.push(p) by mProxy->bindTexture(*p) directly in
+        // core/android/3d/view/grenderer.cpp, so to getImageData just after CanvasRenderingContext2D.drawImage()
+        // need below to let flushJsCommands2CallNative('sync') wait GCanvasWeex::bindTexture() done
+        while (!mBitmapQueue.empty()) {}
+    }
     sem_wait(&mCallNative);
 
     mResult = "";

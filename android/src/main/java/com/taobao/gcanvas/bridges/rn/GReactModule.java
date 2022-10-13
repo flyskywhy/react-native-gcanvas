@@ -316,7 +316,7 @@ public class GReactModule extends ReactContextBaseJavaModule implements Lifecycl
 
     private RNModuleImpl mImpl;
 
-    @ReactMethod
+    @ReactMethod(isBlockingSynchronousMethod = true)
     public void bindImageTexture(final ReadableArray array, final String refId, final Callback callback) {
         if (null == array || TextUtils.isEmpty(refId) || array.size() != 2) {
             return;

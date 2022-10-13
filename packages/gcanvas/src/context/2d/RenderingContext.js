@@ -57,6 +57,7 @@ export default class CanvasRenderingContext2D {
       const image = value._img;
       CanvasRenderingContext2D.GBridge.bindImageTexture(this.componentId, image.src, image._id);
       this._drawCommands = this._drawCommands.concat('G' + image._id + ',' + value._style + ';');
+      this.flushJsCommands2CallNative('sync', 'execWithoutDisplay');
     } else if (value instanceof FillStyleLinearGradient) {
       var command = 'D' + value._start_pos._x.toFixed(2) + ',' + value._start_pos._y.toFixed(2) + ','
               + value._end_pos._x.toFixed(2) + ',' + value._end_pos._y.toFixed(2) + ','
@@ -103,6 +104,7 @@ export default class CanvasRenderingContext2D {
       const image = value._img;
       CanvasRenderingContext2D.GBridge.bindImageTexture(this.componentId, image.src, image._id);
       this._drawCommands = this._drawCommands.concat('G' + image._id + ',' + value._style + ';');
+      this.flushJsCommands2CallNative('sync', 'execWithoutDisplay');
     } else if (value instanceof FillStyleLinearGradient) {
       var command = 'D' + value._start_pos._x.toFixed(2) + ',' + value._start_pos._y.toFixed(2) + ','
               + value._end_pos._x.toFixed(2) + ',' + value._end_pos._y.toFixed(2) + ','
@@ -536,6 +538,7 @@ export default class CanvasRenderingContext2D {
     }
     CanvasRenderingContext2D.GBridge.bindImageTexture(this.componentId, image.src, image._id);
     this._drawCommands += drawImageCommands();
+    this.flushJsCommands2CallNative('sync', 'execWithDisplay');
   }
 
   createImageData(widthOrImagedata, height) {
