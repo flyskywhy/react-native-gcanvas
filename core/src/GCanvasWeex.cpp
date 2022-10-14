@@ -959,10 +959,19 @@ void GCanvasWeex::execute2dCommands(const char *renderCommands, int length) {
                 break;
             }
             case 'Y': {
-                //shadowOffsetY'
+                //shadowOffsetY
                 p++;
                 float offsetY = fastFloat(p);
                 mCanvasContext->SetShadowOffsetY(offsetY);
+                while (*p && *p != ';') ++p;
+                if (*p == ';') ++p;
+                break;
+            }
+            case 'O': {
+                //imageSmoothingEnabled
+                p++;
+                int smooth = atoi(p);
+                mCanvasContext->SetImageSmoothingEnabled(smooth > 0);
                 while (*p && *p != ';') ++p;
                 if (*p == ';') ++p;
                 break;
@@ -1684,10 +1693,17 @@ void GCanvasWeex::bindTexture(struct BitmapCmd cmd) {
     //step 1:bindtexture
     glGenTextures(1, &glID);
     glBindTexture(GL_TEXTURE_2D, glID);
-    glTexParameterf(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER,
-                    GL_LINEAR_MIPMAP_NEAREST);
-    glTexParameterf(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER,
-                    GL_LINEAR);
+    if (mCanvasContext->ImageSmoothingEnabled()) {
+        glTexParameterf(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER,
+                        GL_LINEAR_MIPMAP_NEAREST);
+        glTexParameterf(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER,
+                        GL_LINEAR);
+    } else {
+        glTexParameterf(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER,
+                        GL_NEAREST);
+        glTexParameterf(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER,
+                        GL_NEAREST);
+    }
     glTexParameterf(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S,
                     GL_CLAMP_TO_EDGE);
     glTexParameterf(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T,

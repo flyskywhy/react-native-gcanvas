@@ -18,6 +18,7 @@ export default class CanvasRenderingContext2D {
   _shadowBlur = 0;
   _shadowOffsetX = 0;
   _shadowOffsetY = 0;
+  _imageSmoothingEnabled = 1;
   _lineWidth = 1;
   _lineCap = 'butt';
   _lineJoin = 'miter';
@@ -162,6 +163,18 @@ export default class CanvasRenderingContext2D {
   set shadowOffsetY(value) {
     this._shadowOffsetY = value;
     this._drawCommands = this._drawCommands.concat('Y' + value + ';');
+  }
+
+  get imageSmoothingEnabled() {
+    return this._imageSmoothingEnabled;
+  }
+
+  set imageSmoothingEnabled(value) {
+    if (this._imageSmoothingEnabled !== Number(value)) {
+      this._imageSmoothingEnabled = Number(value);
+      this._drawCommands = this._drawCommands.concat('O' + this._imageSmoothingEnabled + ';');
+      this.flushJsCommands2CallNative('sync', 'execWithoutDisplay');
+    }
   }
 
   get lineDashOffset() {

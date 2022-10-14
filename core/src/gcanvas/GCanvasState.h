@@ -29,11 +29,11 @@ public:
     GCanvasState(const GCanvasState &state);
     GCanvasState &operator=(const GCanvasState &state);
     ~GCanvasState();
-    
+
     //transfrom
     GTransform mTransform;
     GTransform mUserTransform;
-    
+
     //ClipPath
     GPath *mClipPath;
 
@@ -49,16 +49,16 @@ public:
     int mShadowBlur;
     float mShadowOffsetX;
     float mShadowOffsetY;
-    
+
     //line style
     GLineCap mLineCap;
     GLineJoin mLineJoin;
     float mLineWidth;
     float mMiterLimit;
-    
+
     std::vector<float> mLineDash;
     float mLineDashOffset;
-    
+
     //font style
     gcanvas::GFontStyle *mFont;
     GTextAlign mTextAlign;
@@ -66,15 +66,17 @@ public:
 
     float mscaleFontX = 1.0f;
     float mscaleFontY = 1.0f;
-    
+
     //global
     float mGlobalAlpha;
     GCompositeOperation mGlobalCompositeOp;
-    
-    
+
+
     //shader & texture
     GShader *mShader;
     int mTextureId = InvalidateTextureId;
+
+    bool mImageSmoothingEnabled = true;
 };
 
 

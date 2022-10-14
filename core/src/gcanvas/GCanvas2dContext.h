@@ -55,13 +55,13 @@ public:
     bool InitializeGLEnvironment();
     virtual bool InitializeGLShader();
     void ResetStateStack();
-    
+
     void BindVertexBuffer();
     void ClearGeometryDataBuffers();
     API_EXPORT void SendVertexBufferToGPU(const GLenum geometry_type = GL_TRIANGLES);
     void BindPositionVertexBuffer();
     GLuint PositionSlot();
-    
+
     void UpdateProjectTransform();
     GTransform CalculateProjectTransform(int width, int height);
 
@@ -81,7 +81,7 @@ public:
 
     void SetTexture(int textureId);
 
-    
+
     //----------------Push Vertex------------------------
     void PushTriangle(GPoint v1, GPoint v2, GPoint v3, GColorRGBA color,
                       std::vector<GVertex> *vec = NULL);
@@ -126,23 +126,23 @@ public:
 
     API_EXPORT void SetClearColor(const GColorRGBA &c);
     API_EXPORT GColorRGBA GetClearColor() const { return mClearColor; }
-    
+
     bool IsFboSupport() const { return mIsFboSupported; }
-    
+
     void SetHiQuality(bool isHiQuality) { mHiQuality = isHiQuality; }
     bool GetHiQuality() { return mHiQuality; }
-    
+
     bool HasClipRegion() const { return mHasClipRegion; }
     void SetClipFlag(const bool flag) { mHasClipRegion = flag; }
-    
+
     void SetContextLost(bool v) { mContextLost = v; }
-    
+
     GCanvasState *GetCurrentState() { return mCurrentState; }
-    
+
     GTexture *GetFboTexture();
     GTexture *GetFontTexture();
 
-    
+
     //non-w3c API
     API_EXPORT void ClearScreen();
     API_EXPORT void Resize(int w, int h); //Android only
@@ -160,13 +160,16 @@ public:
     API_EXPORT void DoSetGlobalCompositeOperation(GCompositeOperation op,
                                                   GCompositeOperation alphaOp = COMPOSITE_OP_ADD);
 
+    API_EXPORT bool ImageSmoothingEnabled() const { return mCurrentState->mImageSmoothingEnabled; }
+    API_EXPORT void SetImageSmoothingEnabled(bool smooth) { mCurrentState->mImageSmoothingEnabled = smooth; }
+
     //font
     API_EXPORT GTextAlign TextAlign() const { return mCurrentState->mTextAlign; }
     API_EXPORT void SetTextAlign(GTextAlign align);
 
     API_EXPORT GTextBaseline TextBaseline() const { return mCurrentState->mTextBaseline; }
     API_EXPORT void SetTextBaseline(GTextBaseline baseLine);
-    
+
     API_EXPORT void SetFont(const char *font);
 
     //shadow
@@ -201,12 +204,12 @@ public:
     //path
     API_EXPORT float LineWidth() const { return mCurrentState->mLineWidth; }
     API_EXPORT void SetLineWidth(float w) { mCurrentState->mLineWidth = w; }
-    
+
     API_EXPORT GLineCap LineCap() const { return mCurrentState->mLineCap; }
     API_EXPORT void SetLineCap(GLineCap cap) { mCurrentState->mLineCap = cap; }
     API_EXPORT void SetLineCap(const char *p);
 
-    
+
     API_EXPORT GLineJoin LineJoin() const { return mCurrentState->mLineJoin; }
     API_EXPORT void SetLineJoin(GLineJoin join) { mCurrentState->mLineJoin = join; }
     API_EXPORT void SetLineJoin(const char *p);
@@ -219,10 +222,10 @@ public:
     API_EXPORT std::vector<float> &GetLineDash();
     API_EXPORT std::vector<float> LineDash() const { return mCurrentState->mLineDash; }
     API_EXPORT void SetLineDash(std::vector<float> lineDash) { mCurrentState->mLineDash = lineDash; }
-    
+
     API_EXPORT float LineDashOffset() const { return mCurrentState->mLineDashOffset; }
     API_EXPORT void SetLineDashOffset(float offset) { mCurrentState->mLineDashOffset = offset; }
-    
+
 
     //////////////////////////////////////////////////////////////////////////////
     ///   Context2D Method
@@ -254,14 +257,14 @@ public:
     API_EXPORT void ArcTo(float x1, float y1, float x2, float y2, float radius);
     API_EXPORT void QuadraticCurveTo(float cpx, float cpy, float x, float y);
     API_EXPORT void BezierCurveTo(float cp1x, float cp1y, float cp2x, float cp2y, float x, float y);
-    
+
     //rect
     API_EXPORT void FillRect(float x, float y, float w, float h);
     API_EXPORT void DoFillRect(float x, float y, float w, float h);
     API_EXPORT void StrokeRect(float x, float y, float w, float h);
     API_EXPORT void DoStrokeRect(float x, float y, float w, float h);
     API_EXPORT void ClearRect(float x, float y, float w, float h);
-    
+
     //clip strok fill
     API_EXPORT void Clip(GFillRule rule = FILL_RULE_NONZERO);
     API_EXPORT void ResetClip();
@@ -272,18 +275,18 @@ public:
     API_EXPORT float MeasureTextWidth(const char *text, int strLength = 0);
     API_EXPORT void DrawText(const char *text, float x, float y, float maxWidth = SHRT_MAX);
     API_EXPORT void StrokeText(const char *text, float x, float y, float maxWidth = SHRT_MAX);
-    
+
     //image
     API_EXPORT void DrawImage(int textureId, int textureWidth, int textureHeight,
                                   float sx, float sy, float sw, float sh,
                                   float dx, float dy, float dw, float dh,
                                   bool flipY = false);
-    
+
     API_EXPORT void DoDrawImage(float w, float h, int TextureId,
                                 float sx, float sy, float sw, float sh,
                                 float dx, float dy, float dw, float dh,
                                 bool flipY = false);
-    
+
     API_EXPORT void PutImageData(const unsigned char *rgbaData,
                                  int tw, int th, int x, int y,
                                  int sx, int sy, int sw, int sh,
@@ -295,7 +298,7 @@ public:
     API_EXPORT int BindImage(const unsigned char *rgbaData, GLint format, unsigned int width,
                              unsigned int height);
 
-  
+
     //----------------Other------------------------
     API_EXPORT void SetTransformOfShader(const GTransform &trans);
 
@@ -322,7 +325,7 @@ public:
     API_EXPORT void ApplyTransform(float m11, float m12, float m21, float m22,
                                    float dx, float dy);
     API_EXPORT void ApplyTransform(GTransform t);
-    
+
     GWebGLTxtImage2DFunc GetGWebGLTxtImage2DFunc() { return mWebGLTexImage2dFunc; }
     void SetGWebGLTxtImage2DFunc(GWebGLTxtImage2DFunc func) { mWebGLTexImage2dFunc = func; }
 
@@ -341,12 +344,12 @@ protected:
     DrawTextWithLength(const char *text, int strLength, float x, float y, bool isStroke = false, float maxWidth = SHRT_MAX);
 
     virtual GShader *FindShader(const char *name);
-    
+
     void FillRectBlur(float x, float y, float w, float h);
     void StrokeRectBlur(float x, float y, float w, float h);
     void FillBlur();
     void StrokeBlur();
-    
+
     void Blur(const GRectf &rect, float blur, std::function<void()> draw,
               GFrameBufferObjectPtr &outputFbo, bool isOnScreen, float scale);
     void DrawBlur(const GRectf &rect, float blur, std::function<void()> draw);
@@ -354,7 +357,7 @@ protected:
     void ImageBlur(float w, float h, int TextureId, float sx,
                    float sy, float sw, float sh, float dx,
                    float dy, float dw, float dh);
-    
+
     //FBO
     void PrepareDrawElemetToFBO(GFrameBufferObject &fbo);
     void DrawFBOToFBO(GFrameBufferObject &src, GFrameBufferObject &dest);
@@ -384,7 +387,7 @@ public:
     GFontManager *mFontManager = nullptr;
 
     GCanvasHooks *mHooks;
-    
+
     //Weex
     int mContextType; // 0--2d;1--webgl
 
@@ -406,7 +409,7 @@ protected:
     bool mSaveIsStroke;
 
     GVertex CanvasVertexBuffer[GCanvasContext::GCANVAS_VERTEX_BUFFER_SIZE];
-    
+
     bool mIsGLInited = false;
     GFrameBufferObjectPool mFrameBufferPool;
     GTexture *mFontTexture = nullptr;

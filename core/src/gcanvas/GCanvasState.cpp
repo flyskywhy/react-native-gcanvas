@@ -20,9 +20,9 @@ GCanvasState::GCanvasState()
     mLineJoin = LINE_JOIN_MITER;
     mMiterLimit = 10;
     mLineDashOffset = 0;
-    
+
     mFont = nullptr; // delay-load: "10px sans-serif"
-    
+
     mTextAlign = TEXT_ALIGN_START;
     mTextBaseline = TEXT_BASELINE_ALPHABETIC;
     mTransform = GTransformIdentity;
@@ -30,7 +30,7 @@ GCanvasState::GCanvasState()
     mShader = nullptr;
     mFillStyle = nullptr;
     mStrokeStyle = nullptr;
-    
+
     mShadowColor = gcanvas::StrValueToColorRGBA("transparent");
     mShadowBlur = 0;
     mShadowOffsetX = 0;
@@ -38,6 +38,8 @@ GCanvasState::GCanvasState()
 
     mscaleFontX = 1.0f;
     mscaleFontY = 1.0f;
+
+    mImageSmoothingEnabled = true;
 }
 
 GCanvasState::GCanvasState(const GCanvasState &state)
@@ -53,7 +55,7 @@ GCanvasState::GCanvasState(const GCanvasState &state)
     mLineDashOffset = state.mLineDashOffset;
     mLineDash = state.mLineDash;
     mShader = state.mShader;
-    
+
     mFillStyle = nullptr;
     if (state.mFillStyle != nullptr)
     {
@@ -64,7 +66,7 @@ GCanvasState::GCanvasState(const GCanvasState &state)
     {
         mStrokeStyle = state.mStrokeStyle->Clone();
     }
-    
+
     if (state.mFont != nullptr)
     {
         mFont = new gcanvas::GFontStyle(*state.mFont);
@@ -73,11 +75,11 @@ GCanvasState::GCanvasState(const GCanvasState &state)
     {
         mFont = nullptr;
     }
-    
+
     mTextAlign = state.mTextAlign;
     mTextBaseline = state.mTextBaseline;
     mTransform = state.mTransform;
-    
+
     if (state.mClipPath != nullptr)
     {
         mClipPath = new GPath(*(state.mClipPath));
@@ -87,7 +89,7 @@ GCanvasState::GCanvasState(const GCanvasState &state)
         mClipPath = nullptr;
     }
     mTextureId = state.mTextureId;
-    
+
     mShadowColor = state.mShadowColor;
     mShadowBlur = state.mShadowBlur;
     mShadowOffsetX = state.mShadowOffsetX;
@@ -95,6 +97,8 @@ GCanvasState::GCanvasState(const GCanvasState &state)
 
     mscaleFontX = state.mscaleFontX;
     mscaleFontY = state.mscaleFontY;
+
+    mImageSmoothingEnabled = state.mImageSmoothingEnabled;
 }
 
 GCanvasState &GCanvasState::operator=(const GCanvasState &state)
@@ -110,7 +114,7 @@ GCanvasState &GCanvasState::operator=(const GCanvasState &state)
     mLineDashOffset = state.mLineDashOffset;
     mLineDash = state.mLineDash;
     mShader = state.mShader;
-    
+
     mFillStyle = nullptr;
     if (state.mFillStyle != nullptr)
     {
@@ -126,28 +130,28 @@ GCanvasState &GCanvasState::operator=(const GCanvasState &state)
         delete mFont;
         mFont = nullptr;
     }
-    
+
     if (state.mFont != nullptr)
     {
         mFont = new gcanvas::GFontStyle(*state.mFont);
     }
-    
-    
+
+
     mTextAlign = state.mTextAlign;
     mTextBaseline = state.mTextBaseline;
     mTransform = state.mTransform;
-    
+
     if (mClipPath != nullptr)
     {
         delete mClipPath;
         mClipPath = nullptr;
     }
-    
+
     if (state.mClipPath != nullptr)
     {
         mClipPath = new GPath(*(state.mClipPath));
     }
-    
+
     mTextureId = state.mTextureId;
 
     mShadowColor = state.mShadowColor;
@@ -157,7 +161,9 @@ GCanvasState &GCanvasState::operator=(const GCanvasState &state)
 
     mscaleFontX = state.mscaleFontX;
     mscaleFontY = state.mscaleFontY;
-    
+
+    mImageSmoothingEnabled = state.mImageSmoothingEnabled;
+
     return *this;
 }
 

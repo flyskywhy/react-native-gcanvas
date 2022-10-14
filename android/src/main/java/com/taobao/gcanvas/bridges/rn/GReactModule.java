@@ -346,6 +346,7 @@ public class GReactModule extends ReactContextBaseJavaModule implements Lifecycl
 
         // after bindCanvasTexture() in packages/gcanvas/src/context/2d/RenderingContext.js then will call
         // drawImageCommands() which eat image with ratio 1 , so Ratio1 here
+        // TODO: false should enough for downscale Bitmap, maybe need be ImageSmoothingEnabled() if someone need it :P
         Bitmap bmpWithRatio1 = sRatio > 1 ? Bitmap.createScaledBitmap(bmpOfDemand, sWidth, sHeight, false) : bmpOfDemand;
 
         // Bitmap.CompressFormat format = Bitmap.CompressFormat.PNG;
