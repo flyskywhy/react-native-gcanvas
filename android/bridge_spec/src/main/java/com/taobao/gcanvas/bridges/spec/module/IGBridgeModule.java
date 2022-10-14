@@ -1,5 +1,6 @@
 package com.taobao.gcanvas.bridges.spec.module;
 
+import android.graphics.Bitmap;
 
 import com.taobao.gcanvas.adapters.img.IGImageLoader;
 import com.taobao.gcanvas.bridges.spec.AndroidOnly;
@@ -57,6 +58,14 @@ public interface IGBridgeModule<JSCallback> {
      * @param canvasId
      */
     void disable(String canvasId);
+
+    /**
+     * bind the specified image to the specified canvas's OpenGL environment.
+     * @param canvasId
+     * @param bmp
+     * @param id image id, a unique id that used for tracking cache.
+     */
+    void bindImageTexture(String canvasId, Bitmap bmp, int id);
 
     /**
      * bind the specified image to the specified canvas's OpenGL environment.

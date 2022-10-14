@@ -25,9 +25,7 @@ export default class GCanvas extends Element {
     this.id = id;
 
     this._isAutoClearRectBeforePutImageData = isAutoClearRectBeforePutImageData;
-    if (devicePixelRatio !== undefined) {
-      this._devicePixelRatio = parseInt(devicePixelRatio, 10);
-    }
+    this._devicePixelRatio = devicePixelRatio || PixelRatio.get();
     this._disableAutoSwap = disableAutoSwap;
     this._swapBuffers = () => {
       this._context && this._context.flushJsCommands2CallNative();
@@ -115,7 +113,8 @@ export default class GCanvas extends Element {
         // https://github.com/flyskywhy/snakeRN/tree/v3.0.0 sometimes (1st load js on new installed debug apk)
         // will cause `Error: Invalid value of `0` passed to `checkMaxIfStatementsInShader` in
         // `node_modules/pixi.js/lib/core/renderers/webgl/utils/checkMaxIfStatmentsInShader.js` ,
-        // `sleepMs()` by `for(;;)` wait enough can fix it, don't know why.
+        // `sleepMs()` by `for(;;)` wait enough can fix it, don't know why maybe also
+        // `setContextType can not find canvas with id` as described below.
         sleepMs(130);
       }
       if (this._devicePixelRatio > 0) {
@@ -127,6 +126,17 @@ export default class GCanvas extends Element {
       this._context.drawingBufferHeight = this._clientHeight * PixelRatio.get();
       this._context.componentId = this.id;
       GCanvas.GBridge.callSetContextType(this.id, 0);
+
+      // document.createElement('canvas') (as offscreen canvas) sometimes (reload js on debug apk,
+      // especially 1st load js on new installed debug or release apk) will not work, because
+      // `setContextType can not find canvas with id` then no effect for bindCanvasTexture or
+      // some other canvas method, and it's not convenient to wait GCanvasView's props.onIsReady(),
+      // so use `sleepMs()` by `for(;;)` wait enough to fix it.
+      sleepMs(130);
+      if (__DEV__) {
+        // and if not setLogLevel(0) (means no DEBUG print) in components/GCanvasComponent.js , need more wait...
+        sleepMs(150);
+      }
 
       // need `sleepMs()` by `for(;;)` to let callSetDevicePixelRatio take effect
       sleepMs(100);

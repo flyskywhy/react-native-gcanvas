@@ -228,6 +228,10 @@ const GBridge = {
     }
   },
 
+  bindCanvasTexture(componentId, sCanvasId, sCanvasPixelRatio, sWidth, sHeight, imageId) {
+    GBridge.GCanvasModule.bindCanvasTexture([sCanvasId, sCanvasPixelRatio, sWidth, sHeight, imageId], componentId);
+  },
+
   bindImageTexture(componentId, src, imageId) {
     GBridge.GCanvasModule.bindImageTexture([src, imageId], componentId, function(e) {
 

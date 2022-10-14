@@ -3,6 +3,8 @@ import base64 from 'base64-js';
 import FillStylePattern from './FillStylePattern';
 import FillStyleLinearGradient from './FillStyleLinearGradient';
 import FillStyleRadialGradient from './FillStyleRadialGradient';
+import Canvas from '../../env/canvas';
+import Image from '../../env/image';
 
 export default class CanvasRenderingContext2D {
   _drawCommands = '';
@@ -504,12 +506,14 @@ export default class CanvasRenderingContext2D {
 
   drawImage(image, sx, sy, sw, sh, dx, dy, dw, dh) {
     const numArgs = arguments.length;
+    let imageId = image instanceof Canvas ? Image.increaseId() : image._id;
+
     function drawImageCommands() {
       if (numArgs === 3) {
         const x = parseFloat(sx) || 0.0;
         const y = parseFloat(sy) || 0.0;
 
-        return 'd' + image._id + ',0,0,'
+        return 'd' + imageId + ',0,0,'
                   + image.width + ',' + image.height + ','
                   + x + ',' + y + ',' + image.width + ',' + image.height + ';';
       } else if (numArgs === 5) {
@@ -518,7 +522,7 @@ export default class CanvasRenderingContext2D {
         const width = parseInt(sw) || image.width;
         const height = parseInt(sh) || image.height;
 
-        return 'd' + image._id + ',0,0,'
+        return 'd' + imageId + ',0,0,'
                   + image.width + ',' + image.height + ','
                   + x + ',' + y + ',' + width + ',' + height + ';';
       } else if (numArgs === 9) {
@@ -531,12 +535,31 @@ export default class CanvasRenderingContext2D {
         dw = parseInt(dw) || image.width;
         dh = parseInt(dh) || image.height;
 
-        return 'd' + image._id + ','
+        return 'd' + imageId + ','
                   + sx + ',' + sy + ',' + sw + ',' + sh + ','
                   + dx + ',' + dy + ',' + dw + ',' + dh + ';';
       }
     }
-    CanvasRenderingContext2D.GBridge.bindImageTexture(this.componentId, image.src, image._id);
+    if (image instanceof Canvas) {
+      if (!image._context) {
+        return;
+      }
+
+      image._context.flushJsCommands2CallNative('sync');
+
+      let sCanvasId = image.id;
+      let sCanvasPixelRatio = image._devicePixelRatio;
+      // even README.md said "despite of values into `canvas.width =` and `canvas.height =`",
+      // because canvas of sCanvasId is mostly comes from document.createElement('canvas')
+      // that just like offscreen canvas, so it will use style {position: 'absolute'} and
+      // that means it's clientWidth will not change (for not re-render as offscreen), so
+      // it's meaningful to use canvas.width usually change after document.createElement('canvas')
+      let sCanvasWidth = image.width;
+      let sCanvasHeight = image.height;
+      CanvasRenderingContext2D.GBridge.bindCanvasTexture(this.componentId, sCanvasId, sCanvasPixelRatio, sCanvasWidth, sCanvasHeight, imageId);
+    } else {
+      CanvasRenderingContext2D.GBridge.bindImageTexture(this.componentId, image.src, imageId);
+    }
     this._drawCommands += drawImageCommands();
     this.flushJsCommands2CallNative('sync', 'execWithDisplay');
   }

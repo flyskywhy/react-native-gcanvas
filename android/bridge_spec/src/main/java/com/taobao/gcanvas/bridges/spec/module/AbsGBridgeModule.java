@@ -87,6 +87,15 @@ public abstract class AbsGBridgeModule<JSCallback> implements IGBridgeModule<JSC
     }
 
     @Override
+    public void bindImageTexture(final String canvasId, final Bitmap bmp, final int id) {
+        if (bmp != null) {
+            GCanvasJNI.bindTexture(canvasId, bmp, id, GLES20.GL_TEXTURE_2D, 0, GLES20.GL_RGBA, GLES20.GL_RGBA, GLES20.GL_UNSIGNED_BYTE);
+        } else {
+            GLog.d("bitmap is null.");
+        }
+    }
+
+    @Override
     public void bindImageTexture(final String canvasId, final String src, final int id, final JSCallback callback) {
         if (!TextUtils.isEmpty(src)) {
             try {

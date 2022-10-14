@@ -317,6 +317,49 @@ public class GReactModule extends ReactContextBaseJavaModule implements Lifecycl
     private RNModuleImpl mImpl;
 
     @ReactMethod(isBlockingSynchronousMethod = true)
+    public void bindCanvasTexture(final ReadableArray array, final String refId) {
+        if (null == array || TextUtils.isEmpty(refId)) {
+            return;
+        }
+        GReactTextureView textureView = mViews.get(refId);
+        if (null == textureView) {
+            GLog.w(TAG, "can not find canvas with id ===> " + refId);
+            return;
+        }
+        String sCanvasId = array.getString(0);
+        GReactTextureView sCanvasView = mViews.get(sCanvasId);
+        if (null == sCanvasView) {
+            GLog.w(TAG, "can not find source canvas with id ===> " + sCanvasId);
+            return;
+        }
+        double sRatio = array.getDouble(1);
+        int sWidth = array.getInt(2);
+        int sHeight = array.getInt(3);
+        int rid = array.getInt(4);
+
+        // bmpOfFullCanvas is always using sRatio
+        Bitmap bmpOfFullCanvas = sCanvasView.getBitmap();
+
+        // as described beside bindCanvasTexture() in packages/gcanvas/src/context/2d/RenderingContext.js ,
+        // maybe sWidth != sCanvas.width , so Demand here
+        Bitmap bmpOfDemand = Bitmap.createBitmap(bmpOfFullCanvas, 0, 0, (int)(sWidth * sRatio), (int)(sHeight * sRatio));
+
+        // after bindCanvasTexture() in packages/gcanvas/src/context/2d/RenderingContext.js then will call
+        // drawImageCommands() which eat image with ratio 1 , so Ratio1 here
+        Bitmap bmpWithRatio1 = sRatio > 1 ? Bitmap.createScaledBitmap(bmpOfDemand, sWidth, sHeight, false) : bmpOfDemand;
+
+        // Bitmap.CompressFormat format = Bitmap.CompressFormat.PNG;
+        // String base64Str = "data:image/png;base64,";
+        // ByteArrayOutputStream baos = new ByteArrayOutputStream();
+        // bmpWithRatio1.compress(format, 100, baos);
+        // byte[] byteArray = baos.toByteArray();
+        // base64Str += Base64.encodeToString(byteArray, Base64.NO_WRAP);
+        // mImpl.bindImageTexture(textureView.getCanvasKey(), base64Str, rid, null);
+
+        mImpl.bindImageTexture(textureView.getCanvasKey(), bmpWithRatio1, rid);
+    }
+
+    @ReactMethod(isBlockingSynchronousMethod = true)
     public void bindImageTexture(final ReadableArray array, final String refId, final Callback callback) {
         if (null == array || TextUtils.isEmpty(refId) || array.size() != 2) {
             return;
