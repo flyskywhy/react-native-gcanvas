@@ -3,7 +3,6 @@ import base64 from 'base64-js';
 import FillStylePattern from './FillStylePattern';
 import FillStyleLinearGradient from './FillStyleLinearGradient';
 import FillStyleRadialGradient from './FillStyleRadialGradient';
-import Canvas from '../../env/canvas';
 import Image from '../../env/image';
 
 export default class CanvasRenderingContext2D {
@@ -519,7 +518,8 @@ export default class CanvasRenderingContext2D {
 
   drawImage(image, sx, sy, sw, sh, dx, dy, dw, dh) {
     const numArgs = arguments.length;
-    let imageId = image instanceof Canvas ? Image.increaseId() : image._id;
+    const imageIsCanvas = image.hasOwnProperty('nodeName') && image.nodeName.toLowerCase() === 'canvas';
+    let imageId = imageIsCanvas ? Image.increaseId() : image._id;
 
     function drawImageCommands() {
       if (numArgs === 3) {
@@ -553,7 +553,7 @@ export default class CanvasRenderingContext2D {
                   + dx + ',' + dy + ',' + dw + ',' + dh + ';';
       }
     }
-    if (image instanceof Canvas) {
+    if (imageIsCanvas) {
       if (!image._context) {
         return;
       }
