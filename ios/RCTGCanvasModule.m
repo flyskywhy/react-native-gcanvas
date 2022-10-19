@@ -95,6 +95,8 @@ RCT_EXPORT_BLOCKING_SYNCHRONOUS_METHOD(bindImageTexture:(NSArray *)data componen
     [self.gcanvasModule bindImageTexture:data componentId:componentId callback:^(id result) {
         callback(@[result?:@""]);
     }];
+    
+    return nil;
 }
 
 //set context type
