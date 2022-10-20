@@ -93,7 +93,7 @@
 }
 
 
-+ (GLuint)bindTexture:(UIImage *)image{
++ (GLuint)bindTexture:(UIImage *)image  imageSmoothingEnabled:(BOOL)imageSmoothingEnabled {
     GCVLOG_METHOD(@"bindTexture image=%@", image);
     CGImageRef cgImageRef = [image CGImage];
     CGFloat width = (CGFloat)CGImageGetWidth(cgImageRef);
@@ -116,14 +116,23 @@
     GLuint glID;
     glGenTextures(1, &glID);
     glBindTexture(GL_TEXTURE_2D, glID);
-    glTexParameterf(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR);
-    glTexParameterf(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
+    if (imageSmoothingEnabled) {
+        glTexParameterf(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR);
+        glTexParameterf(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
+    } else {
+        glTexParameterf(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_NEAREST);
+        glTexParameterf(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_NEAREST);
+    }
     glTexParameterf(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_CLAMP_TO_EDGE);
     glTexParameterf(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_CLAMP_TO_EDGE);
     glTexImage2D(GL_TEXTURE_2D, 0, GL_RGBA, width, height, 0, GL_BGRA, GL_UNSIGNED_BYTE, pixelData.bytes);
     glGenerateMipmap(GL_TEXTURE_2D);
     
     return glID;
+}
+
++ (GLuint)bindTexture:(UIImage *)image {
+    return [self bindTexture:image imageSmoothingEnabled:YES];
 }
 
 @end

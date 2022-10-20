@@ -88,6 +88,8 @@ typedef void(^GCVLoadImageCompletion)(UIImage *image, NSError *error, BOOL finis
 
 + (instancetype)sharedInstance;
 
++ (GLuint)bindTexture:(UIImage *)image imageSmoothingEnabled:(BOOL)imageSmoothingEnabled;
+
 /**
  * Bind a UIImage to a textureId.
  * @param image         current image

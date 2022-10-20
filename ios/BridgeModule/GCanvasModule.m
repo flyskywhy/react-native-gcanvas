@@ -249,6 +249,62 @@ static NSMutableDictionary  *_staticModuleExistDict;
     });
 }
 
+- (void)bindCanvasTexture:(NSArray *)data componentId:(NSString*)componentId{
+    if (!data || ![data isKindOfClass:NSArray.class]) {
+        return;
+    }
+
+    GCanvasObject *gcanvasInst = self.gcanvasObjectDict[componentId];
+    GCanvasPlugin *plugin = gcanvasInst.plugin;
+    id<GCanvasViewProtocol> component = gcanvasInst.component;
+    if (!component || !plugin) {
+        return;
+    }
+
+    NSString *sCanvasId = data[0];
+    double sRatio = [data[1] doubleValue];
+    NSUInteger sWidth = [data[2] integerValue];
+    NSUInteger sHeight = [data[3] integerValue];
+    NSUInteger jsTextureId = [data[4] integerValue];
+
+    GCanvasObject *sCanvasInst = self.gcanvasObjectDict[sCanvasId];
+    if(!sCanvasInst) {
+        return;
+    }
+    id<GCanvasViewProtocol> sComponent = sCanvasInst.component;
+    if (!sComponent) {
+        return;
+    }
+
+    __block UIImage *image;
+    dispatch_sync(dispatch_get_main_queue(), ^{
+        UIGraphicsBeginImageContextWithOptions(sComponent.glkview.bounds.size, NO, self.devicePixelRatio / sRatio);
+
+        CGContextRef context = UIGraphicsGetCurrentContext();
+        // TODO: kCGInterpolationNone should enough for downscale Bitmap, maybe need ImageSmoothingEnabled() if someone need it :P
+        CGContextSetInterpolationQuality(context, kCGInterpolationNone);
+
+        [sComponent.glkview drawViewHierarchyInRect:sComponent.glkview.frame afterScreenUpdates:YES];
+
+        image = UIGraphicsGetImageFromCurrentImageContext();
+        UIGraphicsEndImageContext();
+    });
+
+    CGImageRef imageRef = CGImageCreateWithImageInRect(image.CGImage, CGRectMake(0, 0, sWidth, sHeight));
+    image = [UIImage imageWithCGImage:imageRef];
+    CGImageRelease(imageRef);
+
+    GLuint textureId = [plugin getTextureId:jsTextureId];
+    [EAGLContext setCurrentContext:component.glkview.context];
+    textureId = [GCVCommon bindTexture:image imageSmoothingEnabled:plugin.imageSmoothingEnabled];
+    if (textureId > 0) {
+//        GCVLOG_METHOD(@"==>bindCanvasTexture success: jsTextureId:%d => texutreId:%d, componentId:%@", jsTextureId, textureId, componentId);
+        [plugin addTextureId:textureId withAppId:jsTextureId
+                       width:sWidth height:sHeight
+                   offscreen:NO];
+    }
+}
+
 /**
  * Export JS method for binding image to real native texture
  *

@@ -142,6 +142,8 @@ typedef GCanvasPlugin* (^FetchPluginBlock)(NSString * componentId);
  */
 - (int)contextType;
 
+- (BOOL)imageSmoothingEnabled;
+
 /**
  *  @abstract   get GCanvas fps
  *

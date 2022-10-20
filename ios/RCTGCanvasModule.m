@@ -89,6 +89,14 @@ RCT_EXPORT_METHOD(preLoadImage:(NSArray *)data callback:(RCTResponseSenderBlock)
     }];
 }
 
+// bind canvas texture
+RCT_EXPORT_BLOCKING_SYNCHRONOUS_METHOD(bindCanvasTexture:(NSArray *)data componentId:(NSString*)componentId)
+{
+    [self.gcanvasModule bindCanvasTexture:data componentId:componentId];
+    
+    return nil;
+}
+
 //bind image texture
 RCT_EXPORT_BLOCKING_SYNCHRONOUS_METHOD(bindImageTexture:(NSArray *)data componentId:(NSString*)componentId callback:(RCTResponseSenderBlock)callback)
 {

@@ -63,9 +63,10 @@ export default class GCanvas extends Element {
       if (this._context.className === 'CanvasRenderingContext2D') {
         this._context.clearRect(0, 0, this._clientWidth, this._clientHeight);
       }
+
+      this. _conditionallyResetGlViewport();
     }
     this._width = value | 0; // width is fixed not float just like Web
-    GCanvas.GBridge.callResetGlViewport(this.id);
   }
 
   get height() {
@@ -78,12 +79,36 @@ export default class GCanvas extends Element {
       if (this._context.className === 'CanvasRenderingContext2D') {
         this._context.clearRect(0, 0, this._clientWidth, this._clientHeight);
       }
+
+      this. _conditionallyResetGlViewport();
     }
     this._height = value | 0;
-    GCanvas.GBridge.callResetGlViewport(this.id);
+  }
+
+  _conditionallyResetGlViewport() {
+    let isNormalCanvas = true;
+    if (global.createCanvasElements) {
+      if (global.createCanvasElements.findIndex(canvas => canvas === this) > -1) {
+        isNormalCanvas = false;
+      }
+    }
+
+    if (isNormalCanvas) {
+      GCanvas.GBridge.callResetGlViewport(this.id);
+    } else {
+      // on iOS, resetGlViewport to global.createCanvasElements which comes from
+      // document.createElement('canvas') (as offscreen canvas) when replace
+      // require('resize-image-data') in https://github.com/flyskywhy/PixelShapeRN/blob/master/src/utils/canvasUtils.js
+      // will cause APP crash, and since such canvas style is {position: 'absolute'}
+      // so no need of resetGlViewport, so no callResetGlViewport() here
+    }
   }
 
   getContext(type) {
+    if (this._context) {
+      return this._context;
+    }
+
     if (type.match(/webgl/i)) {
       this._context = new GContextWebGL(this);
       this._context.drawingBufferWidth = this._clientWidth * PixelRatio.get();

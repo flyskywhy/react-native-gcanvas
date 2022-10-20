@@ -2130,7 +2130,7 @@ void GCanvasContext::PutImageData(const unsigned char *rgbaData, int tw,
     SendVertexBufferToGPU();
 
     std::vector<GCanvasLog> logVec;
-    GLuint glID = gcanvas::PixelsBindTexture(rgbaData, GL_RGBA, tw, th, &logVec);
+    GLuint glID = gcanvas::PixelsBindTexture(rgbaData, GL_RGBA, tw, th, this->ImageSmoothingEnabled(), &logVec);
     LOG_EXCEPTION_VECTOR(mHooks, mContextId, logVec);
 
     sw = sw > tw ? tw : sw;
@@ -2144,5 +2144,5 @@ void GCanvasContext::PutImageData(const unsigned char *rgbaData, int tw,
 
 int GCanvasContext::BindImage(const unsigned char *rgbaData, GLint format, unsigned int width, unsigned int height)
 {
-    return gcanvas::PixelsBindTexture(rgbaData, format, width, height);
+    return gcanvas::PixelsBindTexture(rgbaData, format, width, height, this->ImageSmoothingEnabled());
 }

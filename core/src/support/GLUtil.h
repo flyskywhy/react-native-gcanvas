@@ -16,7 +16,9 @@
 
 namespace gcanvas{
     GLuint PixelsBindTexture(const unsigned char *rgbaData, GLint format, unsigned int width,
-                             unsigned int height, std::vector<GCanvasLog> *errVec = nullptr);
+                             
+                             unsigned int height, bool imageSmoothingEnabled = true,
+                             std::vector<GCanvasLog> *errVec = nullptr);
     void PixelsSampler(int inWidth, int inHeight, int *inPixels, int outWidth, int outHeight, int *outPixels);
 }
 

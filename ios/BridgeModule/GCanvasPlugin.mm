@@ -280,6 +280,14 @@ void nsLog(const char *tag, const char *log) {
     return self.gcanvas->GetContextType();
 }
 
+- (BOOL)imageSmoothingEnabled {
+    if (self.context) {
+        return self.context->ImageSmoothingEnabled();
+    } else {
+        return YES;
+    }
+}
+
 - (CGFloat)fps{
     if( !self.gcanvas ) return 0;
     return self.gcanvas->mFps;

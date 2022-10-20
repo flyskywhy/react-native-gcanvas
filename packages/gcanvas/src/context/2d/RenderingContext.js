@@ -5,6 +5,10 @@ import FillStyleLinearGradient from './FillStyleLinearGradient';
 import FillStyleRadialGradient from './FillStyleRadialGradient';
 import Image from '../../env/image';
 
+function sleepMs(ms) {
+  for (var start = new Date(); new Date() - start <= ms; ) {}
+}
+
 export default class CanvasRenderingContext2D {
   _drawCommands = '';
 
@@ -559,6 +563,8 @@ export default class CanvasRenderingContext2D {
       }
 
       image._context.flushJsCommands2CallNative('sync');
+      // seems [plugin waitUtilTimeout] of execCommandById() in ios/BridgeModule/GCanvasModule.m sometimes is not enough, so wait more here
+      sleepMs(16);
 
       let sCanvasId = image.id;
       let sCanvasPixelRatio = image._devicePixelRatio;
