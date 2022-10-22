@@ -61,7 +61,7 @@ export default class GCanvas extends Element {
 
   set width(value) {
     if (this._context) {
-      this._context.drawingBufferWidth = this._clientWidth * PixelRatio.get();
+      this._context.drawingBufferWidth = this._clientWidth * PixelRatio.get() | 0;
       if (this._context.className === 'CanvasRenderingContext2D') {
         this._context.clearRect(0, 0, this._clientWidth, this._clientHeight);
       }
@@ -77,7 +77,7 @@ export default class GCanvas extends Element {
 
   set height(value) {
     if (this._context) {
-      this._context.drawingBufferHeight = this._clientHeight * PixelRatio.get();
+      this._context.drawingBufferHeight = this._clientHeight * PixelRatio.get() | 0;
       if (this._context.className === 'CanvasRenderingContext2D') {
         this._context.clearRect(0, 0, this._clientWidth, this._clientHeight);
       }
@@ -113,8 +113,8 @@ export default class GCanvas extends Element {
 
     if (type.match(/webgl/i)) {
       this._context = new GContextWebGL(this);
-      this._context.drawingBufferWidth = this._clientWidth * PixelRatio.get();
-      this._context.drawingBufferHeight = this._clientHeight * PixelRatio.get();
+      this._context.drawingBufferWidth = this._clientWidth * PixelRatio.get() | 0;
+      this._context.drawingBufferHeight = this._clientHeight * PixelRatio.get() | 0;
       this._context.componentId = this.id;
 
       GCanvas.GBridge.callSetContextType(this.id, 1); // 0 for 2d; 1 for webgl
@@ -150,8 +150,8 @@ export default class GCanvas extends Element {
       }
     } else if (type.match(/2d/i)) {
       this._context = new GContext2D(this);
-      this._context.drawingBufferWidth = this._clientWidth * PixelRatio.get();
-      this._context.drawingBufferHeight = this._clientHeight * PixelRatio.get();
+      this._context.drawingBufferWidth = this._clientWidth * PixelRatio.get() | 0;
+      this._context.drawingBufferHeight = this._clientHeight * PixelRatio.get() | 0;
       this._context.componentId = this.id;
       GCanvas.GBridge.callSetContextType(this.id, 0);
 
