@@ -401,10 +401,10 @@ const styles = StyleSheet.create({
 Take width as example, in [Window.devicePixelRatio](https://developer.mozilla.org/en-US/docs/Web/API/Window/devicePixelRatio):
 
 * "display size (css pixels)" means `canvas.clientWidth`
-* "actual size in memory" of GPU means `canvas._context.drawingBufferHeight`
+* "actual size in memory" of GPU means `canvas._context.drawingBufferWidth`
 
 To avoid "blurry canvas" described in [Window.devicePixelRatio
-](https://developer.mozilla.org/en-US/docs/Web/API/Window/devicePixelRatio), `@flyskywhy/react-native-gcanvas` always set "actual size in memory" of GPU with physical pixels (despite of values into `canvas.width =` and `canvas.height =`), so `canvas._context.drawingBufferHeight` always equals `canvas.clientWidth * PixelRatio.get()` .
+](https://developer.mozilla.org/en-US/docs/Web/API/Window/devicePixelRatio), `@flyskywhy/react-native-gcanvas` always set "actual size in memory" of GPU with physical pixels (despite of values into `canvas.width =` and `canvas.height =`), so `canvas._context.drawingBufferWidth` (WebGLRenderingContext's property) always equals `canvas.clientWidth * PixelRatio.get()` .
 
 ### with no devicePixelRatio prop, or devicePixelRatio={PixelRatio.get()}
 To be here if you want to code with css pixels, in other words, to code like the device full view width is `(full physical width)/PixelRatio.get()`, and iOS and Android will have the same x y scale with Web against same JS code. FE designer may prefer it.
