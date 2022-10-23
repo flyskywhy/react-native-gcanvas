@@ -654,13 +654,19 @@ public class GReactModule extends ReactContextBaseJavaModule implements Lifecycl
         ByteBuffer buf = ByteBuffer.allocate(bytes);
         bmp.copyPixelsToBuffer(buf);
         byte[] byteArray = buf.array();
+        StringBuilder sb = new StringBuilder(byteArray.length);
+        sb.append("");
         for (int i = 0; i < byteArray.length; i++) {
-            byteArray[i] &= 0xff;
+            sb.append(byteArray[i] & 0xff);
+            if (i + 1 < byteArray.length) {
+                sb.append(",");
+            }
         }
+        String pixelStr = sb.toString();
 
         // ref to processArray() in packages/gcanvas/src/context/webgl/RenderingContext.js
         int arrayType = 1;
-        String pixelStr = Arrays.toString(byteArray).replace("[","").replace("]","").replace(" ","");
+
         String base64Str = Base64.encodeToString(pixelStr.getBytes(), Base64.NO_WRAP);
 
         int border = 0;
