@@ -144,6 +144,12 @@ typedef GCanvasPlugin* (^FetchPluginBlock)(NSString * componentId);
 
 - (BOOL)imageSmoothingEnabled;
 
+- (void)GetImageData:(int)x y:(int)y width:(int)width height:(int)height rgbaData:(uint8_t *)rgbaData;
+
+- (void)DoDrawImageData:(float)tw th:(float)th rgbaData:(const uint8_t *)rgbaData
+                     sx:(float)sx sy:(float)sy sw:(float)sw sh:(float)sh
+                     dx:(float)dx dy:(float)dy dw:(float)dw dh:(float)dh;
+
 /**
  *  @abstract   get GCanvas fps
  *

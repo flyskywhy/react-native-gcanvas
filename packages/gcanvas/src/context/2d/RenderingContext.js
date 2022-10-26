@@ -3,11 +3,6 @@ import base64 from 'base64-js';
 import FillStylePattern from './FillStylePattern';
 import FillStyleLinearGradient from './FillStyleLinearGradient';
 import FillStyleRadialGradient from './FillStyleRadialGradient';
-import Image from '../../env/image';
-
-function sleepMs(ms) {
-  for (var start = new Date(); new Date() - start <= ms; ) {}
-}
 
 export default class CanvasRenderingContext2D {
   _drawCommands = '';
@@ -522,65 +517,76 @@ export default class CanvasRenderingContext2D {
 
   drawImage(image, sx, sy, sw, sh, dx, dy, dw, dh) {
     const numArgs = arguments.length;
-    const imageIsCanvas = image.hasOwnProperty('nodeName') && image.nodeName.toLowerCase() === 'canvas';
-    let imageId = imageIsCanvas ? Image.increaseId() : image._id;
+    let srcX, srcY, srcW, srcH, dstX, dstY, dstW, dstH;
 
-    function drawImageCommands() {
-      if (numArgs === 3) {
-        const x = parseFloat(sx) || 0.0;
-        const y = parseFloat(sy) || 0.0;
-
-        return 'd' + imageId + ',0,0,'
-                  + image.width + ',' + image.height + ','
-                  + x + ',' + y + ',' + image.width + ',' + image.height + ';';
-      } else if (numArgs === 5) {
-        const x = parseFloat(sx) || 0.0;
-        const y = parseFloat(sy) || 0.0;
-        const width = parseInt(sw) || image.width;
-        const height = parseInt(sh) || image.height;
-
-        return 'd' + imageId + ',0,0,'
-                  + image.width + ',' + image.height + ','
-                  + x + ',' + y + ',' + width + ',' + height + ';';
-      } else if (numArgs === 9) {
-        sx = parseFloat(sx) || 0.0;
-        sy = parseFloat(sy) || 0.0;
-        sw = parseInt(sw) || image.width;
-        sh = parseInt(sh) || image.height;
-        dx = parseFloat(dx) || 0.0;
-        dy = parseFloat(dy) || 0.0;
-        dw = parseInt(dw) || image.width;
-        dh = parseInt(dh) || image.height;
-
-        return 'd' + imageId + ','
-                  + sx + ',' + sy + ',' + sw + ',' + sh + ','
-                  + dx + ',' + dy + ',' + dw + ',' + dh + ';';
-      }
+    if (numArgs === 3) {
+      srcX = 0;
+      srcY = 0;
+      srcW = image.width;
+      srcH = image.height;
+      dstX = parseFloat(sx) || 0.0;
+      dstY = parseFloat(sy) || 0.0;
+      dstW = image.width;
+      dstH = image.height;
+    } else if (numArgs === 5) {
+      srcX = 0;
+      srcY = 0;
+      srcW = image.width;
+      srcH = image.height;
+      dstX = parseFloat(sx) || 0.0;
+      dstY = parseFloat(sy) || 0.0;
+      dstW = parseInt(sw) || image.width;
+      dstH = parseInt(sh) || image.height;
+    } else if (numArgs === 9) {
+      srcX = parseFloat(sx) || 0.0;
+      srcY = parseFloat(sy) || 0.0;
+      srcW = parseInt(sw) || image.width;
+      srcH = parseInt(sh) || image.height;
+      dstX = parseFloat(dx) || 0.0;
+      dstY = parseFloat(dy) || 0.0;
+      dstW = parseInt(dw) || image.width;
+      dstH = parseInt(dh) || image.height;
     }
+
+    const imageIsCanvas = image.hasOwnProperty('nodeName') && image.nodeName.toLowerCase() === 'canvas';
     if (imageIsCanvas) {
       if (!image._context) {
         return;
       }
 
+      this.flushJsCommands2CallNative('sync', 'execWithDisplay');
+
       image._context.flushJsCommands2CallNative('sync');
-      // seems [plugin waitUtilTimeout] of execCommandById() in ios/BridgeModule/GCanvasModule.m sometimes is not enough, so wait more here
-      sleepMs(16);
 
       let sCanvasId = image.id;
-      let sCanvasPixelRatio = image._devicePixelRatio;
       // even README.md said "despite of values into `canvas.width =` and `canvas.height =`",
       // because canvas of sCanvasId is mostly comes from document.createElement('canvas')
       // that just like offscreen canvas, so it will use style {position: 'absolute'} and
-      // that means it's clientWidth will not change (for not re-render as offscreen), so
-      // it's meaningful to use canvas.width usually change after document.createElement('canvas')
+      // that means it's clientWidth will not change (to avoid re-render as offscreen), so
+      // it's meaningful to use canvas.width usually be changed after document.createElement('canvas')
       let sCanvasWidth = image.width;
       let sCanvasHeight = image.height;
-      CanvasRenderingContext2D.GBridge.bindCanvasTexture(this.componentId, sCanvasId, sCanvasPixelRatio, sCanvasWidth, sCanvasHeight, imageId);
+      CanvasRenderingContext2D.GBridge.drawCanvas2Canvas({
+        srcComponentId: sCanvasId,
+        dstComponentId: this.componentId,
+        tw: sCanvasWidth,
+        th: sCanvasHeight,
+        sx: srcX,
+        sy: srcY,
+        sw: srcW,
+        sh: srcH,
+        dx: dstX,
+        dy: dstY,
+        dw: dstW,
+        dh: dstH,
+      });
     } else {
-      CanvasRenderingContext2D.GBridge.bindImageTexture(this.componentId, image.src, imageId);
+      CanvasRenderingContext2D.GBridge.bindImageTexture(this.componentId, image.src, image._id);
+      this._drawCommands += 'd' + image._id + ','
+                  + srcX + ',' + srcY + ',' + srcW + ',' + srcH + ','
+                  + dstX + ',' + dstY + ',' + dstW + ',' + dstH + ';';
+      this.flushJsCommands2CallNative('sync', 'execWithDisplay');
     }
-    this._drawCommands += drawImageCommands();
-    this.flushJsCommands2CallNative('sync', 'execWithDisplay');
   }
 
   createImageData(widthOrImagedata, height) {

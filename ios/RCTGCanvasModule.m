@@ -89,10 +89,10 @@ RCT_EXPORT_METHOD(preLoadImage:(NSArray *)data callback:(RCTResponseSenderBlock)
     }];
 }
 
-// bind canvas texture
-RCT_EXPORT_BLOCKING_SYNCHRONOUS_METHOD(bindCanvasTexture:(NSArray *)data componentId:(NSString*)componentId)
+// draw a canvas as texture to current canvas
+RCT_EXPORT_BLOCKING_SYNCHRONOUS_METHOD(drawCanvas2Canvas:(NSDictionary*)dict)
 {
-    [self.gcanvasModule bindCanvasTexture:data componentId:componentId];
+    [self.gcanvasModule drawCanvas2Canvas:dict];
     
     return nil;
 }

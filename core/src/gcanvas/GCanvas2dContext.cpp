@@ -2075,7 +2075,7 @@ void GCanvasContext::DrawImage(int textureId, int textureWidth, int textureHeigh
 }
 
 /**
- * DoDrawImage实现
+ * DoDrawImage 实现把函数外部绑定的 texture 进行绘制
  * sx, sw 支持为负值，sw, sh必须为正数
  */
 void GCanvasContext::DoDrawImage(float w, float h, int TextureId, float sx,
@@ -2091,6 +2091,26 @@ void GCanvasContext::DoDrawImage(float w, float h, int TextureId, float sx,
     GColorRGBA color = BlendWhiteColor(this);
     SetTexture(TextureId);
     PushRectangle(dx, dy, dw, dh, sx / w, sy / h, sw / w, sh / h, color, flipY);
+}
+
+/**
+ * DoDrawImageData 实现将 ImageData 绑定成 texture 后绘制然后立即删除 texture
+ */
+void GCanvasContext::DoDrawImageData(float tw, float th, const unsigned char *rgbaData,
+                                     float sx, float sy, float sw, float sh, float dx,
+                                     float dy, float dw, float dh, bool flipY)
+{
+    SendVertexBufferToGPU();
+
+    GLuint glID = gcanvas::PixelsBindTexture(rgbaData, GL_RGBA, tw, th, this->ImageSmoothingEnabled());
+
+    sw = sw > tw ? tw : sw;
+    sh = sh > th ? th : sh;
+    DoDrawImage(tw, th, glID, sx, sy, sw, sh, dx, dy, dw, dh, flipY);
+
+    SendVertexBufferToGPU();
+    SetTexture(InvalidateTextureId);
+    glDeleteTextures(1, &glID);
 }
 
 void GCanvasContext::GetImageData(int x, int y, int width, int height, uint8_t *pixels)
@@ -2120,7 +2140,7 @@ void GCanvasContext::GetImageData(int x, int y, int width, int height, uint8_t *
                       glerror);
     }
     // sample
-    gcanvas::PixelsSampler(realWidth, realHeight, &rawPixel[0], width, height, reinterpret_cast<int *>(pixels));
+    gcanvas::PixelsSampler(realWidth, realHeight, &rawPixel[0], width, height, reinterpret_cast<int *>(pixels), this->ImageSmoothingEnabled());
 }
 
 void GCanvasContext::PutImageData(const unsigned char *rgbaData, int tw,

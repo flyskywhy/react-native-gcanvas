@@ -158,6 +158,11 @@ public:
      void PopCallbacks();
 #endif
 
+     void GetImageDataWithoutStringCmd(int x, int y, int w, int h, unsigned char *rgbaData);
+     void DrawImageDataWithoutStringCmd(float tw, float th, const unsigned char *rgbaData,
+                                        float sx, float sy, float sw, float sh,
+                                        float dx, float dy, float dw, float dh);
+
      void DrawImage(int textureId, float sx, float sy, float sw, float sh,
                             float dx, float dy, float dw, float dh);
 

@@ -19,7 +19,7 @@ namespace gcanvas{
                              
                              unsigned int height, bool imageSmoothingEnabled = true,
                              std::vector<GCanvasLog> *errVec = nullptr);
-    void PixelsSampler(int inWidth, int inHeight, int *inPixels, int outWidth, int outHeight, int *outPixels);
+    void PixelsSampler(int inWidth, int inHeight, int *inPixels, int outWidth, int outHeight, int *outPixels, bool imageSmoothingEnabled = true);
 }
 
 #endif /* GCANVAS_GLUTIL_H */

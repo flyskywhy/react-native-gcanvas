@@ -288,6 +288,18 @@ void nsLog(const char *tag, const char *log) {
     }
 }
 
+- (void)GetImageData:(int)x y:(int)y width:(int)width height:(int)height rgbaData:(uint8_t *)rgbaData {
+    if (self.gcanvas) {
+        self.gcanvas->GetImageDataWithoutStringCmd(x, y, width, height, rgbaData);
+    }
+}
+
+- (void)DoDrawImageData:(float)tw th:(float)th rgbaData:(const uint8_t *)rgbaData sx:(float)sx sy:(float)sy sw:(float)sw sh:(float)sh dx:(float)dx dy:(float)dy dw:(float)dw dh:(float)dh {
+    if (self.gcanvas) {
+        self.gcanvas->DrawImageDataWithoutStringCmd(tw, th, rgbaData, sx, sy, sw, sh, dx, dy, dw, dh);
+    }
+}
+
 - (CGFloat)fps{
     if( !self.gcanvas ) return 0;
     return self.gcanvas->mFps;

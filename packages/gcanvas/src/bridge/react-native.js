@@ -228,8 +228,8 @@ const GBridge = {
     }
   },
 
-  bindCanvasTexture(componentId, sCanvasId, sCanvasPixelRatio, sWidth, sHeight, imageId) {
-    GBridge.GCanvasModule.bindCanvasTexture([sCanvasId, sCanvasPixelRatio, sWidth, sHeight, imageId], componentId);
+  drawCanvas2Canvas(map) {
+    GBridge.GCanvasModule.drawCanvas2Canvas(map);
   },
 
   bindImageTexture(componentId, src, imageId) {

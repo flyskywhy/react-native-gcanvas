@@ -287,6 +287,11 @@ public:
                                 float dx, float dy, float dw, float dh,
                                 bool flipY = false);
 
+    API_EXPORT void DoDrawImageData(float tw, float th, const unsigned char *rgbaData,
+                                    float sx, float sy, float sw, float sh,
+                                    float dx, float dy, float dw, float dh,
+                                    bool flipY = false);
+
     API_EXPORT void PutImageData(const unsigned char *rgbaData,
                                  int tw, int th, int x, int y,
                                  int sx, int sy, int sw, int sh,

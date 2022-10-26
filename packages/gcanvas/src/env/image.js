@@ -9,10 +9,6 @@ let id = 0;
 
 class GImage extends Element {
   static GBridge = null;
-  static increaseId () {
-    id++;
-    return id;
-  }
 
   constructor() {
     super('img');

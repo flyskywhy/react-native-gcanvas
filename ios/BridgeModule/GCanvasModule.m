@@ -249,10 +249,23 @@ static NSMutableDictionary  *_staticModuleExistDict;
     });
 }
 
-- (void)bindCanvasTexture:(NSArray *)data componentId:(NSString*)componentId{
-    if (!data || ![data isKindOfClass:NSArray.class]) {
+- (void)drawCanvas2Canvas:(NSDictionary*)dict {
+    if (!dict || ![dict isKindOfClass:NSDictionary.class]) {
         return;
     }
+
+    NSString *srcComponentId = dict[@"srcComponentId"];
+    NSString *componentId = dict[@"dstComponentId"];
+    NSUInteger tw = [dict[@"tw"] integerValue];
+    NSUInteger th = [dict[@"th"] integerValue];
+    NSUInteger sx = [dict[@"sx"] integerValue];
+    NSUInteger sy = [dict[@"sy"] integerValue];
+    NSUInteger sw = [dict[@"sw"] integerValue];
+    NSUInteger sh = [dict[@"sh"] integerValue];
+    NSUInteger dx = [dict[@"dx"] integerValue];
+    NSUInteger dy = [dict[@"dy"] integerValue];
+    NSUInteger dw = [dict[@"dw"] integerValue];
+    NSUInteger dh = [dict[@"dh"] integerValue];
 
     GCanvasObject *gcanvasInst = self.gcanvasObjectDict[componentId];
     GCanvasPlugin *plugin = gcanvasInst.plugin;
@@ -261,14 +274,9 @@ static NSMutableDictionary  *_staticModuleExistDict;
         return;
     }
 
-    NSString *sCanvasId = data[0];
-    double sRatio = [data[1] doubleValue];
-    NSUInteger sWidth = [data[2] integerValue];
-    NSUInteger sHeight = [data[3] integerValue];
-    NSUInteger jsTextureId = [data[4] integerValue];
-
-    GCanvasObject *sCanvasInst = self.gcanvasObjectDict[sCanvasId];
-    if(!sCanvasInst) {
+    GCanvasObject *sCanvasInst = self.gcanvasObjectDict[srcComponentId];
+    GCanvasPlugin *sPlugin = sCanvasInst.plugin;
+    if(!sCanvasInst || !sPlugin) {
         return;
     }
     id<GCanvasViewProtocol> sComponent = sCanvasInst.component;
@@ -276,33 +284,17 @@ static NSMutableDictionary  *_staticModuleExistDict;
         return;
     }
 
-    __block UIImage *image;
-    dispatch_sync(dispatch_get_main_queue(), ^{
-        UIGraphicsBeginImageContextWithOptions(sComponent.glkview.bounds.size, NO, self.devicePixelRatio / sRatio);
+    GCVLOG_METHOD(@"srcComponentId:%@ componentId:%@", srcComponentId, componentId);
 
-        CGContextRef context = UIGraphicsGetCurrentContext();
-        // TODO: kCGInterpolationNone should enough for downscale Bitmap, maybe need ImageSmoothingEnabled() if someone need it :P
-        CGContextSetInterpolationQuality(context, kCGInterpolationNone);
+    uint8_t *pixels = (uint8_t*)malloc(tw * th * 4);
 
-        [sComponent.glkview drawViewHierarchyInRect:sComponent.glkview.frame afterScreenUpdates:YES];
+    [EAGLContext setCurrentContext:sComponent.glkview.context];
+    [sPlugin GetImageData:0 y:0 width:(int)tw height:(int)th rgbaData:pixels];
 
-        image = UIGraphicsGetImageFromCurrentImageContext();
-        UIGraphicsEndImageContext();
-    });
-
-    CGImageRef imageRef = CGImageCreateWithImageInRect(image.CGImage, CGRectMake(0, 0, sWidth, sHeight));
-    image = [UIImage imageWithCGImage:imageRef];
-    CGImageRelease(imageRef);
-
-    GLuint textureId = [plugin getTextureId:jsTextureId];
     [EAGLContext setCurrentContext:component.glkview.context];
-    textureId = [GCVCommon bindTexture:image imageSmoothingEnabled:plugin.imageSmoothingEnabled];
-    if (textureId > 0) {
-//        GCVLOG_METHOD(@"==>bindCanvasTexture success: jsTextureId:%d => texutreId:%d, componentId:%@", jsTextureId, textureId, componentId);
-        [plugin addTextureId:textureId withAppId:jsTextureId
-                       width:sWidth height:sHeight
-                   offscreen:NO];
-    }
+    [plugin DoDrawImageData:tw th:th rgbaData:pixels sx:sx sy:sy sw:sw sh:sh dx:dx dy:dy dw:dw dh:dh];
+
+    free(pixels);
 }
 
 /**

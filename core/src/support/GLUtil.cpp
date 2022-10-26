@@ -67,7 +67,7 @@ namespace gcanvas {
     }
 
     void PixelsSampler(int inWidth, int inHeight, int *inPixels, int outWidth, int outHeight,
-                       int *outPixels) {
+                       int *outPixels, bool imageSmoothingEnabled) {
         if (outWidth == 1 && outHeight == 1) {
             // when GetImageData 1x1 , it means APP want color pick 1 pixel, so
             // it's better not `pixel / 9` below but just pick 1 pixel exactly
@@ -82,20 +82,28 @@ namespace gcanvas {
         } else {
             for (int y = 0; y < outHeight; ++y) {
                 int inY = y * inHeight / outHeight;
-                int revertY = (inHeight - 1) - inY - 1;
+                int revertY = (inHeight - 1) - inY;
+                if (imageSmoothingEnabled) {
+                    revertY -= 1;
+                }
                 for (int x = 0; x < outWidth; ++x) {
-                    int inX = x * inWidth / outWidth + 1;
-                    RGBA pixel;
-                    pixel += GetPixel(inPixels, inX, revertY, inWidth, inHeight);
-                    pixel += GetPixel(inPixels, inX - 1, revertY - 1, inWidth, inHeight);
-                    pixel += GetPixel(inPixels, inX, revertY - 1, inWidth, inHeight);
-                    pixel += GetPixel(inPixels, inX + 1, revertY - 1, inWidth, inHeight);
-                    pixel += GetPixel(inPixels, inX - 1, revertY, inWidth, inHeight);
-                    pixel += GetPixel(inPixels, inX + 1, revertY, inWidth, inHeight);
-                    pixel += GetPixel(inPixels, inX - 1, revertY + 1, inWidth, inHeight);
-                    pixel += GetPixel(inPixels, inX, revertY + 1, inWidth, inHeight);
-                    pixel += GetPixel(inPixels, inX - 1, revertY + 1, inWidth, inHeight);
-                    outPixels[y * outWidth + x] = pixel / 9;
+                    int inX = x * inWidth / outWidth;
+                    if (imageSmoothingEnabled) {
+                        inX += 1;
+                        RGBA pixel;
+                        pixel += GetPixel(inPixels, inX, revertY, inWidth, inHeight);
+                        pixel += GetPixel(inPixels, inX - 1, revertY - 1, inWidth, inHeight);
+                        pixel += GetPixel(inPixels, inX, revertY - 1, inWidth, inHeight);
+                        pixel += GetPixel(inPixels, inX + 1, revertY - 1, inWidth, inHeight);
+                        pixel += GetPixel(inPixels, inX - 1, revertY, inWidth, inHeight);
+                        pixel += GetPixel(inPixels, inX + 1, revertY, inWidth, inHeight);
+                        pixel += GetPixel(inPixels, inX - 1, revertY + 1, inWidth, inHeight);
+                        pixel += GetPixel(inPixels, inX, revertY + 1, inWidth, inHeight);
+                        pixel += GetPixel(inPixels, inX - 1, revertY + 1, inWidth, inHeight);
+                        outPixels[y * outWidth + x] = pixel / 9;
+                    } else {
+                        outPixels[y * outWidth + x] = GetPixel(inPixels, inX, revertY, inWidth, inHeight);
+                    }
                 }
             }
         }

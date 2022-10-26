@@ -76,7 +76,7 @@ typedef void (^GCanvasModuleCallback)(id result);
  */
 - (void)preLoadImage:(NSArray *)data callback:(GCanvasModuleCallback)callback;
 
-- (void)bindCanvasTexture:(NSArray *)data componentId:(NSString*)componentId;
+- (void)drawCanvas2Canvas:(NSDictionary*)dict;
 
 /**
  * Export JS method for binding image to real native texture

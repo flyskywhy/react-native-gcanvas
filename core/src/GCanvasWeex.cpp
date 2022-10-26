@@ -245,6 +245,34 @@ void GCanvasWeex::Render(const char *renderCommands, int length) {
     }
 }
 
+void GCanvasWeex::GetImageDataWithoutStringCmd(int x, int y, int w, int h, unsigned char *rgbaData) {
+    if (mContextLost ||
+        nullptr == mCanvasContext->mCurrentState ||
+        nullptr == mCanvasContext->mCurrentState->mShader
+    ) {
+        return;
+    }
+//    LOG_D("GCanvasWeex::GetImageDataWithoutStringCmd begin... xy=(%d, %d), wh=(%d, %d)", x, y, w, h);
+    mCanvasContext->BindFBO();
+    mCanvasContext->GetImageData(x, y, w, h, rgbaData);
+    mCanvasContext->UnbindFBO();
+}
+
+void GCanvasWeex::DrawImageDataWithoutStringCmd(float tw, float th, const unsigned char *rgbaData,
+                                                float sx, float sy, float sw, float sh,
+                                                float dx, float dy, float dw, float dh) {
+    if (mContextLost ||
+        nullptr == mCanvasContext->mCurrentState ||
+        nullptr == mCanvasContext->mCurrentState->mShader
+    ) {
+        return;
+    }
+//    LOG_D("GCanvasWeex::DrawImageDataWithoutStringCmd");
+    mCanvasContext->BindFBO();
+    mCanvasContext->DoDrawImageData(tw, th, rgbaData, sx, sy, sw, sh, dx, dy, dw, dh);
+    mCanvasContext->UnbindFBO();
+}
+
 //for string cmd
 void GCanvasWeex::DrawImage(int textureId, float sx, float sy, float sw, float sh,
                             float dx, float dy, float dw, float dh) {
