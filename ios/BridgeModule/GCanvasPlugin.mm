@@ -63,6 +63,7 @@ void nsLog(const char *tag, const char *log) {
     gcanvasSystemLog = nsLog;
 
     if (self){
+        self.mGcanvasInitedSem = dispatch_semaphore_create(0);
 //        self.mExecCommands = dispatch_semaphore_create(1);
         self.mSyncSem = dispatch_semaphore_create(0);
         self.renderCommandArray = [[NSMutableArray alloc] init];
@@ -91,6 +92,7 @@ void nsLog(const char *tag, const char *log) {
 
 - (void)reInitContext{
     self.gcanvasInited = NO;
+//    [self removeCommands];
     self.gcanvas->ReCreateContext();
     self.context = self.gcanvas->GetGCanvasContext();
 }
@@ -104,7 +106,12 @@ void nsLog(const char *tag, const char *log) {
     if( !self.gcanvasInited ){
         self.gcanvas->OnSurfaceChanged(0, 0, frame.size.width, frame.size.height);
         self.gcanvasInited = YES;
+        dispatch_semaphore_signal(self.mGcanvasInitedSem);
     }
+}
+
+- (void)waitGcanvasInitedUtilTimeout{
+    dispatch_semaphore_wait(self.mGcanvasInitedSem, dispatch_time(DISPATCH_TIME_NOW, 500 * 1000 * 1000));
 }
 
 - (void)setClearColor:(UIColor*)color{

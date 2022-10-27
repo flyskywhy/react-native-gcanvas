@@ -29,6 +29,7 @@ typedef GCanvasPlugin* (^FetchPluginBlock)(NSString * componentId);
 
 @interface GCanvasPlugin : NSObject
 
+@property(strong, nonatomic) dispatch_semaphore_t mGcanvasInitedSem;
 //@property(strong, nonatomic) dispatch_semaphore_t mExecCommands;
 @property(strong, nonatomic) dispatch_semaphore_t mSyncSem;
 
@@ -56,6 +57,8 @@ typedef GCanvasPlugin* (^FetchPluginBlock)(NSString * componentId);
  *  @param      frame   frame of Canvas
  */
 - (void)setFrame:(CGRect)frame;
+
+- (void)waitGcanvasInitedUtilTimeout;
 
 /**
  *  @abstract   set Canvas clear color

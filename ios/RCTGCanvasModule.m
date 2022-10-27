@@ -108,9 +108,11 @@ RCT_EXPORT_BLOCKING_SYNCHRONOUS_METHOD(bindImageTexture:(NSArray *)data componen
 }
 
 //set context type
-RCT_EXPORT_METHOD(setContextType:(NSUInteger)type componentId:(NSString*)componentId)
+RCT_EXPORT_BLOCKING_SYNCHRONOUS_METHOD(setContextType:(NSUInteger)type componentId:(NSString*)componentId)
 {
     [self.gcanvasModule setContextType:type componentId:componentId];
+    
+    return nil;
 }
 
 RCT_EXPORT_METHOD(setDevicePixelRatio:(NSString*)componentId ratio:(CGFloat)ratio)
@@ -118,9 +120,11 @@ RCT_EXPORT_METHOD(setDevicePixelRatio:(NSString*)componentId ratio:(CGFloat)rati
     [self.gcanvasModule setDevicePixelRatio:componentId ratio:ratio];
 }
 
-RCT_EXPORT_METHOD(resetGlViewport:(NSString*)componentId)
+RCT_EXPORT_BLOCKING_SYNCHRONOUS_METHOD(resetGlViewport:(NSString*)componentId)
 {
     [self.gcanvasModule resetGlViewport:componentId];
+    
+    return nil;
 }
 
 RCT_EXPORT_BLOCKING_SYNCHRONOUS_METHOD(toDataURL:(NSString*)componentId mimeType:(NSString*)mimeType quality:(CGFloat)quality)

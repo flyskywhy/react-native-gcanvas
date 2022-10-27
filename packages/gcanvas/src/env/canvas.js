@@ -96,11 +96,11 @@ export default class GCanvas extends Element {
     if (isNormalCanvas) {
       GCanvas.GBridge.callResetGlViewport(this.id);
     } else {
-      // on iOS, resetGlViewport to global.createCanvasElements which comes from
+      // resetGlViewport to global.createCanvasElements which comes from
       // document.createElement('canvas') (as offscreen canvas) when replace
       // require('resize-image-data') in https://github.com/flyskywhy/PixelShapeRN/blob/master/src/utils/canvasUtils.js
-      // will cause APP crash, and since such canvas style is {position: 'absolute'}
-      // so no need of resetGlViewport, so no callResetGlViewport() here
+      // is invoked too frequently, and since such canvas style is {position: 'absolute'}
+      // so no need of resetGlViewport, so no GCanvas.GBridge.callResetGlViewport() here
     }
   }
 
@@ -157,6 +157,7 @@ export default class GCanvas extends Element {
       // `setContextType can not find canvas with id` then no effect for bindCanvasTexture or
       // some other canvas method, and it's not convenient to wait GCanvasView's props.onIsReady(),
       // so use `sleepMs()` by `for(;;)` wait enough to fix it.
+      // TODO: can remove these 3 sleepMs on iOS, so remove them on Android too
       sleepMs(130);
       if (__DEV__) {
         // and if not setLogLevel(0) (means no DEBUG print) in components/GCanvasComponent.js , need more wait...

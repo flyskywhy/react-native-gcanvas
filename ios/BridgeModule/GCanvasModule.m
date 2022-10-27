@@ -270,13 +270,13 @@ static NSMutableDictionary  *_staticModuleExistDict;
     GCanvasObject *gcanvasInst = self.gcanvasObjectDict[componentId];
     GCanvasPlugin *plugin = gcanvasInst.plugin;
     id<GCanvasViewProtocol> component = gcanvasInst.component;
-    if (!component || !plugin) {
+    if (!component || !plugin || !plugin.gcanvasInited) {
         return;
     }
 
     GCanvasObject *sCanvasInst = self.gcanvasObjectDict[srcComponentId];
     GCanvasPlugin *sPlugin = sCanvasInst.plugin;
-    if(!sCanvasInst || !sPlugin) {
+    if (!sCanvasInst || !sPlugin || !sPlugin.gcanvasInited) {
         return;
     }
     id<GCanvasViewProtocol> sComponent = sCanvasInst.component;
@@ -315,7 +315,7 @@ static NSMutableDictionary  *_staticModuleExistDict;
     GCanvasObject *gcanvasInst = self.gcanvasObjectDict[componentId];
     GCanvasPlugin *plugin = gcanvasInst.plugin;
     id<GCanvasViewProtocol> component = gcanvasInst.component;
-    if( !component || !plugin ){
+    if (!component || !plugin || !plugin.gcanvasInited) {
         if( callback ) callback(@{});
         return;
     }
@@ -401,25 +401,30 @@ static NSMutableDictionary  *_staticModuleExistDict;
             dispatch_main_sync_safe(^{
                 [component.glkview setNeedsDisplay];
             });
+            [plugin waitGcanvasInitedUtilTimeout];
         }
     }
 }
 
 - (void)resetGlViewport:(NSString*)componentId{
-    GCanvasObject *gcanvasInst = self.gcanvasObjectDict[componentId];
-    GCanvasPlugin *plugin = gcanvasInst.plugin;
-    int contextType = plugin.contextType;
-    [plugin reInitContext];
-    [plugin setContextType:contextType];
-    gcanvasInst.component.needChangeEAGLContenxt = YES;
+    @synchronized (self) {
+        GCVLOG_METHOD(@"componentId:%@", componentId);
+        GCanvasObject *gcanvasInst = self.gcanvasObjectDict[componentId];
+        GCanvasPlugin *plugin = gcanvasInst.plugin;
+        int contextType = plugin.contextType;
+        [plugin reInitContext];
+        [plugin setContextType:contextType];
+        gcanvasInst.component.needChangeEAGLContenxt = YES;
 
-    // ref to comment in setContextType() above
-    // TODO: `component.glkview.delegate = weakSelf;` for webgl? but webgl just seems working well after resetGlViewport() when canvas resize
-    id<GCanvasViewProtocol> component = gcanvasInst.component;
-    if (component) {
-        dispatch_main_sync_safe(^{
-            [component.glkview setNeedsDisplay];
-        });
+        // ref to comment in setContextType() above
+        // TODO: `component.glkview.delegate = weakSelf;` for webgl? but webgl just seems working well after resetGlViewport() when canvas resize
+        id<GCanvasViewProtocol> component = gcanvasInst.component;
+        if (component) {
+            dispatch_main_sync_safe(^{
+                [component.glkview setNeedsDisplay];
+            });
+            [plugin waitGcanvasInitedUtilTimeout];
+        }
     }
 }
 
@@ -699,7 +704,7 @@ static NSMutableDictionary  *_staticModuleExistDict;
     }
     id<GCanvasViewProtocol> component = gcanvasInst.component;
     GCanvasPlugin *plugin = gcanvasInst.plugin;
-    if (!component || !plugin){
+    if (!component || !plugin || !plugin.gcanvasInited) {
         return;
     }
 
@@ -729,6 +734,10 @@ static NSMutableDictionary  *_staticModuleExistDict;
     id<GCanvasViewProtocol> component = gcanvasInst.component;
     GCanvasPlugin *plugin = gcanvasInst.plugin;
     if (!component || !plugin) {
+        return retDict;
+    }
+    if (!component || !plugin || !plugin.gcanvasInited) {
+        GCVLOG_METHOD(@"plugin.gcanvasInited:%d", plugin.gcanvasInited);
         return retDict;
     }
 
