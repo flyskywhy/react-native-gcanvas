@@ -168,6 +168,8 @@ export default class CanvasRenderingContext2D {
   }
 
   set imageSmoothingEnabled(value) {
+    // 'if' can be here because needDisableImageSmoothing in ios/BridgeModule/GCanvasPlugin.mm
+    // also do the work when resetGlViewport
     if (this._imageSmoothingEnabled !== Number(value)) {
       this._imageSmoothingEnabled = Number(value);
       this._drawCommands = this._drawCommands.concat('O' + this._imageSmoothingEnabled + ';');

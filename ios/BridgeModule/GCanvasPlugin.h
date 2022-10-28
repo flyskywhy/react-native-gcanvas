@@ -145,8 +145,6 @@ typedef GCanvasPlugin* (^FetchPluginBlock)(NSString * componentId);
  */
 - (int)contextType;
 
-- (BOOL)imageSmoothingEnabled;
-
 - (void)GetImageData:(int)x y:(int)y width:(int)width height:(int)height rgbaData:(uint8_t *)rgbaData;
 
 - (void)DoDrawImageData:(float)tw th:(float)th rgbaData:(const uint8_t *)rgbaData

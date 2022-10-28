@@ -29,6 +29,7 @@ void nsLog(const char *tag, const char *log) {
 @property(nonatomic, assign) GCanvasContext *context;
 @property(nonatomic, strong) NSMutableArray *renderCommandArray;
 @property(nonatomic, strong) NSMutableDictionary *textureDict;
+@property(nonatomic, assign) BOOL needDisableImageSmoothing;
 
 @property(nonatomic, weak) GLKView *glkview;
 
@@ -70,6 +71,7 @@ void nsLog(const char *tag, const char *log) {
         self.textureDict = NSMutableDictionary.dictionary;
 
         self.gcanvasInited = NO;
+        self.needDisableImageSmoothing = NO; // default mImageSmoothingEnabled is true in core/src/gcanvas/GCanvasState.h
         self.componentId = componentId;
 
         gcanvas::GCanvasManager* manager = gcanvas::GCanvasManager::GetManager();
@@ -92,6 +94,7 @@ void nsLog(const char *tag, const char *log) {
 
 - (void)reInitContext{
     self.gcanvasInited = NO;
+    self.needDisableImageSmoothing = !self.context->ImageSmoothingEnabled();
 //    [self removeCommands];
     self.gcanvas->ReCreateContext();
     self.context = self.gcanvas->GetGCanvasContext();
@@ -105,6 +108,16 @@ void nsLog(const char *tag, const char *log) {
     if( !self.gcanvas ) return;
     if( !self.gcanvasInited ){
         self.gcanvas->OnSurfaceChanged(0, 0, frame.size.width, frame.size.height);
+
+        // OnSurfaceChanged above will invoke GCanvasContext::InitializeGLEnvironment()
+        // then invoke GCanvasContext::ResetStateStack() to init
+        // GCanvasContext->mCurrentState so that SetImageSmoothingEnabled below can
+        // set mCurrentState->mImageSmoothingEnabled
+        if (self.needDisableImageSmoothing) {
+            self.needDisableImageSmoothing = NO;
+            self.context->SetImageSmoothingEnabled(NO);
+        }
+        
         self.gcanvasInited = YES;
         dispatch_semaphore_signal(self.mGcanvasInitedSem);
     }
@@ -285,14 +298,6 @@ void nsLog(const char *tag, const char *log) {
 - (int)contextType{
     if( !self.gcanvas ) return 0;
     return self.gcanvas->GetContextType();
-}
-
-- (BOOL)imageSmoothingEnabled {
-    if (self.context) {
-        return self.context->ImageSmoothingEnabled();
-    } else {
-        return YES;
-    }
 }
 
 - (void)GetImageData:(int)x y:(int)y width:(int)width height:(int)height rgbaData:(uint8_t *)rgbaData {
