@@ -49,8 +49,6 @@
  */
 @property (nonatomic, strong) NSMutableDictionary *gcanvasObjectDict;
 
-@property (nonatomic, assign) CGFloat devicePixelRatio;
-
 /**
  * enter background flag
  */
@@ -168,7 +166,6 @@ static NSMutableDictionary  *_staticModuleExistDict;
     GCVWeakSelf
     id<GCanvasViewProtocol> component = [self.deletage gcanvasComponentById:componentId];
     if( component ){
-        self.devicePixelRatio = component.devicePixelRatio;
         dispatch_sync([self gcanvasExecuteQueue], ^{
             EAGLContext *context = [GCanvasModule createEAGLContextWithModuleInstance:[weakSelf.deletage gcanvasModuleInstanceId]];
             context.multiThreaded = YES;
@@ -650,20 +647,16 @@ static NSMutableDictionary  *_staticModuleExistDict;
                                          compFrame.size.width*component.devicePixelRatio,
                                          compFrame.size.height*component.devicePixelRatio);
         [plugin setClearColor:component.glkview.backgroundColor];
-        [plugin setFrame:gcanvasFrame];
+        [plugin setFrame:gcanvasFrame devicePixelRatio:component.devicePixelRatio];
     });
-
-    GCVLOG_METHOD(@"enable devicePixelRatio %f", self.devicePixelRatio);
-    [plugin setDevicePixelRatio:self.devicePixelRatio];
 }
 
 - (void)setDevicePixelRatio:(NSString*)componentId ratio:(CGFloat)ratio {
     GCVLOG_METHOD(@"setDevicePixelRatio:componentId:%@, ratio:%f", componentId, ratio);
-    self.devicePixelRatio = ratio;
     GCanvasObject *gcanvasInst = self.gcanvasObjectDict[componentId];
     GCanvasPlugin *plugin = gcanvasInst.plugin;
     if (plugin) {
-        [plugin setDevicePixelRatio:self.devicePixelRatio];
+        [plugin setDevicePixelRatio:ratio];
     }
 }
 

@@ -55,8 +55,9 @@ typedef GCanvasPlugin* (^FetchPluginBlock)(NSString * componentId);
 /**
  *  @abstract   set Canvas frame
  *  @param      frame   frame of Canvas
+ *  @param      devicePixelRatio   value of pixel ratio
  */
-- (void)setFrame:(CGRect)frame;
+- (void)setFrame:(CGRect)frame devicePixelRatio:(CGFloat)devicePixelRatio;
 
 - (void)waitGcanvasInitedUtilTimeout;
 

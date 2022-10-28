@@ -104,7 +104,7 @@ void nsLog(const char *tag, const char *log) {
     [self removeGCanvas];
 }
 
-- (void)setFrame:(CGRect)frame{
+- (void)setFrame:(CGRect)frame devicePixelRatio:(CGFloat)devicePixelRatio {
     if( !self.gcanvas ) return;
     if( !self.gcanvasInited ){
         self.gcanvas->OnSurfaceChanged(0, 0, frame.size.width, frame.size.height);
@@ -117,7 +117,10 @@ void nsLog(const char *tag, const char *log) {
             self.needDisableImageSmoothing = NO;
             self.context->SetImageSmoothingEnabled(NO);
         }
-        
+
+        GCVLOG_METHOD(@"enable devicePixelRatio %f", devicePixelRatio);
+        self.context->SetDevicePixelRatio(devicePixelRatio);
+
         self.gcanvasInited = YES;
         dispatch_semaphore_signal(self.mGcanvasInitedSem);
     }
