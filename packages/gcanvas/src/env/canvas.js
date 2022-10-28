@@ -158,6 +158,8 @@ export default class GCanvas extends Element {
       // some other canvas method, and it's not convenient to wait GCanvasView's props.onIsReady(),
       // so use `sleepMs()` by `for(;;)` wait enough to fix it.
       // TODO: can remove these 3 sleepMs on iOS, so remove them on Android too
+      // TODO: iOS need at least sleepMs(130), otherwise will crash with https://github.com/flyskywhy/PixelShapeRN
+      // modified to resizeImageData with canvas and GCanvas.GBridge.callResetGlViewport(this.id) despite isNormalCanvas
       sleepMs(130);
       if (__DEV__) {
         // and if not setLogLevel(0) (means no DEBUG print) in components/GCanvasComponent.js , need more wait...
