@@ -408,9 +408,13 @@ static NSMutableDictionary  *_staticModuleExistDict;
 
 - (void)resetGlViewport:(NSString*)componentId{
     @synchronized (self) {
-        GCVLOG_METHOD(@"componentId:%@", componentId);
         GCanvasObject *gcanvasInst = self.gcanvasObjectDict[componentId];
         GCanvasPlugin *plugin = gcanvasInst.plugin;
+        if (!plugin || !plugin.gcanvasInited) {
+            return;
+        }
+
+        GCVLOG_METHOD(@"componentId:%@", componentId);
         int contextType = plugin.contextType;
         [plugin reInitContext];
         [plugin setContextType:contextType];
