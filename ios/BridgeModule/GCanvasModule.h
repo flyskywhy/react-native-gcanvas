@@ -31,6 +31,7 @@ typedef void (^GCanvasModuleCallback)(id result);
 
 #define kGCanvasResetNotification       @"kGCanvasReset"
 #define kGCanvasCompLoadedNotification  @"kGCanvasCompLoaded"
+#define kGCanvasCompUnloadedNotification  @"kGCanvasCompUnloaded"
 #define kGCanvasDestroyNotification     @"kGCanvasDestroy"
 
 

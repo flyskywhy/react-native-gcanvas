@@ -131,6 +131,10 @@ static NSMutableDictionary  *_staticModuleExistDict;
                                                      name:kGCanvasCompLoadedNotification
                                                    object:nil];
         [[NSNotificationCenter defaultCenter] addObserver:self
+                                                 selector:@selector(onGCanvasCompUnloadedNotify:)
+                                                     name:kGCanvasCompUnloadedNotification
+                                                   object:nil];
+        [[NSNotificationCenter defaultCenter] addObserver:self
                                                  selector:@selector(onGCanvasResetNotify:)
                                                      name:kGCanvasResetNotification
                                                    object:nil];
@@ -182,9 +186,9 @@ static NSMutableDictionary  *_staticModuleExistDict;
 - (void)disable:(NSString*)componentId{
     GCVLOG_METHOD(@"disable:, componentId=%@", componentId);
 
-    [[NSNotificationCenter defaultCenter] postNotificationName:kGCanvasDestroyNotification
+    [[NSNotificationCenter defaultCenter] postNotificationName:kGCanvasCompUnloadedNotification
                                                         object:nil
-                                                      userInfo:@{@"instanceId":[self.deletage gcanvasModuleInstanceId]}];
+                                                      userInfo:@{@"componentId":componentId}];
 }
 
 #pragma mark - Need Export Context2D Method
@@ -472,6 +476,25 @@ static NSMutableDictionary  *_staticModuleExistDict;
 #pragma mark - Notification
 - (void)onGCanvasCompLoadedNotify:(NSNotification*)notification{
     NSLog(@"onGCanvasCompLoadedNotify...");
+}
+
+- (void)onGCanvasCompUnloadedNotify:(NSNotification*)notification{
+    NSString *componentId = notification.userInfo[@"componentId"];
+
+    [self.gcanvasObjectDict enumerateKeysAndObjectsUsingBlock:^(NSString *compId, GCanvasObject *gcanvasInst, BOOL * _Nonnull stop) {
+        if ( [componentId isEqualToString:gcanvasInst.componentId] &&  gcanvasInst.component ) {
+            id<GCanvasViewProtocol> comp = gcanvasInst.component;
+            comp.glkview.delegate = nil;
+
+            GCanvasPlugin *plugin = gcanvasInst.plugin;
+            [plugin removeGCanvas];
+            [plugin removeCommands];
+        }
+    }];
+
+    [self.gcanvasObjectDict removeObjectForKey:componentId];
+
+    [_staticModuleExistDict removeObjectForKey:[self.deletage gcanvasModuleInstanceId]];
 }
 
 - (void)onGCanvasResetNotify:(NSNotification*)notification{
