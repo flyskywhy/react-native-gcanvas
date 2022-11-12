@@ -641,7 +641,7 @@ public class GReactModule extends ReactContextBaseJavaModule implements Lifecycl
 
         int border = 0;
 
-        String cmd = "102,9," + target + "," + level + "," + glInternalformat + "," + bmpWidth + "," + bmpHeight + "," + border + "," +
+        String cmd = "102,9," + target + "," + level + "," + glInternalformat + "," + bmpWidth + "," + bmpHeight + "," + border + ","
                 + glFormat + "," + type + "," + arrayType +  "," + base64Str;
 
         mImpl.extendCallNative(refId, cmd, 0x60000000); // 0x60000000 ref to packages/gcanvas/src/bridge/react-native.js
@@ -680,7 +680,7 @@ public class GReactModule extends ReactContextBaseJavaModule implements Lifecycl
         String pixelStr = Arrays.toString(byteArray).replace("[","").replace("]","").replace(" ","");
         String base64Str = Base64.encodeToString(pixelStr.getBytes(), Base64.NO_WRAP);
 
-        String cmd = "105,9," + target + "," + level + "," + xoffset + ',' + yoffset + "," + bmpWidth + "," + bmpHeight + "," +
+        String cmd = "105,9," + target + "," + level + "," + xoffset + ',' + yoffset + "," + bmpWidth + "," + bmpHeight + ","
                 + format + "," + type + "," + arrayType +  "," + base64Str;
 
         mImpl.extendCallNative(refId, cmd, 0x60000000); // 0x60000000 ref to packages/gcanvas/src/bridge/react-native.js
