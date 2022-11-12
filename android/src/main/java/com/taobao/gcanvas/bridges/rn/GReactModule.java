@@ -317,47 +317,37 @@ public class GReactModule extends ReactContextBaseJavaModule implements Lifecycl
     private RNModuleImpl mImpl;
 
     @ReactMethod(isBlockingSynchronousMethod = true)
-    public void bindCanvasTexture(final ReadableArray array, final String refId) {
-        if (null == array || TextUtils.isEmpty(refId)) {
+    public void drawCanvas2Canvas(final ReadableMap map) {
+        if (null == map) {
             return;
         }
-        GReactTextureView textureView = mViews.get(refId);
+        String srcComponentId = map.getString("srcComponentId");
+        String componentId = map.getString("dstComponentId");
+        int tw = map.getInt("tw");
+        int th = map.getInt("th");
+        int sx = map.getInt("sx");
+        int sy = map.getInt("sy");
+        int sw = map.getInt("sw");
+        int sh = map.getInt("sh");
+        int dx = map.getInt("dx");
+        int dy = map.getInt("dy");
+        int dw = map.getInt("dw");
+        int dh = map.getInt("dh");
+
+        GReactTextureView textureView = mViews.get(componentId);
         if (null == textureView) {
-            GLog.w(TAG, "can not find canvas with id ===> " + refId);
+            GLog.w(TAG, "can not find canvas with id ===> " + componentId);
             return;
         }
-        String sCanvasId = array.getString(0);
-        GReactTextureView sCanvasView = mViews.get(sCanvasId);
-        if (null == sCanvasView) {
-            GLog.w(TAG, "can not find source canvas with id ===> " + sCanvasId);
+        GReactTextureView srcTextureView = mViews.get(srcComponentId);
+        if (null == srcTextureView) {
+            GLog.w(TAG, "can not find source canvas with id ===> " + srcComponentId);
             return;
         }
-        double sRatio = array.getDouble(1);
-        int sWidth = array.getInt(2);
-        int sHeight = array.getInt(3);
-        int rid = array.getInt(4);
 
-        // bmpOfFullCanvas is always using sRatio
-        Bitmap bmpOfFullCanvas = sCanvasView.getBitmap();
+        GLog.d(TAG, "drawCanvas2Canvas srcComponentId:" + srcComponentId + " componentId:" + componentId);
 
-        // as described beside bindCanvasTexture() in packages/gcanvas/src/context/2d/RenderingContext.js ,
-        // maybe sWidth != sCanvas.width , so Demand here
-        Bitmap bmpOfDemand = Bitmap.createBitmap(bmpOfFullCanvas, 0, 0, (int)(sWidth * sRatio), (int)(sHeight * sRatio));
-
-        // after bindCanvasTexture() in packages/gcanvas/src/context/2d/RenderingContext.js then will call
-        // drawImageCommands() which eat image with ratio 1 , so Ratio1 here
-        // TODO: false should enough for downscale Bitmap, maybe need be ImageSmoothingEnabled() if someone need it :P
-        Bitmap bmpWithRatio1 = sRatio > 1 ? Bitmap.createScaledBitmap(bmpOfDemand, sWidth, sHeight, false) : bmpOfDemand;
-
-        // Bitmap.CompressFormat format = Bitmap.CompressFormat.PNG;
-        // String base64Str = "data:image/png;base64,";
-        // ByteArrayOutputStream baos = new ByteArrayOutputStream();
-        // bmpWithRatio1.compress(format, 100, baos);
-        // byte[] byteArray = baos.toByteArray();
-        // base64Str += Base64.encodeToString(byteArray, Base64.NO_WRAP);
-        // mImpl.bindImageTexture(textureView.getCanvasKey(), base64Str, rid, null);
-
-        mImpl.bindImageTexture(textureView.getCanvasKey(), bmpWithRatio1, rid);
+        mImpl.drawCanvas2Canvas(textureView.getCanvasKey(), tw, th, srcTextureView.getCanvasKey(), sx, sy, sw, sh, dx, dy, dw, dh);
     }
 
     @ReactMethod(isBlockingSynchronousMethod = true)

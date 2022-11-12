@@ -82,6 +82,17 @@ struct BitmapCmd
     int xoffset;
     int yoffset;
     int id;
+
+    int tw;
+    int th;
+    int sx;
+    int sy;
+    int sw;
+    int sh;
+    int dx;
+    int dy;
+    int dw;
+    int dh;
 };
 
 // -----------------------------------------------------------

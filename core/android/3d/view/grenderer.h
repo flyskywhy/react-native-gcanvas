@@ -47,6 +47,9 @@ public:
 
     void waitResponse();
 
+    void drawImageData(int tw, int th, std::string base64ImageData,
+                       int sx, int sy, int sw, int sh, int dx, int dy, int dw, int dh);
+
     void bindTexture(JNIEnv *env, jobject bitmap, int id, int target, int level, int internalformat,
                      int format, int type);
 

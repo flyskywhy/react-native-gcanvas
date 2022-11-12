@@ -172,6 +172,14 @@ JNIEXPORT void JNICALL Java_com_taobao_gcanvas_GCanvasJNI_setConfig(JNIEnv *je,
 JNIEXPORT jstring JNICALL Java_com_taobao_gcanvas_GCanvasJNI_exeSyncCmd
         (JNIEnv *je, jclass jc, jstring ContextID, jint type, jstring args);
 
+JNIEXPORT void JNICALL Java_com_taobao_gcanvas_GCanvasJNI_drawCanvas2Canvas(
+        JNIEnv *je, jclass jc, jstring contextId, jint tw, jint th, jstring srcContextId,
+        jint sx, jint sy, jint sw, jint sh, jint dx, jint dy, jint dw, jint dh);
+
+JNIEXPORT void JNICALL Java_com_taobao_gcanvas_GCanvasJNI_drawImageData(
+        JNIEnv *je, jclass jc, jstring contextId, jint tw, jint th, jstring base64ImageData,
+        jint sx, jint sy, jint sw, jint sh, jint dx, jint dy, jint dw, jint dh);
+
 JNIEXPORT void JNICALL Java_com_taobao_gcanvas_GCanvasJNI_bindTexture(
         JNIEnv *je, jclass jc, jstring contextId, jobject bitmap, jint id,
         jint target, jint level, jint internalformat, jint format, jint type);

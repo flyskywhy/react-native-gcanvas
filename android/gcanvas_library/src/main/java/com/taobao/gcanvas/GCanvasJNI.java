@@ -219,6 +219,12 @@ public class GCanvasJNI {
 
     public static native void setPreCompilePath(String path);
 
+    public static native void drawCanvas2Canvas(String contextId, int tw, int th, String srcContextId,
+                                                int sx, int sy, int sw, int sh, int dx, int dy, int dw, int dh);
+
+    public static native void drawImageData(String contextId, int tw, int th, String base64ImageData,
+                                            int sx, int sy, int sw, int sh, int dx, int dy, int dw, int dh);
+
     public static native void bindTexture(String contextId, Bitmap bitmap, int id,
                                           int target, int level, int internalformat, int format, int type);
 

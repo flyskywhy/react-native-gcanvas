@@ -59,13 +59,8 @@ public interface IGBridgeModule<JSCallback> {
      */
     void disable(String canvasId);
 
-    /**
-     * bind the specified image to the specified canvas's OpenGL environment.
-     * @param canvasId
-     * @param bmp
-     * @param id image id, a unique id that used for tracking cache.
-     */
-    void bindImageTexture(String canvasId, Bitmap bmp, int id);
+    void drawCanvas2Canvas(String canvasId, int tw, int th, String srcCanvasId,
+                           int sx, int sy, int sw, int sh, int dx, int dy, int dw, int dh);
 
     /**
      * bind the specified image to the specified canvas's OpenGL environment.

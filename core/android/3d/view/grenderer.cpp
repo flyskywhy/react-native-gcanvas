@@ -6,7 +6,7 @@
 #include <android/bitmap.h>
 #include <support/Util.h>
 #include "grenderer.h"
-
+#include "support/Encode.h"
 
 
 GRenderer::GRenderer(std::string key) : m_egl_context(0),
@@ -274,7 +274,22 @@ void GRenderer::renderLoop() {
         if (m_bindtexture && m_egl_surface != EGL_NO_SURFACE) {
             while (!mBitmapQueue.empty()) {
                 struct BitmapCmd *p = reinterpret_cast<struct BitmapCmd * >(mBitmapQueue.front());
-                mProxy->bindTexture(*p);
+                if (p->id == -1) {
+                    mProxy->DrawImageDataWithoutStringCmd(p->tw,
+                                                          p->th,
+                                                          (unsigned char *)(p->Bitmap),
+                                                          p->sx,
+                                                          p->sy,
+                                                          p->sw,
+                                                          p->sh,
+                                                          p->dx,
+                                                          p->dy,
+                                                          p->dw,
+                                                          p->dh);
+                    free(p->Bitmap);
+                } else {
+                    mProxy->bindTexture(*p);
+                }
 
                 mBitmapQueue.pop();
                 delete p;
@@ -361,6 +376,66 @@ void GRenderer::requestViewportChanged() {
     m_viewportchanged = true;
     pthread_cond_signal(&m_cond);
     waitUtilTimeout(&m_SyncSem, GCANVAS_TIMEOUT);
+}
+
+void GRenderer::drawImageData(int tw, int th, const std::string base64ImageData,
+                              int sx, int sy, int sw, int sh,
+                              int dx, int dy, int dw, int dh) {
+    int buf_size = 4 * tw * th;
+
+    // std::string pixelsData;
+    // std::string *ptr_data = &pixelsData;
+    // ptr_data->resize(buf_size);
+    // char *pixels = (char *) ptr_data->c_str();
+    // TODO: Which is more efficient? std::string or malloc?
+    char *pixels = (char *) malloc(buf_size);
+
+    int base64ImageDataLength = base64ImageData.size();
+    gcanvas::Base64DecodeBuf(pixels, base64ImageData.c_str(), base64ImageDataLength);
+
+    struct BitmapCmd *p = new struct BitmapCmd();
+    p->id = -1;
+    p->tw = tw;
+    p->th = th;
+    p->Bitmap = pixels;
+    p->sx = sx;
+    p->sy = sy;
+    p->sw = sw;
+    p->sh = sh;
+    p->dx = dx;
+    p->dy = dy;
+    p->dw = dw;
+    p->dh = dh;
+
+    if (this->mProxy != nullptr) {
+        // mProxy->DrawImageDataWithoutStringCmd(p->tw,
+        //                                       p->th,
+        //                                       (unsigned char *)(p->Bitmap),
+        //                                       p->sx,
+        //                                       p->sy,
+        //                                       p->sw,
+        //                                       p->sh,
+        //                                       p->dx,
+        //                                       p->dy,
+        //                                       p->dw,
+        //                                       p->dh);
+
+        // above can't work, don't know why, so use mBitmapQueue below
+
+        mBitmapQueue.push(p);
+        m_bindtexture = true;
+
+        LOG_D("start to drawImageData,tw=%d,th=%d,sx=%d,sy=%d,sw=%d,sh=%d,dx=%d,dy=%d,dw=%d,dh=%d\n",
+              tw, th, sx, sy, sw, sh, dx, dy, dw, dh);
+        pthread_cond_signal(&m_cond);
+
+        gcanvas::waitUtilTimeout(&m_SyncSem, GCANVAS_TIMEOUT);
+
+        LOG_D("finish wait in drawImageData.");
+    } else {
+        delete p;
+        LOG_D("the proxy is null when drawImageData.");
+    }
 }
 
 void GRenderer::bindTexture(JNIEnv *env, jobject bitmap, int id, int target, int level,

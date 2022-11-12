@@ -573,6 +573,70 @@ JNIEXPORT void JNICALL Java_com_taobao_gcanvas_GCanvasJNI_setConfig(
     free(configKey);
 }
 
+JNIEXPORT void JNICALL Java_com_taobao_gcanvas_GCanvasJNI_drawCanvas2Canvas(
+        JNIEnv *je, jclass jc, jstring contextId, jint tw, jint th, jstring srcContextId,
+        jint sx, jint sy, jint sw, jint sh, jint dx, jint dy, jint dw, jint dh) {
+    if (!contextId || !srcContextId) {
+        return;
+    }
+
+//     GCanvasManager *theManager = GCanvasManager::GetManager();
+//     char *canvasId = jstringToString(je, contextId);
+//     GCanvasWeex *dstCanvas = (GCanvasWeex *) theManager->GetCanvas(canvasId);
+//     free(canvasId);
+//     canvasId = jstringToString(je, srcContextId);
+//     GCanvasWeex *srcCanvas = (GCanvasWeex *) theManager->GetCanvas(canvasId);
+//     free(canvasId);
+//
+//     if (dstCanvas && srcCanvas) {
+//         LOG_D("drawCanvas2Canvas in gcanvasjni.");
+//         unsigned char *pixels = (unsigned char *) malloc(tw * th * 4);
+//         srcCanvas->GetImageDataWithoutStringCmd(0, 0, tw, th, pixels);
+//         LOG_D("drawCanvas2Canvas DrawImageDataWithoutStringCmd %d %d %d %d %d %d %d %d %d %d %d", tw, th, *pixels, sx, sy, sw, sh, dx, dy, dw, dh);
+//         dstCanvas->DrawImageDataWithoutStringCmd(tw, th, pixels, sx, sy, sw, sh, dx, dy, dw, dh);
+//         free(pixels);
+//     }
+
+    // above can't work, don't know why pixels always 0, so use StringCmd below
+
+    char renderCommands[16] = {0};
+    sprintf(renderCommands, "R0,0,%d,%d;", tw, th);
+    jstring base64ImageData = Java_com_taobao_gcanvas_GCanvasJNI_render(
+        je, jc, srcContextId, je->NewStringUTF(renderCommands), 0x20000000);  // 0x20000000 ref to packages/gcanvas/src/bridge/react-native.js
+
+    Java_com_taobao_gcanvas_GCanvasJNI_drawImageData(
+        je, jc, contextId, tw, th, base64ImageData,
+        sx, sy, sw, sh, dx, dy, dw, dh);
+
+    je->DeleteLocalRef(base64ImageData);
+}
+
+JNIEXPORT void JNICALL Java_com_taobao_gcanvas_GCanvasJNI_drawImageData(
+        JNIEnv *je, jclass jc, jstring contextId, jint tw, jint th, jstring base64ImageData,
+        jint sx, jint sy, jint sw, jint sh, jint dx, jint dy, jint dw, jint dh) {
+    if (!contextId) {
+        return;
+    }
+    const char *str_chars = je->GetStringUTFChars(contextId, NULL);
+    if (!str_chars) {
+        je->ReleaseStringUTFChars(contextId, str_chars);
+        return;
+    }
+
+    string cxx_string = string(str_chars);
+
+    GRenderer *render = GManager::getSingleton()->findRenderer(cxx_string);
+    if (render != nullptr) {
+        LOG_D("drawImageData in gcanvasjni.");
+
+        char *bid = jstringToString(je, base64ImageData);
+        string b64ImageData = bid;
+        free(bid);
+
+        render->drawImageData(tw, th, b64ImageData, sx, sy, sw, sh, dx, dy, dw, dh);
+    }
+}
+
 JNIEXPORT void JNICALL Java_com_taobao_gcanvas_GCanvasJNI_bindTexture(
         JNIEnv *je, jclass jc, jstring contextId, jobject bitmap, jint id,
         jint target, jint level, jint internalformat, jint format, jint type) {
