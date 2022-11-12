@@ -80,16 +80,26 @@ namespace gcanvas {
             int inX = 0; // left is 0
             outPixels[0] = GetPixel(inPixels, inX, revertY, inWidth, inHeight);
         } else {
+            float scaleWidth = inWidth / outWidth;
+            float offsetX = scaleWidth / 2;
+            if (scaleWidth < 2) {
+                // can't find an offsetX to PixelsSampler without a flaw for 1 < scaleWidth < 2 , so just 0
+                offsetX = 0;
+            }
+
+            float scaleHeight = inHeight / outHeight;
+            float offsetY = scaleHeight / 2;
+            if (scaleHeight < 2) {
+                offsetX = 0;
+            }
+
             for (int y = 0; y < outHeight; ++y) {
-                int inY = y * inHeight / outHeight;
+                // here inHeight / outHeight is more accurate than scaleHeight for inY
+                int inY = y * inHeight / outHeight + offsetY;
                 int revertY = (inHeight - 1) - inY;
-                if (imageSmoothingEnabled) {
-                    revertY -= 1;
-                }
                 for (int x = 0; x < outWidth; ++x) {
-                    int inX = x * inWidth / outWidth;
+                    int inX = x * inWidth / outWidth + offsetX;
                     if (imageSmoothingEnabled) {
-                        inX += 1;
                         RGBA pixel;
                         pixel += GetPixel(inPixels, inX, revertY, inWidth, inHeight);
                         pixel += GetPixel(inPixels, inX - 1, revertY - 1, inWidth, inHeight);
