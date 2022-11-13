@@ -8,7 +8,7 @@ All notable changes of this project will be documented in.
 ### Changed
 
 * React Native GCanvas Component
-        * fix: width and height of canvas is fixed not float just like Web, now resizeCanvasToDisplaySize() in `node_modules/webgl-utils.js/` works well
+    * fix: width and height of canvas is fixed not float just like Web, now resizeCanvasToDisplaySize() in `node_modules/webgl-utils.js/` works well
 
 
 ## [2.3.26] - 2022-09-30 Happy National Day (10-01) of the People's Republic of China
@@ -16,7 +16,7 @@ All notable changes of this project will be documented in.
 ### Changed
 
 * React Native GCanvas Component
-        * fix: `EventEmitter.removeListener ... Method has been deprecated` #44
+    * fix: `EventEmitter.removeListener ... Method has been deprecated` #44
 
 
 ## [2.3.25] - 2022-09-18 Chinese do not forget the September 18 Incident that marked the start of Japan's 14-year invasion of China
@@ -24,9 +24,9 @@ All notable changes of this project will be documented in.
 ### Changed
 
 * React Native GCanvas Component
-        * README.md: install react-native-unimodules without install expo
-        * refactor: Zdog rendering different from the web #46
-        * fix: support https://developer.mozilla.org/en-US/docs/Web/API/Element/setAttribute to avoid crash with [Zdog Mario](https://codepen.io/desandro/pen/qxjmKM)
+    * README.md: install react-native-unimodules without install expo
+    * refactor: Zdog rendering different from the web #46
+    * fix: support https://developer.mozilla.org/en-US/docs/Web/API/Element/setAttribute to avoid crash with [Zdog Mario](https://codepen.io/desandro/pen/qxjmKM)
 
 
 ## [2.3.23] - 2022-05-29
@@ -34,7 +34,7 @@ All notable changes of this project will be documented in.
 ### Changed
 
 * React Native GCanvas Component
-        * feat: call drawImage() in loop with only one GImage instance #41, just like what Web can do
+    * feat: call drawImage() in loop with only one GImage instance #41, just like what Web can do
 
 
 ## [2.3.22] - 2022-05-28
@@ -42,7 +42,7 @@ All notable changes of this project will be documented in.
 ### Changed
 
 * React Native GCanvas Component
-        * fix: iOS memory leak when recreate canvas #42
+    * fix: iOS memory leak when recreate canvas #42
 
 
 ## [2.3.21] - 2022-04-01
@@ -117,7 +117,7 @@ All notable changes of this project will be documented in.
 ### Changed
 
 * React Native GCanvas Component
-	* fix: context was scaled when `Canvas resize` #32 fixed by `this.canvas.width = width; this.canvas.height = height;` to match the same solution on Web <canvas/> , `onCanvasResize` usage can ref to README.md diff of commit 8225a74
+	* fix: context was scaled when `Canvas resize` #32 fixed by `this.canvas.width = width; this.canvas.height = height;` to match the same solution on Web `<canvas/>` , `onCanvasResize` usage can ref to README.md diff of commit 8225a74
 
 
 ## [2.3.9] - 2022-01-12
