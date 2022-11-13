@@ -76,7 +76,7 @@ public class GReactModule extends ReactContextBaseJavaModule implements Lifecycl
 
         @Override
         public void execute() {
-            setContextType(type, canvasId);
+            setContextTypeOnce(type, canvasId);
         }
     }
 
@@ -479,12 +479,36 @@ public class GReactModule extends ReactContextBaseJavaModule implements Lifecycl
         }
     }
 
-    @ReactMethod
+    public GReactTextureView waitTextureViewReady(String refId, int timeoutMs) {
+        int i = timeoutMs / 16; // TODO: maybe smaller than 16 is better
+
+        GReactTextureView textureView = null;
+        while (i-- > 0) {
+            textureView = mViews.get(refId);
+            if (null != textureView) {
+                break;
+            }
+            try {
+              Thread.sleep(16);
+            } catch (Exception ex) {
+              ex.printStackTrace();
+            }
+        }
+
+        return textureView;
+    }
+
+    @ReactMethod(isBlockingSynchronousMethod = true)
     public void setContextType(int args, String refId) {
         if (TextUtils.isEmpty(refId)) {
             return;
         }
 
+        waitTextureViewReady(refId, 1000); // 500ms is enough, use 1000ms to insure
+        setContextTypeOnce(args, refId);
+    }
+
+    public void setContextTypeOnce(int args, String refId) {
         GReactTextureView textureView = mViews.get(refId);
         if (null == textureView) {
             GLog.w(TAG, "setContextType can not find canvas with id ===> " + refId);

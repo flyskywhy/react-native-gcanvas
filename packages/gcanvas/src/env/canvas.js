@@ -135,6 +135,7 @@ export default class GCanvas extends Element {
       sleepMs(100);
 
       if (__DEV__) {
+        // TODO: need test again to see if can remove sleepMs(130).
         // https://github.com/flyskywhy/snakeRN/tree/v3.0.0 sometimes (1st load js on new installed debug apk)
         // will cause `Error: Invalid value of `0` passed to `checkMaxIfStatementsInShader` in
         // `node_modules/pixi.js/lib/core/renderers/webgl/utils/checkMaxIfStatmentsInShader.js` ,
@@ -152,22 +153,11 @@ export default class GCanvas extends Element {
       this._context.componentId = this.id;
       GCanvas.GBridge.callSetContextType(this.id, 0);
 
-      // document.createElement('canvas') (as offscreen canvas) sometimes (reload js on debug apk,
-      // especially 1st load js on new installed debug or release apk) will not work, because
-      // `setContextType can not find canvas with id` then no effect for bindCanvasTexture or
-      // some other canvas method, and it's not convenient to wait GCanvasView's props.onIsReady(),
-      // so use `sleepMs()` by `for(;;)` wait enough to fix it.
-      // TODO: can remove these 3 sleepMs on iOS, so remove them on Android too
-      // TODO: iOS need at least sleepMs(130), otherwise will crash with https://github.com/flyskywhy/PixelShapeRN
+      // TODO: need test again to see if can remove sleepMs(130).
+      // iOS need at least sleepMs(130), otherwise will crash with https://github.com/flyskywhy/PixelShapeRN
       // modified to resizeImageData with canvas and GCanvas.GBridge.callResetGlViewport(this.id) despite isNormalCanvas
       sleepMs(130);
-      if (__DEV__) {
-        // and if not setLogLevel(0) (means no DEBUG print) in components/GCanvasComponent.js , need more wait...
-        sleepMs(150);
-      }
 
-      // need `sleepMs()` by `for(;;)` to let callSetDevicePixelRatio take effect
-      sleepMs(100);
       if (this._devicePixelRatio > 0) {
         GCanvas.GBridge.callSetDevicePixelRatio(this.id, this._devicePixelRatio);
       }
