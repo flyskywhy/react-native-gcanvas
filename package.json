@@ -1,6 +1,6 @@
 {
   "name": "@flyskywhy/react-native-gcanvas",
-  "version": "2.3.27",
+  "version": "2.3.28",
   "description": "A C++ native canvas 2D/WebGL component based on gpu opengl glsl shader GCanvas",
   "main": "index",
   "scripts": {
@@ -36,7 +36,7 @@
     "zdog"
   ],
   "dependencies": {
-    "@flyskywhy/react-native-browser-polyfill": "^1.0.6"
+    "@flyskywhy/react-native-browser-polyfill": "^1.0.8"
   },
   "private": false,
   "funding": [{

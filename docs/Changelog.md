@@ -3,6 +3,23 @@
 All notable changes of this project will be documented in.
 
 
+## [2.3.28] - 2022-11-13
+
+### Changed
+
+* React Native GCanvas Component
+    * fix: getImageData() on Android get [0, 0, 0, 0, ...] if just after drawImage()
+    * feat: let drawImage() also eat canvas, so that most usecase of drawImage(canvas) with document.createElement('canvas') (as offscreen canvas) can work
+    * feat: support ctx.ImageSmoothingEnabled
+    * fix: crash if set canvas.width before invoke canvas.getContext
+    * fix: let resetGlViewport() and setContextType() be sync on iOS to avoid crash render some cmd just after resetGlViewport()
+    * refactor: let setContextType() be sync on Android to remove some sleepMs() in JS
+    * fix: on iOS sometimes devicePixelRatio will be 1 after resetGlViewport()
+    * fix: iOS one canvas crash or not work if unmount another canvas, since 2.3.22
+    * fix: typo that maybe cause onLayout->ResetGlViewport->onLayout infinite loop
+    * fix: avoid pixel offset flaw when GetImageData if devicePixelRatio in GCanvasView is not int but float
+
+
 ## [2.3.27] - 2022-10-11
 
 ### Changed
