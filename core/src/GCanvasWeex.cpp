@@ -78,6 +78,14 @@ void GCanvasWeex::SetDevicePixelRatio(const float ratio) {
     mCanvasContext->SetDevicePixelRatio(ratio);
 }
 
+bool GCanvasWeex::ImageSmoothingEnabled() {
+    return mCanvasContext->ImageSmoothingEnabled();
+}
+
+void GCanvasWeex::SetImageSmoothingEnabled(bool smooth) {
+    mCanvasContext->SetImageSmoothingEnabled(smooth);
+}
+
 int GCanvasWeex::GetContextType() {
     return mCanvasContext->mContextType;
 }

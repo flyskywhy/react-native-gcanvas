@@ -147,6 +147,9 @@ public:
     void SetClearColor(const GColorRGBA &c);
     void SetDevicePixelRatio(const float ratio);
 
+    bool ImageSmoothingEnabled();
+    void SetImageSmoothingEnabled(bool smooth);
+
     int GetContextType();
     void SetContextType(int contextType);
 
