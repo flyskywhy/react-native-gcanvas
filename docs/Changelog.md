@@ -3,6 +3,20 @@
 All notable changes of this project will be documented in.
 
 
+## [2.3.29] - 2022-11-15
+
+### Changed
+
+* React Native GCanvas Component
+    * fix: `A/libc(27847): Fatal signal 6 (SIGABRT), code -1 (SI_QUEUE) in tid 28018 (JNISurfaceTextu)` by
+
+        ~/tools/android-sdk/ndk/21.4.7075529/toolchains/aarch64-linux-android-4.9/prebuilt/linux-x86_64/bin/aarch64-linux-android-addr2line -e react-native-gcanvas/android/gcanvas_library/build/intermediates/cmake/release/obj/arm64-v8a/libgcanvas.so 0000000000094a48
+
+    ref to the related log:
+
+        A/DEBUG(28069):       #03 pc 0000000000094a48  /data/app/com.lessing.damitis-1takdafFSBJoT3BNSgkpSw==/lib/arm64/libgcanvas.so
+
+
 ## [2.3.28] - 2022-11-13
 
 ### Changed
