@@ -1553,7 +1553,10 @@ const char *GCanvasWeex::CallNative(int type, const std::string &args) {
 
     struct GCanvasCmd *p = new struct GCanvasCmd();
     p->type = type;
-    p->args = args;
+    // `= args.c_str()` is deep copy but `= args` not, we need deep copy, otherwise if not sync,
+    // sometimes `args` is freed by je->ReleaseStringUTFChars(renderCommands, rc) in Java_com_taobao_gcanvas_GCanvasJNI_render
+    // thus `delete p` in GCanvasWeex::QueueProc will cause APP crash `A/libc(6413): Fatal signal 6 (SIGABRT), code -1 (SI_QUEUE) in tid 6684 (JNISurfaceTextu)`
+    p->args = args.c_str();
 
     if (sync == SYNC) {
         // TODO: remove this mCmdQueue.empty line if webgl also don't need this since the job is done by mCallNative
