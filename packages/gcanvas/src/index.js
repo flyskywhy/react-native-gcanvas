@@ -36,3 +36,13 @@ export function enable(el, { bridge, debug, isAutoClearRectBeforePutImageData, d
 
   return canvas;
 }
+
+export function disable(canvas) {
+  canvas.disabled = true;
+  if (canvas.webglInterval) {
+    clearInterval(canvas.webglInterval);
+  }
+
+  const ref = canvas.id;
+  GCanvas.GBridge.callDisable(ref);
+}

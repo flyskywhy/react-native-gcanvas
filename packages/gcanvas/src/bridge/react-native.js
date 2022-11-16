@@ -65,6 +65,10 @@ const GBridge = {
     isComboDisabled = true;
   },
 
+  callDisable: (ref) => {
+    GBridge.GCanvasModule.disable(ref);
+  },
+
   callSetContextType: function(componentId, context_type) {
     GBridge.GCanvasModule.setContextType(context_type, componentId);
   },

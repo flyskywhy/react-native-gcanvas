@@ -23,6 +23,8 @@ export default class GCanvas extends Element {
   constructor(id, {isAutoClearRectBeforePutImageData, devicePixelRatio, disableAutoSwap, style}) {
     super('canvas');
     this.id = id;
+    this.disabled = false;
+    this.webglInterval = null;
 
     this._isAutoClearRectBeforePutImageData = isAutoClearRectBeforePutImageData;
     this._devicePixelRatio = devicePixelRatio || PixelRatio.get();
@@ -125,7 +127,7 @@ export default class GCanvas extends Element {
           }
         };
 
-        setInterval(render, 16);
+        this.webglInterval = setInterval(render, 16);
       }
 
       // On Android, need `sleepMs()` by `for(;;)` to wait enough (or wait until m_requestInitialize be true?) to
@@ -171,6 +173,9 @@ export default class GCanvas extends Element {
   }
 
   _renderLoop() {
+    if (this.disabled) {
+      return;
+    }
     this._context.flushJsCommands2CallNative();
     this._renderLoopId = requestAnimationFrame(this._renderLoop.bind(this));
   }

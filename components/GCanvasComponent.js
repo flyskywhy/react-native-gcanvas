@@ -195,9 +195,9 @@ export default class GCanvasView extends Component {
   }
 
   componentWillUnmount() {
-    ReactNativeBridge.GCanvasModule.disable(
-      '' + findNodeHandle(this.refCanvasView),
-    );
+    if (this.canvas !== null) {
+      disable(this.canvas);
+    }
 
     // if (Platform.OS === 'ios') {
     //   const emitter = new NativeEventEmitter(ReactNativeBridge.GCanvasModule);
