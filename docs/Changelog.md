@@ -3,6 +3,14 @@
 All notable changes of this project will be documented in.
 
 
+## [2.3.30] - 2022-11-16
+
+### Changed
+
+* React Native GCanvas Component
+    * fix: should also stop JS render loop in componentWillUnmount
+
+
 ## [2.3.29] - 2022-11-15
 
 ### Changed
