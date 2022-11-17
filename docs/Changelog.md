@@ -3,6 +3,14 @@
 All notable changes of this project will be documented in.
 
 
+## [2.3.31] - 2022-11-17
+
+### Changed
+
+* React Native GCanvas Component
+    * fix: avoid unnecessary string copy in GCanvasWeex::QueueProc() to avoid sometime std::bad_alloc crash on some Android phone
+
+
 ## [2.3.30] - 2022-11-16
 
 ### Changed
