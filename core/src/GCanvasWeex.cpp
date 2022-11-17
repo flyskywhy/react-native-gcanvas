@@ -1574,6 +1574,10 @@ const char *GCanvasWeex::CallNative(int type, const std::string &args) {
 
     mCmdQueue.push(p);
 
+    // LOG_EXCEPTION(NULL, (std::string)"NULL", "SIGSEGV",
+    //                   "<function:%s, mCmdQueue.size:%d, p->args.length:%d>", __FUNCTION__,
+    //                   mCmdQueue.size(), p->args.length());
+
     signalUpGLthread();
 
 
@@ -1631,31 +1635,41 @@ void GCanvasWeex::QueueProc(std::queue<struct GCanvasCmd *> *queue) {
         int op = getOpType(type);
         int sync = getSyncAttrib(type);
 
-        std::string args = p->args;
+    // try { // need remove -fno-exceptions in core/CMakeLists.txt if use try
+        // std::string args = p->args;
 
         LOG_D("start to process queue cmd.");
 
         switch (cmd) {
             case CANVAS: {
-                canvasProc(op, sync, args);
+                canvasProc(op, sync, p->args);
                 break;
             }
             case WEBGL: {
-                webglProc(op, sync, args);
+                webglProc(op, sync, p->args);
                 break;
             }
             case VULKAN: {
-                vulkanProc(op, sync, args);
+                vulkanProc(op, sync, p->args);
                 break;
             }
             case METAL: {
-                metalProc(op, sync, args);
+                metalProc(op, sync, p->args);
                 break;
             }
             default: {
                 break;
             }
         }
+    // }
+    // catch (const std::bad_alloc&) {
+    //     LOG_EXCEPTION(NULL, (std::string)"NULL", "SIGSEGV",
+    //               "<function:%s, mCmdQueue.size:%d, p->args.length:%d>", __FUNCTION__,
+    //               mCmdQueue.size(), p->args.length());
+
+    //     std::cerr << "Unable to satisfy request for memory\n";
+    //     std::abort();
+    // }
 
         if (op == 1) {
             setRefreshFlag(true);
