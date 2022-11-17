@@ -253,7 +253,9 @@ void GRenderer::renderLoop() {
                 // webgl: previous 3d object will display on somewhere
                 reInitialize();
 
-                needDisableImageSmoothing = !mProxy->ImageSmoothingEnabled();
+                if (0 == mProxy->GetContextType()) {
+                    needDisableImageSmoothing = !mProxy->ImageSmoothingEnabled();
+                }
                 mProxy->ReCreateContext();
                 mProxy->SetContextType(m_context_type);
             }
@@ -264,7 +266,7 @@ void GRenderer::renderLoop() {
             // then invoke GCanvasContext::ResetStateStack() to init
             // GCanvasContext->mCurrentState so that SetImageSmoothingEnabled below can
             // set mCurrentState->mImageSmoothingEnabled
-            if (needDisableImageSmoothing) {
+            if (needDisableImageSmoothing && 0 == mProxy->GetContextType()) {
                 needDisableImageSmoothing = false;
                 mProxy->SetImageSmoothingEnabled(false);
             }

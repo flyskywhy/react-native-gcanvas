@@ -94,7 +94,9 @@ void nsLog(const char *tag, const char *log) {
 
 - (void)reInitContext{
     self.gcanvasInited = NO;
-    self.needDisableImageSmoothing = !self.context->ImageSmoothingEnabled();
+    if (self.gcanvas->GetContextType() == 0) {
+        self.needDisableImageSmoothing = !self.context->ImageSmoothingEnabled();
+    }
 //    [self removeCommands];
     self.gcanvas->ReCreateContext();
     self.context = self.gcanvas->GetGCanvasContext();
@@ -113,7 +115,7 @@ void nsLog(const char *tag, const char *log) {
         // then invoke GCanvasContext::ResetStateStack() to init
         // GCanvasContext->mCurrentState so that SetImageSmoothingEnabled below can
         // set mCurrentState->mImageSmoothingEnabled
-        if (self.needDisableImageSmoothing) {
+        if (self.needDisableImageSmoothing && self.gcanvas->GetContextType() == 0) {
             self.needDisableImageSmoothing = NO;
             self.context->SetImageSmoothingEnabled(NO);
         }
