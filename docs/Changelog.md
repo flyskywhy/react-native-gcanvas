@@ -3,6 +3,14 @@
 All notable changes of this project will be documented in.
 
 
+## [2.3.32] - 2022-11-18
+
+### Changed
+
+* React Native GCanvas Component
+    * fix: crash in context webgl when resetGlViewport
+
+
 ## [2.3.31] - 2022-11-17
 
 ### Changed
