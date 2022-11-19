@@ -987,17 +987,28 @@ export default class WebGLRenderingContext {
     } else {
       if (args.length === 6) {
         const [target, level, internalformat, format, type, image] = args;
-        if (image.data && image.width > 0 && image.height > 0) {
+        let imageData = {};
+        const imageIsCanvas = image.hasOwnProperty('nodeName') && image.nodeName.toLowerCase() === 'canvas' && image._context;
+        const imageIsImageData = image.data && image.width > 0 && image.height > 0;
+        if (imageIsCanvas) {
+          imageData = image._context.getImageData(0, 0, image.width, image.height);
+        }
+        if (imageIsImageData) {
+          imageData = image;
+        }
+        if (imageData.data && imageData.width > 0 && imageData.height > 0) {
           // ImageData
           WebGLRenderingContext.GBridge.callNative(
             this._canvas.id,
             GLmethod.texImage2D + ',' + 9 + ',' + target + ',' + level + ',' + internalformat + ',' +
-                image.width + ',' + image.height + ',' + 0 + ',' + format + ',' + type + ',' + processArray(image.data, true),
+                imageData.width + ',' + imageData.height + ',' + 0 + ',' + format + ',' + type + ',' + processArray(new Uint8Array(imageData.data), true),
             true,
           );
         }
       } else if (args.length === 9) {
         const [target, level, internalformat, width, height, border, format, type, image] = args;
+        // usage example 1: gl.texImage2D(gl.TEXTURE_2D, 0, gl.RGBA, 1, 1, 0, gl.RGBA, gl.UNSIGNED_BYTE, new Uint8Array([255, 0, 0, 255]));
+        // usage example 2: gl.texImage2D(gl.TEXTURE_CUBE_MAP_POSITIVE_X, 0, gl.RGBA, 2, 2, 0, gl.RGBA, gl.UNSIGNED_BYTE, new Uint8Array([187,157,202,255,222,199,255,255,108,75,68,255,139,107,110,255]));
         WebGLRenderingContext.GBridge.callNative(
           this._canvas.id,
           GLmethod.texImage2D + ',' + 9 + ',' + target + ',' + level + ',' + internalformat + ',' +
@@ -1061,12 +1072,20 @@ export default class WebGLRenderingContext {
     } else {
       if (args.length === 7) {
         const [target, level, xoffset, yoffset, format, type, image] = args;
-        if (image.data && image.width > 0 && image.height > 0) {
-          // ImageData
+        let imageData = {};
+        const imageIsCanvas = image.hasOwnProperty('nodeName') && image.nodeName.toLowerCase() === 'canvas' && image._context;
+        const imageIsImageData = image.data && image.width > 0 && image.height > 0;
+        if (imageIsCanvas) {
+          imageData = image._context.getImageData(0, 0, image.width, image.height);
+        }
+        if (imageIsImageData) {
+          imageData = image;
+        }
+        if (imageData.data && imageData.width > 0 && imageData.height > 0) {
           WebGLRenderingContext.GBridge.callNative(
             this._canvas.id,
             GLmethod.texSubImage2D + ',' + 9 + ',' + target + ',' + level + ',' + xoffset + ',' + yoffset + ',' +
-                image.width + ',' + image.height + ',' + format + ',' + type + ',' + processArray(image.data, true),
+                imageData.width + ',' + imageData.height + ',' + format + ',' + type + ',' + processArray(new Uint8Array(imageData.data), true),
             true,
           );
         }
