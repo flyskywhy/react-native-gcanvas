@@ -3,6 +3,14 @@
 All notable changes of this project will be documented in.
 
 
+## [2.3.33] - 2022-11-19
+
+### Changed
+
+* React Native GCanvas Component
+    * feat: support HTMLCanvasElement to texImage2D and texSubImage2D
+
+
 ## [2.3.32] - 2022-11-18
 
 ### Changed
