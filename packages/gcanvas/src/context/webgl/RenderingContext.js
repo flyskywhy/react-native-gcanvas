@@ -126,7 +126,7 @@ export default class WebGLRenderingContext {
     WebGLRenderingContext.GBridge.callNative(
       this._canvas.id,
       GLmethod.bindTexture + ',' + target + ',' + (texture ? texture.id : 0),
-      true
+      // true, // if true, will flick before display all in https://github.com/flyskywhy/GCanvasRNExamples/src/nonDeclarative.js
     );
   }
 
@@ -1043,7 +1043,7 @@ export default class WebGLRenderingContext {
             this._canvas.id,
             GLmethod.texImage2D + ',' + 9 + ',' + target + ',' + level + ',' + internalformat + ',' +
                 imageData.width + ',' + imageData.height + ',' + 0 + ',' + format + ',' + type + ',' + processArray(new Uint8Array(imageData.data), true),
-            true,
+            // true, // if true, will flick before display all in https://github.com/flyskywhy/GCanvasRNExamples/src/nonDeclarative.js
           );
         }
       } else if (args.length === 9) {
@@ -1054,7 +1054,7 @@ export default class WebGLRenderingContext {
           this._canvas.id,
           GLmethod.texImage2D + ',' + 9 + ',' + target + ',' + level + ',' + internalformat + ',' +
               width + ',' + height + ',' + border + ',' + format + ',' + type + ',' + processArray(image, true),
-          true,
+          // true, // if true, will flick before display all in https://github.com/flyskywhy/GCanvasRNExamples/src/nonDeclarative.js
         );
       }
     }
@@ -1065,7 +1065,7 @@ export default class WebGLRenderingContext {
     WebGLRenderingContext.GBridge.callNative(
       this._canvas.id,
       GLmethod.texParameterf + ',' + target + ',' + pname + ',' + param,
-      true
+      // true, // if true, will flick before display all in https://github.com/flyskywhy/GCanvasRNExamples/src/nonDeclarative.js
     );
   }
 
@@ -1073,7 +1073,7 @@ export default class WebGLRenderingContext {
     WebGLRenderingContext.GBridge.callNative(
       this._canvas.id,
       GLmethod.texParameteri + ',' + target + ',' + pname + ',' + param,
-      true, // TODO: maybe need more APP code to test
+      // true, // if true, will flick before display all in https://github.com/flyskywhy/GCanvasRNExamples/src/nonDeclarative.js
     );
   }
 
@@ -1127,7 +1127,7 @@ export default class WebGLRenderingContext {
             this._canvas.id,
             GLmethod.texSubImage2D + ',' + 9 + ',' + target + ',' + level + ',' + xoffset + ',' + yoffset + ',' +
                 imageData.width + ',' + imageData.height + ',' + format + ',' + type + ',' + processArray(new Uint8Array(imageData.data), true),
-            true,
+            // true, // ref to texImage2D above
           );
         }
       } else if (args.length === 9) {
@@ -1136,7 +1136,7 @@ export default class WebGLRenderingContext {
           this._canvas.id,
           GLmethod.texSubImage2D + ',' + 9 + ',' + target + ',' + level + ',' + xoffset + ',' + yoffset + ',' +
               width + ',' + height + ',' + format + ',' + type + ',' + processArray(image, true),
-          true,
+          // true, // ref to texImage2D above
         );
       }
     }
