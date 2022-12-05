@@ -87,7 +87,6 @@ public:
     bool needDisableImageSmoothing = false; // default mImageSmoothingEnabled is true in core/src/gcanvas/GCanvasState.h
     float m_device_pixel_ratio = 1.0f;
 
-    std::queue<struct BitmapCmd *> mBitmapQueue;
     bool m_initialized = false;
     bool m_requestInitialize = false;
 

@@ -1563,7 +1563,7 @@ const char *GCanvasWeex::CallNative(int type, const std::string &args) {
         // while (!mCmdQueue.empty()) {}
 
         // because bindImageTexture is async with mBitmapQueue and don't know why texture will display
-        // black if just replace mBitmapQueue.push(p) by mProxy->bindTexture(*p) directly in
+        // black if just replace mProxy->addBitmapQueue(p) by mProxy->bindTexture(*p) directly in
         // core/android/3d/view/grenderer.cpp, so to getImageData just after CanvasRenderingContext2D.drawImage()
         // need below to let flushJsCommands2CallNative('sync') wait GCanvasWeex::bindTexture() done
         while (!mBitmapQueue.empty()) {}
@@ -1611,9 +1611,12 @@ void GCanvasWeex::clearCmdQueue() {
     }
 
     while (!mBitmapQueue.empty()) {
-        struct BitmapCmd *p = reinterpret_cast<struct BitmapCmd *> (mBitmapQueue.front());
-        mBitmapQueue.pop();
-        delete p;
+        struct BitmapCmd *p;
+        if (mBitmapQueue.try_pop(p)) {
+            delete p;
+        } else {
+            break;
+        }
     }
 
 }
@@ -1719,9 +1722,35 @@ void GCanvasWeex::addBitmapQueue(struct BitmapCmd *p) {
     mBitmapQueue.push(p);
 }
 
+void GCanvasWeex::processAllBitmapQueue() {
+    while (!mBitmapQueue.empty()) {
+        struct BitmapCmd *p;
+        if (mBitmapQueue.try_pop(p)) {
+            if (p->id == -1) {
+                DrawImageDataWithoutStringCmd(p->tw,
+                                              p->th,
+                                              (unsigned char *)(p->Bitmap),
+                                              p->sx,
+                                              p->sy,
+                                              p->sw,
+                                              p->sh,
+                                              p->dx,
+                                              p->dy,
+                                              p->dw,
+                                              p->dh);
+                free(p->Bitmap);
+            } else {
+                bindTexture(*p);
+            }
+
+            delete p;
+        } else {
+            break;
+        }
+    }
+}
+
 void GCanvasWeex::bindTexture(struct BitmapCmd cmd) {
-    //    while (!mBitmapQueue.empty()) {
-    //        struct BitmapCmd *p = reinterpret_cast<struct BitmapCmd * >(mBitmapQueue.front());
     GLuint glID;
     LOG_D("DO BIND TEXTURE. context type = %d", GetContextType());
 

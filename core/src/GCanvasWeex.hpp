@@ -22,7 +22,6 @@
 
 #ifdef ANDROID
 
-#include <queue>
 #include <jni.h>
 #include <semaphore.h>
 
@@ -219,6 +218,7 @@ public:
      void finishProc();
      bool continueProcess();
      void addBitmapQueue(struct BitmapCmd *p);
+     void processAllBitmapQueue();
      void bindTexture(struct BitmapCmd cmd);
      void bindTexture(GTexture *texture);
      void setContextLost(bool lost);
@@ -313,7 +313,7 @@ public:
     bool mSync = false;
     bool mExit = false;
     ConcurrenceQueue<struct GCanvasCmd *> mCmdQueue;
-    std::queue<struct BitmapCmd *> mBitmapQueue;
+    ConcurrenceQueue<struct BitmapCmd *> mBitmapQueue;
 #endif
 
 

@@ -182,12 +182,6 @@ void GRenderer::destroy() {
     m->RemoveCanvas(mContextId);
     mProxy = nullptr;
 
-    while (!mBitmapQueue.empty()) {
-        struct BitmapCmd *p = reinterpret_cast<struct BitmapCmd *> (mBitmapQueue.front());
-        mBitmapQueue.pop();
-        delete p;
-    }
-
     contextExit();
 }
 
@@ -285,29 +279,7 @@ void GRenderer::renderLoop() {
 
 
         if (m_bindtexture && m_egl_surface != EGL_NO_SURFACE) {
-            while (!mBitmapQueue.empty()) {
-                struct BitmapCmd *p = reinterpret_cast<struct BitmapCmd * >(mBitmapQueue.front());
-                if (p->id == -1) {
-                    mProxy->DrawImageDataWithoutStringCmd(p->tw,
-                                                          p->th,
-                                                          (unsigned char *)(p->Bitmap),
-                                                          p->sx,
-                                                          p->sy,
-                                                          p->sw,
-                                                          p->sh,
-                                                          p->dx,
-                                                          p->dy,
-                                                          p->dw,
-                                                          p->dh);
-                    free(p->Bitmap);
-                } else {
-                    mProxy->bindTexture(*p);
-                }
-
-                mBitmapQueue.pop();
-                delete p;
-            }
-
+            mProxy->processAllBitmapQueue();
             m_bindtexture = false;
             sem_post(&m_SyncSem);
         }
@@ -420,7 +392,7 @@ void GRenderer::drawImageData(int tw, int th, const std::string base64ImageData,
     p->dw = dw;
     p->dh = dh;
 
-    if (this->mProxy != nullptr) {
+    if (mProxy != nullptr) {
         // mProxy->DrawImageDataWithoutStringCmd(p->tw,
         //                                       p->th,
         //                                       (unsigned char *)(p->Bitmap),
@@ -433,9 +405,9 @@ void GRenderer::drawImageData(int tw, int th, const std::string base64ImageData,
         //                                       p->dw,
         //                                       p->dh);
 
-        // above can't work, don't know why, so use mBitmapQueue below
+        // above can't work, don't know why, so use addBitmapQueue below
 
-        mBitmapQueue.push(p);
+        mProxy->addBitmapQueue(p);
         m_bindtexture = true;
 
         LOG_D("start to drawImageData,tw=%d,th=%d,sx=%d,sy=%d,sw=%d,sh=%d,dx=%d,dy=%d,dw=%d,dh=%d\n",
@@ -500,8 +472,8 @@ void GRenderer::bindTexture(JNIEnv *env, jobject bitmap, int id, int target, int
     p->type = type;
     p->id = id;
 
-    if (this->mProxy != nullptr) {
-        mBitmapQueue.push(p);
+    if (mProxy != nullptr) {
+        mProxy->addBitmapQueue(p);
         m_bindtexture = true;
 
         LOG_D("start to require bindtexure,width=%d,height=%d,target=%d,level=%d,internalformat=%d,format=%d,type=%d\n",
