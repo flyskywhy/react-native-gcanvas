@@ -3,6 +3,14 @@
 All notable changes of this project will be documented in.
 
 
+## [2.3.34] - 2022-12-05
+
+### Changed
+
+* React Native GCanvas Component
+    * fix: let mCmdQueue be thread safe to fix random app crash by `Fatal signal 11 (SIGSEGV), code 1 (SEGV_MAPERR)` #54
+
+
 ## [2.3.33] - 2022-11-19
 
 ### Changed
