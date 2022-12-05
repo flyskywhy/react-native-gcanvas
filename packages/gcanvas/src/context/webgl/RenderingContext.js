@@ -1,4 +1,3 @@
-import {btoa} from 'abab';
 import GLenum from './GLenum';
 import ActiveInfo from './ActiveInfo';
 import Buffer from './Buffer';
