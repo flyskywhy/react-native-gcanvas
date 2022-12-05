@@ -1574,10 +1574,6 @@ const char *GCanvasWeex::CallNative(int type, const std::string &args) {
 
     mCmdQueue.push(p);
 
-    // LOG_EXCEPTION(NULL, (std::string)"NULL", "SIGSEGV",
-    //                   "<function:%s, mCmdQueue.size:%d, p->args.length:%d>", __FUNCTION__,
-    //                   mCmdQueue.size(), p->args.length());
-
     signalUpGLthread();
 
 
@@ -1606,9 +1602,12 @@ void GCanvasWeex::clearCmdQueue() {
     GCanvasManager *theManager = GCanvasManager::GetManager();
     theManager->clearQueueByContextId(mContextId);
     while (!mCmdQueue.empty()) {
-        struct GCanvasCmd *p = reinterpret_cast<struct GCanvasCmd *> (mCmdQueue.front());
-        mCmdQueue.pop();
-        delete p;
+        struct GCanvasCmd *p;
+        if (mCmdQueue.try_pop(p)) {
+            delete p;
+        } else {
+            break;
+        }
     }
 
     while (!mBitmapQueue.empty()) {
@@ -1619,24 +1618,16 @@ void GCanvasWeex::clearCmdQueue() {
 
 }
 
-void GCanvasWeex::QueueProc(std::queue<struct GCanvasCmd *> *queue) {
+void GCanvasWeex::QueueProc(ConcurrenceQueue<struct GCanvasCmd *> *queue) {
     if (queue == nullptr) {
         return;
     }
-    if (!queue->empty()) {
-        struct GCanvasCmd *p = reinterpret_cast<struct GCanvasCmd *>(queue->front());
-        if (p == nullptr) {
-            // found once when reload JS, maybe need more test
-            LOG_E("QueueProc: why p is nullptr?");
-            return;
-        }
+    struct GCanvasCmd *p;
+    if (queue->try_pop(p)) {
         int type = p->type;
         int cmd = getCmdType(type);
         int op = getOpType(type);
         int sync = getSyncAttrib(type);
-
-    // try { // need remove -fno-exceptions in core/CMakeLists.txt if use try
-        // std::string args = p->args;
 
         LOG_D("start to process queue cmd.");
 
@@ -1661,28 +1652,16 @@ void GCanvasWeex::QueueProc(std::queue<struct GCanvasCmd *> *queue) {
                 break;
             }
         }
-    // }
-    // catch (const std::bad_alloc&) {
-    //     LOG_EXCEPTION(NULL, (std::string)"NULL", "SIGSEGV",
-    //               "<function:%s, mCmdQueue.size:%d, p->args.length:%d>", __FUNCTION__,
-    //               mCmdQueue.size(), p->args.length());
-
-    //     std::cerr << "Unable to satisfy request for memory\n";
-    //     std::abort();
-    // }
 
         if (op == 1) {
             setRefreshFlag(true);
-        }
-        queue->pop();
-
-        if (p != nullptr) {
-            delete p;
         }
 
         if (sync == SYNC) {
             setSyncFlag();
         }
+
+        delete p;
     }
 }
 
@@ -1693,19 +1672,22 @@ void GCanvasWeex::LinkNativeGLProc() {
         return;
     }
 
-    GCanvasManager *theManager = GCanvasManager::GetManager();
-    std::queue<struct GCanvasCmd *> *queue = theManager->getQueueByContextId(
-            mContextId);
-    if (queue != nullptr) {
-        LOG_E("in LinkNativeProc QueueProc queue");
-        QueueProc(queue);
-    }
+    // For now getQueueByContextId() is meaningless cause no code use AddtoQueue() ,
+    // and if someday use it, need refactor queue from std::queue to ConcurrenceQueue
+    // just as what mCmdQueue did
+    // GCanvasManager *theManager = GCanvasManager::GetManager();
+    // std::queue<struct GCanvasCmd *> *queue = theManager->getQueueByContextId(
+    //         mContextId);
+    // if (queue != nullptr) {
+    //     LOG_E("in LinkNativeProc QueueProc queue");
+    //     QueueProc(queue);
+    // }
     //    LOG_D("in LinkNativeProc QueueProc mCmdQueue");
     QueueProc(&mCmdQueue);
 
-    if (queue != nullptr) {
-        delete queue;
-    }
+    // if (queue != nullptr) {
+    //     delete queue;
+    // }
 }
 
 void GCanvasWeex::setSyncFlag() {

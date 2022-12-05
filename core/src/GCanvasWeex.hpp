@@ -13,6 +13,7 @@
 
 #include "GCanvas.hpp"
 #include "GCanvas2dContext.h"
+#include "support/ConcurrenceQueue.h"
 #include "support/DynArray.h"
 #include "support/Log.h"
 #include "export.h"
@@ -211,7 +212,7 @@ public:
      virtual void signalUpGLthread();
      void LinkNativeGLProc();
      void clearCmdQueue();
-     void QueueProc(std::queue<struct GCanvasCmd *> *queue);
+     void QueueProc(ConcurrenceQueue<struct GCanvasCmd *> *queue);
      virtual void setRefreshFlag(bool refresh);
      void setSyncFlag();
      void setThreadExit();
@@ -311,7 +312,7 @@ public:
     sem_t mSyncSem;
     bool mSync = false;
     bool mExit = false;
-    std::queue<struct GCanvasCmd *> mCmdQueue;
+    ConcurrenceQueue<struct GCanvasCmd *> mCmdQueue;
     std::queue<struct BitmapCmd *> mBitmapQueue;
 #endif
 
