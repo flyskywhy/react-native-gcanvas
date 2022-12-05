@@ -3,6 +3,15 @@
 All notable changes of this project will be documented in.
 
 
+## [2.3.35] - 2022-12-05
+
+### Changed
+
+* React Native GCanvas Component
+    * fix: let btoa use window.btoa comes from @flyskywhy/react-native-browser-polyfill to fix `Unable to resolve "abab"` #53
+    * fix: Compatible with https://github.com/flyskywhy/snakeRN/tree/v3.1.1
+
+
 ## [2.3.34] - 2022-12-05
 
 ### Changed
