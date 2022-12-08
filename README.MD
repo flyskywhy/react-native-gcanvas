@@ -281,28 +281,33 @@ export default class App extends Component {
       );
       const imageRequireSrc = imageRequireAsset.uri;
 
-      const loader = new Loader();
-      const setup = (loader, resources) => {
-        this.ctx.drawImage(resources[imageHttpSrc].data, 70, 0, 112, 37);
-        this.ctx.drawImage(resources[imageRequireSrc].data, 0, 100, 120, 120);
+      // const loader = new Loader();
+      // const setup = (loader, resources) => {
+      //   this.ctx.drawImage(resources[imageHttpSrc].data, 70, 0, 112, 37);
+      //   this.ctx.drawImage(resources[imageRequireSrc].data, 0, 100, 120, 120);
+      // };
+      // loader.add(imageHttpSrc).add(imageRequireAsset.uri).load(setup);
+
+      // you can use Loader() above instead of Image() below, but notice that imageRequireSrc
+      // only work with 'resource-loader' in react-native debug/dev mode cause the asset will
+      // be served over `http://localhost:8081` , and won't work in release mode. Maybe someone
+      // can port 'resource-loader' to 'react-native-resource-loader', before that, Loader()
+      // above only support chain `add(different imageHttpSrc)` , if you use imageRequireSrc,
+      // please use Image() below.
+
+      // because already `import '@flyskywhy/react-native-browser-polyfill';` in GCanvasView, so can `new Image()`
+      // not `Platform.OS === 'web' ? new Image() : new GImage()` here
+      const imageHttp = new Image();
+      imageHttp.crossOrigin = true; // need this to solve `Uncaught DOMException: Failed to execute 'toDataURL' on 'HTMLCanvasElement': Tainted canvases may not be exported.` on Web in production mode
+      imageHttp.onload = () => {
+        this.ctx.drawImage(imageHttp, 70, 0, 112, 37);
       };
-      loader.add(imageHttpSrc).add(imageRequireAsset.uri).load(setup);
-
-      // you can use Loader() above instead of Image() below, or vice versa
-
-      // // because already `import '@flyskywhy/react-native-browser-polyfill';` in GCanvasView, so can `new Image()`
-      // // not `Platform.OS === 'web' ? new Image() : new GImage()` here
-      // const imageHttp = new Image();
-      // imageHttp.crossOrigin = true; // need this to solve `Uncaught DOMException: Failed to execute 'toDataURL' on 'HTMLCanvasElement': Tainted canvases may not be exported.` on Web in production mode
-      // imageHttp.onload = () => {
-      //   this.ctx.drawImage(imageHttp, 70, 0, 112, 37);
-      // };
-      // imageHttp.onerror = (error) => {
-      //   this.setState({
-      //     debugInfo: error.message,
-      //   });
-      // };
-      // imageHttp.src = imageHttpSrc;
+      imageHttp.onerror = (error) => {
+        this.setState({
+          debugInfo: error.message,
+        });
+      };
+      imageHttp.src = imageHttpSrc;
 
       // // to [Call drawImage() in loop with only one GImage instance](https://github.com/flyskywhy/react-native-gcanvas/issues/41)
       // for (let i = 0; i < 10; i++) {
@@ -316,16 +321,16 @@ export default class App extends Component {
       //   }
       // }
 
-      // const imageRequire = new Image();
-      // imageRequire.onload = () => {
-      //   this.ctx.drawImage(imageRequire, 0, 100, 120, 120);
-      // };
-      // imageRequire.onerror = (error) => {
-      //   this.setState({
-      //     debugInfo: error.message,
-      //   });
-      // };
-      // imageRequire.src = imageRequireSrc;
+      const imageRequire = new Image();
+      imageRequire.onload = () => {
+        this.ctx.drawImage(imageRequire, 0, 100, 120, 120);
+      };
+      imageRequire.onerror = (error) => {
+        this.setState({
+          debugInfo: error.message,
+        });
+      };
+      imageRequire.src = imageRequireSrc;
     }
   };
 
