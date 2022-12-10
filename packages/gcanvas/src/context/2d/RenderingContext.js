@@ -510,7 +510,19 @@ export default class CanvasRenderingContext2D {
   }
 
   measureText = function(text) {
-    throw new Error('GCanvas not supported yet');
+    cancelAnimationFrame(this._canvas._renderLoopId);
+    this.flushJsCommands2CallNative('sync', 'execWithoutDisplay');
+    let width = CanvasRenderingContext2D.GBridge.callNative(
+      this.componentId,
+      'V' + text + ';',
+      false,
+      '2d',
+      'sync',
+      'execWithoutDisplay',
+    );
+    this._canvas._renderLoopId = requestAnimationFrame(this._canvas._renderLoop.bind(this._canvas));
+
+    return {width: parseFloat(width)};
   }
 
   isPointInPath = function(x, y) {

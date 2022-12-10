@@ -1378,6 +1378,27 @@ void GCanvasWeex::execute2dCommands(const char *renderCommands, int length) {
 
                 break;
             }
+            case 'V': { // measureText
+                p++;
+
+                int textLen = 0;
+                const char *pStart = p;
+                while (*p && *p != ';') {
+                    textLen++;
+                    ++p;
+                }
+
+                float width = 7.0;
+                if (textLen > 0) {
+                    strncpy(tmpText, pStart, textLen);
+                    tmpText[textLen] = 0;
+                    width = mCanvasContext->MeasureTextWidth(tmpText);
+                }
+                setSyncResult(std::to_string(width));
+
+                if (*p == ';') ++p;
+                break;
+            }
             case 'j': {
                 p++;
                 int textLen = 0;

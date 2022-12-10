@@ -61,7 +61,7 @@ Legend
 | setTransform()           | Method                  | Implemented   |
 | fillText()               | Method                  | Implemented   |
 | strokeText()             | Method                  | Implemented   |
-| measureText()            | Method                  | *Empty*       |
+| measureText()            | Method                  | Implemented   |
 | drawImage()              | Method                  | Implemented   |
 | createImageData()        | Method                  | Implemented   |
 | getImageData()           | Method                  | Implemented   |
