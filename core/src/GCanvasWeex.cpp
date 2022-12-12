@@ -1588,10 +1588,9 @@ const char *GCanvasWeex::CallNative(int type, const std::string &args) {
         // core/android/3d/view/grenderer.cpp, so to getImageData just after CanvasRenderingContext2D.drawImage()
         // need below to let flushJsCommands2CallNative('sync') wait GCanvasWeex::bindTexture() done
         while (!mBitmapQueue.empty()) {}
-    }
-    sem_wait(&mCallNative);
 
-    mResult = "";
+        sem_wait(&mCallNative);
+    }
 
     mCmdQueue.push(p);
 
@@ -1605,6 +1604,7 @@ const char *GCanvasWeex::CallNative(int type, const std::string &args) {
         if (mResult.length() > 0) {
             char *resultChar = new char[mResult.length() + 1];
             strcpy(resultChar, mResult.c_str());
+            setSyncResult("");
             sem_post(&mCallNative);
             return resultChar;
         } else {
@@ -1614,7 +1614,6 @@ const char *GCanvasWeex::CallNative(int type, const std::string &args) {
         }
     }
 
-    sem_post(&mCallNative);
     return nullptr;
 }
 
