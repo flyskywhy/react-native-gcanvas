@@ -3,6 +3,16 @@
 All notable changes of this project will be documented in.
 
 
+## [2.3.36] - 2022-12-12
+
+### Changed
+
+* React Native GCanvas Component
+    * fix: drawingBufferWidth and drawingBufferHeight of WebGLRenderingContext is fixed not float as described GLsizei in https://registry.khronos.org/webgl/specs/latest/1.0/#DOM-WebGLRenderingContext-drawingBufferWidth
+    * feat: support ctx.measureText
+    * fix: avoid canvas render (no return result) sometimes stuck the APP (only FlatList can be move), and still avoid getImageData() on Android sometimes get '' since 9e190a6
+
+
 ## [2.3.35] - 2022-12-05
 
 ### Changed
