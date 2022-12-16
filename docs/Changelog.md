@@ -3,6 +3,14 @@
 All notable changes of this project will be documented in.
 
 
+## [2.3.37] - 2022-12-16
+
+### Changed
+
+* React Native GCanvas Component
+    * fix: mouseEvent.type should be 'mousemove' not 'mousedown' in onPanResponderMove()
+
+
 ## [2.3.36] - 2022-12-12
 
 ### Changed
