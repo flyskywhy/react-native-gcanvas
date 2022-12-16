@@ -9,6 +9,7 @@ All notable changes of this project will be documented in.
 
 * React Native GCanvas Component
     * fix: mouseEvent.type should be 'mousemove' not 'mousedown' in onPanResponderMove()
+    * feat: support canvas.focus in 44230ed
 
 
 ## [2.3.36] - 2022-12-12
