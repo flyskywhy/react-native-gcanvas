@@ -41,7 +41,7 @@ export default class GCanvasView extends Component {
         window.dispatchEvent(eventShim);
 
         let mouseEvent = this.eventTouch2Mouse(event.nativeEvent);
-        mouseEvent.type = 'mousedown';
+        mouseEvent.type = 'mousemove';
         props.onMouseMove && props.onMouseMove(mouseEvent);
       },
       onPanResponderRelease: (event, gestureState) => {
