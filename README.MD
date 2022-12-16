@@ -29,7 +29,7 @@ With 200 circles backgroundColor generate (1 `ms`) and render continually, the r
     setState  80 ms        means 12 fps  (stuck for human eyes)
     canvas    1.5 ms       means 400 fps (smooth for human eyes)
 
-### `setNativeProps` vs `expo-2d-context` vs `react-native-gcanvas` On react-native
+### `setNativeProps` vs `expo-2d-context(with expo-gl@8)` vs `react-native-gcanvas` On react-native
 With 800 circles backgroundColor generate and render continually, the final UI `fps` and JS `fps` with react-native developer menu Perf Monitor on an old `Huawei Honor 6 Play` smartphone released in 2017 (Mediatek MT6737T 1.4 GHz, 2 GB RAM, Android 6):
 
     setNativeProps        UI: 20 fps       JS: 1 fps  (stuck for human eyes)
@@ -56,7 +56,7 @@ With 1400 circles backgroundColor generate and render continually
 
 [react-three-fiber](https://github.com/pmndrs/react-three-fiber) maybe can deal with the performance problem, but [memory leak when meshes update](https://github.com/pmndrs/react-three-fiber/issues/263), [Leaking WebGLRenderer and more when unmounting](https://github.com/pmndrs/react-three-fiber/issues/514), [Suggestion: Dispose of renderer context when canvas is destroyed?](https://github.com/pmndrs/react-three-fiber/issues/132), and there is no way to let many React components developed by browser-like canvas APIs be easily ported to React Native.
 
-[expo-2d-context](https://github.com/expo/expo-2d-context) can let many React components developed by browser-like canvas APIs be easily ported to React Native, but it need ctx.flush() that not belongs to canvas 2d APIs, and it's performance is too low.
+[expo-2d-context](https://github.com/expo/expo-2d-context) can let many React components developed by browser-like canvas APIs be easily ported to React Native, but it need ctx.flush() that not belongs to canvas 2d APIs, and `expo-2d-context(with expo-gl@8)` performance is too low, maybe `expo-2d-context(with JSI expo-gl@11)` performance is high enough.
 
 Ref to [Experiments with High Performance Animation in React Native](https://engineering.salesforce.com/experiments-with-high-performance-animation-in-react-native-80a0cb7052b0), it use many ways include `setNativeProps` and [React Native NanoVG](https://github.com/robclouth/react-native-art-nanovg). Maybe `nanovg` can deal with the performance problem, but for now (2020.12) there is no React Native canvas component using  `nanovg` to let many React components developed by browser-like canvas APIs be easily ported to React Native.
 
