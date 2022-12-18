@@ -3,6 +3,15 @@
 All notable changes of this project will be documented in.
 
 
+## [5.0.0] - 2022-12-18
+
+### Changed
+
+* React Native GCanvas Component
+    * Small break! Gesture event always be convert to mouse event.
+    * Support 3d game engine babylonjs!
+
+
 ## [4.0.0] - 2022-12-18
 
 ### Changed
