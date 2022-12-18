@@ -25,32 +25,43 @@ export default class GCanvasView extends Component {
       onStartShouldSetPanResponder: () => true,
       onMoveShouldSetPanResponder: () => false,
       onPanResponderGrant: (event) => {
-        let eventShim = {...event.nativeEvent, type: 'mousedown'};
-        this.canvas.dispatchEvent(eventShim);
-        window.dispatchEvent(eventShim);
+        // let eventShim = {...event.nativeEvent, type: 'mousedown'};
+        // this.canvas.dispatchEvent(eventShim);
 
         let mouseEvent = this.eventTouch2Mouse(event.nativeEvent);
         mouseEvent.type = 'mousedown';
+
+        this.canvas.dispatchEvent(mouseEvent);
+
+        window.dispatchEvent(mouseEvent);
+
         props.onMouseDown && props.onMouseDown(mouseEvent);
       },
       onPanResponderMove: (event, gestureState) => {
-        let eventShim = {...event.nativeEvent, type: 'mousemove'};
-        this.canvas.dispatchEvent(eventShim);
-
-        // as `node_modules/zdog/js/dragger.js` use window.addEventListener not element.addEventListener on mousemove
-        window.dispatchEvent(eventShim);
+        // let eventShim = {...event.nativeEvent, type: 'mousemove'};
+        // this.canvas.dispatchEvent(eventShim);
 
         let mouseEvent = this.eventTouch2Mouse(event.nativeEvent);
         mouseEvent.type = 'mousemove';
+
+        this.canvas.dispatchEvent(mouseEvent);
+
+        // as `node_modules/zdog/js/dragger.js` use window.addEventListener not element.addEventListener on mousemove
+        window.dispatchEvent(mouseEvent);
+
         props.onMouseMove && props.onMouseMove(mouseEvent);
       },
       onPanResponderRelease: (event, gestureState) => {
-        let eventShim = {...event.nativeEvent, type: 'mouseup'};
-        this.canvas.dispatchEvent(eventShim);
-        window.dispatchEvent(eventShim);
+        // let eventShim = {...event.nativeEvent, type: 'mouseup'};
+        // this.canvas.dispatchEvent(eventShim);
 
         let mouseEvent = this.eventTouch2Mouse(event.nativeEvent);
         mouseEvent.type = 'mousedown';
+
+        this.canvas.dispatchEvent(mouseEvent);
+
+        window.dispatchEvent(mouseEvent);
+
         props.onMouseUp && props.onMouseUp(mouseEvent);
       },
       onPanResponderTerminationRequest: () => false,
