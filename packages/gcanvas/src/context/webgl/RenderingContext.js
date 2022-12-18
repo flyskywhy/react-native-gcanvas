@@ -896,8 +896,10 @@ export default class WebGLRenderingContext {
   pixelStorei = function(pname, param) {
     switch (pname) {
       // OpenGL ES will glGetError()=GL_INVALID_ENUM , so be here
+      // TODO: [WebGL和OpenGL的差异 - UNPACK_PREMULTIPLY_ALPHA_WEBGL](https://www.jianshu.com/p/bf21fda9a0b8)
       case GLenum.UNPACK_COLORSPACE_CONVERSION_WEBGL:
       case GLenum.UNPACK_FLIP_Y_WEBGL:
+      case GLenum.UNPACK_PREMULTIPLY_ALPHA_WEBGL:
         break;
       default:
         WebGLRenderingContext.GBridge.callNative(
