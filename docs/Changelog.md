@@ -3,6 +3,15 @@
 All notable changes of this project will be documented in.
 
 
+## [4.0.0] - 2022-12-18
+
+### Changed
+
+* React Native GCanvas Component
+    * Small break! Multisample anti-aliasing (MSAA) is enabled by default on Android, thus present same behavior on Android and Web. Gcanvas on iOS is not supported yet.
+    * feat: support Multisample anti-aliasing (MSAA) by default on Android #48
+
+
 ## [3.0.0] - 2022-12-18
 
 ### Changed
