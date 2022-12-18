@@ -494,6 +494,7 @@ namespace gcanvas {
             case 0x88E0: return "GL_STREAM_DRAW";
             case 0x88E4: return "GL_STATIC_DRAW";
             case 0x88E8: return "GL_DYNAMIC_DRAW";
+            case 0x88F0: return "GL_DEPTH24_STENCIL8";
             case 0x8B30: return "GL_FRAGMENT_SHADER";
             case 0x8B31: return "GL_VERTEX_SHADER";
             case 0x8B4C: return "GL_MAX_VERTEX_TEXTURE_IMAGE_UNITS";
@@ -532,6 +533,7 @@ namespace gcanvas {
             case 0x8CA5: return "GL_STENCIL_BACK_WRITEMASK";
             case 0x8CA6: return "GL_FRAMEBUFFER_BINDING";
             case 0x8CA7: return "GL_RENDERBUFFER_BINDING";
+            case 0x8CAD: return "GL_DEPTH32F_STENCIL8";
             case 0x8CD0: return "GL_FRAMEBUFFER_ATTACHMENT_OBJECT_TYPE";
             case 0x8CD1: return "GL_FRAMEBUFFER_ATTACHMENT_OBJECT_NAME";
             case 0x8CD2: return "GL_FRAMEBUFFER_ATTACHMENT_TEXTURE_LEVEL";

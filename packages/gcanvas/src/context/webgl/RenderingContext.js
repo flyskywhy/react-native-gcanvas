@@ -512,10 +512,10 @@ export default class WebGLRenderingContext {
     );
   }
 
-  framebufferRenderbuffer = function(target, attachment, textarget, texture, level) {
+  framebufferRenderbuffer = function(target, attachment, textarget, texture) {
     WebGLRenderingContext.GBridge.callNative(
       this._canvas.id,
-      GLmethod.framebufferRenderbuffer + ',' + target + ',' + attachment + ',' + textarget + ',' + (texture ? texture.id : 0) + ',' + level,
+      GLmethod.framebufferRenderbuffer + ',' + target + ',' + attachment + ',' + textarget + ',' + (texture ? texture.id : 0),
       true
     );
   }
@@ -612,6 +612,14 @@ export default class WebGLRenderingContext {
       case 'OES_texture_float':
       case 'OES_texture_half_float':
       case 'OES_vertex_array_object':
+      case 'KHR_parallel_shader_compile':
+      case 'EXT_texture_filter_anisotropic':
+      case 'WEBKIT_EXT_texture_filter_anisotropic':
+      case 'MOZ_EXT_texture_filter_anisotropic':
+
+        // maybe some APP need these
+        // case 'OES_texture_float_linear':
+        // case 'OES_texture_half_float_linear':
         return null;
       default:
         return this._supportedExtensions.includes(name) ? true : null;
@@ -746,13 +754,7 @@ export default class WebGLRenderingContext {
         GLmethod.getSupportedExtensions,
       );
       result.split(' ').map(extension => {
-        if (extension !== '' ||
-          // Required because iOS has many issues with float and half float generation
-          extension.includes('OES_texture_float') ||
-          extension.includes('OES_texture_float_linear') ||
-          extension.includes('OES_texture_half_float') ||
-          extension.includes('OES_texture_half_float_linear')
-        ) {
+        if (extension !== '') {
           this._supportedExtensions.push(extension.replace(/^GL_/, ''));
         }
       });
@@ -892,10 +894,18 @@ export default class WebGLRenderingContext {
 
 
   pixelStorei = function(pname, param) {
-    WebGLRenderingContext.GBridge.callNative(
-      this._canvas.id,
-      GLmethod.pixelStorei + ',' + pname + ',' + Number(param)
-    );
+    switch (pname) {
+      // OpenGL ES will glGetError()=GL_INVALID_ENUM , so be here
+      case GLenum.UNPACK_COLORSPACE_CONVERSION_WEBGL:
+      case GLenum.UNPACK_FLIP_Y_WEBGL:
+        break;
+      default:
+        WebGLRenderingContext.GBridge.callNative(
+          this._canvas.id,
+          GLmethod.pixelStorei + ',' + pname + ',' + Number(param),
+        );
+        break;
+    }
   }
 
   polygonOffset = function(factor, units) {
@@ -914,9 +924,12 @@ export default class WebGLRenderingContext {
   }
 
   renderbufferStorage = function(target, internalFormat, width, height) {
+    // WebGL can `GL_DEPTH_STENCIL` but OpenGL ES will getError so use `GL_DEPTH24_STENCIL8` instead
+    const intfmt = internalFormat === GLenum.DEPTH_STENCIL ? GLenum.DEPTH24_STENCIL8 : internalFormat;
+
     WebGLRenderingContext.GBridge.callNative(
       this._canvas.id,
-      GLmethod.renderbufferStorage + ',' + target + ',' + internalFormat + ',' + width + ',' + height,
+      GLmethod.renderbufferStorage + ',' + target + ',' + intfmt + ',' + width + ',' + height,
       true
     );
   }
