@@ -1410,10 +1410,7 @@ void GCanvasWeex::execute2dCommands(const char *renderCommands, int length) {
                 if (textLen > 0) {
                     strncpy(tmpFont, pStart, textLen);
                     tmpFont[textLen] = 0;
-                    if (mCanvasContext->mCurrentState->mFont != nullptr) {
-                        delete mCanvasContext->mCurrentState->mFont;
-                    }
-                    mCanvasContext->mCurrentState->mFont = new GFontStyle(tmpFont);
+                    mCanvasContext->SetFont(tmpFont);
                 }
                 if (*p == ';') ++p;
 
