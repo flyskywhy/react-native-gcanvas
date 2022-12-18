@@ -62,6 +62,7 @@ export default class WebGLRenderingContext {
     this._version = 'WebGL 1.0';
     this._attrs = attrs;
     this._map = new Map();
+    this._supportedExtensions = [];
 
     Object.keys(GLenum)
           .forEach(name => Object.defineProperty(this, name, {
@@ -602,7 +603,19 @@ export default class WebGLRenderingContext {
   }
 
   getExtension = function(name) {
-    return null;
+    this.getSupportedExtensions();
+
+    switch (name) {
+      // return null to let _initGLContext() in @babylonjs@5.1.0/core/Engines/thinEngine.js works
+      case 'EXT_disjoint_timer_query':
+      case 'EXT_disjoint_timer_query_webgl2':
+      case 'OES_texture_float':
+      case 'OES_texture_half_float':
+      case 'OES_vertex_array_object':
+        return null;
+      default:
+        return this._supportedExtensions.includes(name) ? true : null;
+    }
   }
 
   getFramebufferAttachmentParameter = function(target, attachment, pname) {
@@ -727,7 +740,36 @@ export default class WebGLRenderingContext {
   }
 
   getSupportedExtensions = function() {
-    return Object.keys({});
+    if (this._supportedExtensions.length === 0) {
+      const result = WebGLRenderingContext.GBridge.callNative(
+        this._canvas.id,
+        GLmethod.getSupportedExtensions,
+      );
+      result.split(' ').map(extension => {
+        if (extension !== '' ||
+          // Required because iOS has many issues with float and half float generation
+          extension.includes('OES_texture_float') ||
+          extension.includes('OES_texture_float_linear') ||
+          extension.includes('OES_texture_half_float') ||
+          extension.includes('OES_texture_half_float_linear')
+        ) {
+          this._supportedExtensions.push(extension.replace(/^GL_/, ''));
+        }
+      });
+
+      let supportsWebGL2 = false;
+      let version = Number(this.getParameter(GLenum.VERSION).replace(/^.*OpenGL ES /, '').replace(/ .*$/, ''));
+      if (version !== NaN && version >= 3.0) {
+        supportsWebGL2 = true;
+      }
+
+      if (supportsWebGL2) {
+        this._supportedExtensions.push('WEBGL_compressed_texture_astc');
+        this._supportedExtensions.push('WEBGL_compressed_texture_etc');
+      }
+    }
+
+    return this._supportedExtensions;
   }
 
   getTexParameter = function(target, pname) {
