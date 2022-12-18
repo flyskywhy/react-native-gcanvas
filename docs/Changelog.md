@@ -3,6 +3,16 @@
 All notable changes of this project will be documented in.
 
 
+## [3.0.0] - 2022-12-18
+
+### Changed
+
+* React Native GCanvas Component
+    * Small break! Font display size is more bigger than before as it depends on DevicePixelRatio now, even though default font size decrease from 12px to standard 10px, thus font size present same behavior on native and Web.
+    * fix: ctx.font size should depend on DevicePixelRatio #14
+    * fix: default font size is 10px as described GLsizei in https://developer.mozilla.org/zh-CN/docs/Web/API/Canvas_API/Tutorial/Drawing_text
+
+
 ## [2.3.37] - 2022-12-16
 
 ### Changed
