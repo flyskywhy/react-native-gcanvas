@@ -4,6 +4,7 @@ import {
   NativeEventEmitter,
   NativeModules,
   PanResponder,
+  PixelRatio,
   Platform,
   Text,
   View,
@@ -20,6 +21,7 @@ export default class GCanvasView extends Component {
     super(props);
     this.refCanvasView = null;
     this.canvas = null;
+    this.panScale = 1;
 
     let panResponder = PanResponder.create({
       onStartShouldSetPanResponder: () => true,
@@ -28,8 +30,10 @@ export default class GCanvasView extends Component {
         // let eventShim = {...event.nativeEvent, type: 'mousedown'};
         // this.canvas.dispatchEvent(eventShim);
 
-        let mouseEvent = this.eventTouch2Mouse(event.nativeEvent);
-        mouseEvent.type = 'mousedown';
+        let mouseEvent = this.eventTouch2Mouse({
+          nativeEvent: event.nativeEvent,
+          type: 'mousedown',
+        });
 
         this.canvas.dispatchEvent(mouseEvent);
 
@@ -41,8 +45,10 @@ export default class GCanvasView extends Component {
         // let eventShim = {...event.nativeEvent, type: 'mousemove'};
         // this.canvas.dispatchEvent(eventShim);
 
-        let mouseEvent = this.eventTouch2Mouse(event.nativeEvent);
-        mouseEvent.type = 'mousemove';
+        let mouseEvent = this.eventTouch2Mouse({
+          nativeEvent: event.nativeEvent,
+          type: 'mousemove',
+        });
 
         this.canvas.dispatchEvent(mouseEvent);
 
@@ -55,8 +61,10 @@ export default class GCanvasView extends Component {
         // let eventShim = {...event.nativeEvent, type: 'mouseup'};
         // this.canvas.dispatchEvent(eventShim);
 
-        let mouseEvent = this.eventTouch2Mouse(event.nativeEvent);
-        mouseEvent.type = 'mouseup';
+        let mouseEvent = this.eventTouch2Mouse({
+          nativeEvent: event.nativeEvent,
+          type: 'mouseup',
+        });
 
         this.canvas.dispatchEvent(mouseEvent);
 
@@ -108,7 +116,7 @@ export default class GCanvasView extends Component {
     disableAutoSwap: false,
   };
 
-  eventTouch2Mouse = (nativeEvent) => {
+  eventTouch2Mouse = ({nativeEvent, type}) => {
     if (nativeEvent.type) {
       // real mouse event have `type` but touch not
       // TODO: test with real mouse
@@ -116,18 +124,19 @@ export default class GCanvasView extends Component {
     } else {
       return {
         altKey: false,
-        button: 0,
-        buttons: 1,
-        clientX: ~~nativeEvent.locationX,
-        clientY: ~~nativeEvent.locationY,
+        button: type === 'mousemove' ? -1 : 0,
+        buttons: type === 'mousemove' ? 0 : 1,
+        clientX: ~~(nativeEvent.locationX * this.panScale),
+        clientY: ~~(nativeEvent.locationY * this.panScale),
         ctrlKey: false,
         isTrusted: true,
         metaKey: false,
-        pageX: ~~nativeEvent.pageX,
-        pageY: ~~nativeEvent.pageY,
+        pageX: ~~(nativeEvent.pageX * this.panScale),
+        pageY: ~~(nativeEvent.pageY * this.panScale),
         shiftKey: false,
         target: this.canvas,
         timeStamp: nativeEvent.timestamp,
+        type,
       }
     }
   }
@@ -183,6 +192,8 @@ export default class GCanvasView extends Component {
         bridge: ReactNativeBridge,
       },
     );
+
+    this.panScale = PixelRatio.get() / this.canvas._devicePixelRatio;
 
     if (this.props.onCanvasCreate) {
       this.props.onCanvasCreate(this.canvas);
