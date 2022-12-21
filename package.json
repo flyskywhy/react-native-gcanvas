@@ -1,6 +1,6 @@
 {
   "name": "@flyskywhy/react-native-gcanvas",
-  "version": "5.0.0",
+  "version": "5.0.1",
   "description": "A C++ native canvas 2D/WebGL component based on gpu opengl glsl shader GCanvas",
   "main": "index",
   "scripts": {
@@ -14,6 +14,9 @@
     "2d",
     "3d",
     "android",
+    "babylon",
+    "babylon.js",
+    "babylonjs",
     "canvas",
     "dogz",
     "gcanvas",
