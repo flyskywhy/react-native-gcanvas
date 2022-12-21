@@ -56,7 +56,7 @@ export default class GCanvasView extends Component {
         // this.canvas.dispatchEvent(eventShim);
 
         let mouseEvent = this.eventTouch2Mouse(event.nativeEvent);
-        mouseEvent.type = 'mousedown';
+        mouseEvent.type = 'mouseup';
 
         this.canvas.dispatchEvent(mouseEvent);
 
