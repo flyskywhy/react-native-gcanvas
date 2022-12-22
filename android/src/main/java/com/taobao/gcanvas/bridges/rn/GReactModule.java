@@ -549,7 +549,7 @@ public class GReactModule extends ReactContextBaseJavaModule implements Lifecycl
         mImpl.setContextType(refId, type);
     }
 
-    @ReactMethod
+    @ReactMethod(isBlockingSynchronousMethod = true)
     public void setDevicePixelRatio(String refId, double ratio) {
         if (TextUtils.isEmpty(refId)) {
             return;

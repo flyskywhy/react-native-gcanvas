@@ -93,7 +93,7 @@ RCT_EXPORT_METHOD(preLoadImage:(NSArray *)data callback:(RCTResponseSenderBlock)
 RCT_EXPORT_BLOCKING_SYNCHRONOUS_METHOD(drawCanvas2Canvas:(NSDictionary*)dict)
 {
     [self.gcanvasModule drawCanvas2Canvas:dict];
-    
+
     return nil;
 }
 
@@ -103,7 +103,7 @@ RCT_EXPORT_BLOCKING_SYNCHRONOUS_METHOD(bindImageTexture:(NSArray *)data componen
     [self.gcanvasModule bindImageTexture:data componentId:componentId callback:^(id result) {
         callback(@[result?:@""]);
     }];
-    
+
     return nil;
 }
 
@@ -111,11 +111,11 @@ RCT_EXPORT_BLOCKING_SYNCHRONOUS_METHOD(bindImageTexture:(NSArray *)data componen
 RCT_EXPORT_BLOCKING_SYNCHRONOUS_METHOD(setContextType:(NSUInteger)type componentId:(NSString*)componentId)
 {
     [self.gcanvasModule setContextType:type componentId:componentId];
-    
+
     return nil;
 }
 
-RCT_EXPORT_METHOD(setDevicePixelRatio:(NSString*)componentId ratio:(CGFloat)ratio)
+RCT_EXPORT_BLOCKING_SYNCHRONOUS_METHOD(setDevicePixelRatio:(NSString*)componentId ratio:(CGFloat)ratio)
 {
     [self.gcanvasModule setDevicePixelRatio:componentId ratio:ratio];
 }
@@ -123,7 +123,7 @@ RCT_EXPORT_METHOD(setDevicePixelRatio:(NSString*)componentId ratio:(CGFloat)rati
 RCT_EXPORT_BLOCKING_SYNCHRONOUS_METHOD(resetGlViewport:(NSString*)componentId)
 {
     [self.gcanvasModule resetGlViewport:componentId];
-    
+
     return nil;
 }
 
