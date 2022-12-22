@@ -154,18 +154,19 @@ With react-app-rewired, my react-native-web@0.15.0 and RN 0.63+ without expo pro
 
 ## Example As Usage
 ### 3D webgl
-3D webgl examples see [webgl_demo](webgl_demo).
+3D webgl examples recommend <https://github.com/flyskywhy/GCanvasRNExamples>.
 
-`gl.UNPACK_FLIP_Y_WEBGL` is not support in [webgl_demo/texture.js](webgl_demo/texture.js), and will not be supported ref to [y-orientation for texImage2D from HTML elements](https://www.khronos.org/webgl/public-mailing-list/public_webgl/1212/msg00022.php).
+Here is the result of [Webgl Cube Maps](https://github.com/flyskywhy/GCanvasRNExamples/blob/master/app/components/WebglCubeMaps.js).
 
-Here is the result of [webgl_demo/cube.js](webgl_demo/cube.js).
+<img src="https://raw.githubusercontent.com/flyskywhy/GCanvasRNExamples/master/assets/WebglCubeMaps.gif" width="480">
 
-<img src="https://raw.githubusercontent.com/flyskywhy/react-native-gcanvas/master/assets/webgl_cube.gif" width="480">
+PS: `gl.UNPACK_FLIP_Y_WEBGL` is not support in [webgl_demo/texture.js](webgl_demo/texture.js) which is used as example before, and will not be supported ref to [y-orientation for texImage2D from HTML elements](https://www.khronos.org/webgl/public-mailing-list/public_webgl/1212/msg00022.php).
 
 ### 2D canvas
 
 <img src="https://raw.githubusercontent.com/flyskywhy/react-native-gcanvas/master/assets/canvas.gif" width="480">
 
+Below code ref to <https://github.com/flyskywhy/GCanvasRNExamples/blob/master/app/components/Canvas2dDemo.js>.
 ```javascript
 import React, {Component} from 'react';
 import {

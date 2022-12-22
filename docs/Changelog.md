@@ -3,12 +3,20 @@
 All notable changes of this project will be documented in.
 
 
+## [5.0.2] - 2022-12-22
+
+### Changed
+
+* React Native GCanvas Component
+    * fix: setDevicePixelRatio should be sync otherwise font size sometimes will be too big in <https://github.com/flyskywhy/GCanvasRNExamples/blob/master/app/components/WebglCubeMaps.js>
+
+
 ## [5.0.1] - 2022-12-21
 
 ### Changed
 
 * React Native GCanvas Component
-    * fix: can not drag on babylonjs mesh in https://github.com/flyskywhy/GCanvasRNExamples/src/dragNdrop.js
+    * fix: can not drag on babylonjs mesh in <https://github.com/flyskywhy/GCanvasRNExamples/blob/master/src/dragNdrop.js>
 
 
 ## [5.0.0] - 2022-12-18
@@ -17,7 +25,7 @@ All notable changes of this project will be documented in.
 
 * React Native GCanvas Component
     * Small break! Gesture event always be convert to mouse event.
-    * Support 3d game engine babylonjs! Ref to https://github.com/flyskywhy/GCanvasRNExamples
+    * Support 3d game engine babylonjs! Ref to <https://github.com/flyskywhy/GCanvasRNExamples>
 
 
 ## [4.0.0] - 2022-12-18
@@ -36,7 +44,7 @@ All notable changes of this project will be documented in.
 * React Native GCanvas Component
     * Small break! Font display size is more bigger than before as it depends on DevicePixelRatio now, even though default font size decrease from 12px to standard 10px, thus font size present same behavior on native and Web.
     * fix: ctx.font size should depend on DevicePixelRatio #14
-    * fix: default font size is 10px as described GLsizei in https://developer.mozilla.org/zh-CN/docs/Web/API/Canvas_API/Tutorial/Drawing_text
+    * fix: default font size is 10px as described GLsizei in <https://developer.mozilla.org/zh-CN/docs/Web/API/Canvas_API/Tutorial/Drawing_text>
 
 
 ## [2.3.37] - 2022-12-16
@@ -53,7 +61,7 @@ All notable changes of this project will be documented in.
 ### Changed
 
 * React Native GCanvas Component
-    * fix: drawingBufferWidth and drawingBufferHeight of WebGLRenderingContext is fixed not float as described GLsizei in https://registry.khronos.org/webgl/specs/latest/1.0/#DOM-WebGLRenderingContext-drawingBufferWidth
+    * fix: drawingBufferWidth and drawingBufferHeight of WebGLRenderingContext is fixed not float as described GLsizei in <https://registry.khronos.org/webgl/specs/latest/1.0/#DOM-WebGLRenderingContext-drawingBufferWidth>
     * feat: support ctx.measureText
     * fix: avoid canvas render (no return result) sometimes stuck the APP (only FlatList can be move), and still avoid getImageData() on Android sometimes get '' since 9e190a6
 
@@ -64,7 +72,7 @@ All notable changes of this project will be documented in.
 
 * React Native GCanvas Component
     * fix: let btoa use window.btoa comes from @flyskywhy/react-native-browser-polyfill to fix `Unable to resolve "abab"` #53
-    * fix: Compatible with https://github.com/flyskywhy/snakeRN/tree/v3.1.1
+    * fix: Compatible with <https://github.com/flyskywhy/snakeRN/tree/v3.1.1>
 
 
 ## [2.3.34] - 2022-12-05
