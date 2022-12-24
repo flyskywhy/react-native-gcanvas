@@ -263,6 +263,11 @@ export default class GCanvasView extends Component {
       disable(this.canvas);
     }
 
+    let index = global.createCanvasElements.findIndex(canvas => canvas === this.canvas);
+    if (index >= 0) {
+      global.createCanvasElements.splice(index, 1);
+    }
+
     // if (Platform.OS === 'ios') {
     //   const emitter = new NativeEventEmitter(ReactNativeBridge.GCanvasModule);
     //   emitter.removeListener('GCanvasReady', this._onIsReady);
