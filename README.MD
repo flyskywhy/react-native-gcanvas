@@ -79,7 +79,7 @@ So for now (2020.12), `@flyskywhy/react-native-gcanvas` is the best choice.
 
 <img src="https://raw.githubusercontent.com/flyskywhy/PixelShapeRN/master/assets/PixelShapeRN.gif" width="480">
 
-* [Babylon.js](https://www.babylonjs.com) 3d game demo [GCanvasRNExamples](https://github.com/flyskywhy/GCanvasRNExamples) base on [react-native-babylonjs](https://github.com/flyskywhy/react-native-babylonjs). And the [react-babylonjs](https://github.com/brianzinn/react-babylonjs) demo [Drag 'n' Drop](https://brianzinn.github.io/create-react-app-babylonjs/dragNdrop) just ported a few codes to [react -> react-native](https://github.com/flyskywhy/GCanvasRNExamples/commit/c7ba86b).
+* [Babylon.js](https://www.babylonjs.com) 3d game demo [GCanvasRNExamples](https://github.com/flyskywhy/GCanvasRNExamples) base on [react-native-babylonjs](https://github.com/flyskywhy/react-native-babylonjs). And the [react-babylonjs](https://github.com/brianzinn/react-babylonjs) multiple touches demo [Drag 'n' Drop](https://brianzinn.github.io/create-react-app-babylonjs/dragNdrop) just ported a few codes to [react -> react-native](https://github.com/flyskywhy/GCanvasRNExamples/commit/c7ba86b).
 
 <img src="https://raw.githubusercontent.com/flyskywhy/GCanvasRNExamples/master/assets/BabylonjsDragNDrop.gif" width="480">
 

@@ -23,6 +23,7 @@
     "glsl",
     "gpu",
     "ios",
+    "multiple-touches",
     "native",
     "offscreen-canvas",
     "particles-bg",
