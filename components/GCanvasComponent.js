@@ -22,55 +22,73 @@ export default class GCanvasView extends Component {
     this.refCanvasView = null;
     this.canvas = null;
     this.panScale = 1;
+    this.touchBank = [];
+    this.canvasViewPageX = 0;
+    this.canvasViewPageY = 0;
 
     let panResponder = PanResponder.create({
       onStartShouldSetPanResponder: () => true,
       onMoveShouldSetPanResponder: () => false,
       onPanResponderGrant: (event) => {
-        // let eventShim = {...event.nativeEvent, type: 'mousedown'};
-        // this.canvas.dispatchEvent(eventShim);
+        // as [PanResponder is not working when there are multiple touches](https://github.com/facebook/react-native/issues/8094)
+        // said, maybe it's a bug of react-native, and found (tested on Android) 2nd finger touch will
+        // not invoke onPanResponderGrant(), so be the work around this.touchBank
 
-        let mouseEvent = this.eventTouch2Mouse({
-          nativeEvent: event.nativeEvent,
-          type: 'mousedown',
-        });
-
-        this.canvas.dispatchEvent(mouseEvent);
-
-        window.dispatchEvent(mouseEvent);
-
-        props.onMouseDown && props.onMouseDown(mouseEvent);
+        // even componentWillUnmount() inovked then componentDidMount() again, the
+        // event.touchHistory.touchBank still maintain before componentWillUnmount(),
+        // maybe it's a bug of react-native, so be the workaround here
+        this.touchBank = event.touchHistory.touchBank.map(touch => {return {...touch, touchActive: false}});
       },
       onPanResponderMove: (event, gestureState) => {
-        // let eventShim = {...event.nativeEvent, type: 'mousemove'};
-        // this.canvas.dispatchEvent(eventShim);
+        // tested multiple touches with babylonjs demo `Drag and drop` in https://github.com/flyskywhy/GCanvasRNExamples
+        let touchBank = event.touchHistory.touchBank;
 
-        let mouseEvent = this.eventTouch2Mouse({
-          nativeEvent: event.nativeEvent,
-          type: 'mousemove',
+        let toDownTouchs = touchBank.filter(cur => {
+          let preFound = this.touchBank.find(pre => pre.startTimeStamp === cur.startTimeStamp)
+          if (preFound) {
+            if (!preFound.touchActive && cur.touchActive) {
+              // new finger touch can be here because `touchActive: false` workaround in onPanResponderGrant()
+              return true;
+            } else {
+              // componentWillUnmount() then componentDidMount() again cause
+              // event.touchHistory.touchBank still maintain before componentWillUnmount() will
+              // preFound.touchActive === false and cur.touchActive === false
+              // to be here
+              return false;
+            }
+          } else {
+            // 2nd finger touch will be here as 2nd finger touch will not invoke onPanResponderGrant() to change this.touchBank
+            return true;
+          }
+        });
+        let toUpTouchs = this.touchBank.filter(pre => touchBank.filter(cur => cur.startTimeStamp === pre.startTimeStamp && !cur.touchActive).length && pre.touchActive);
+        let toMoveTouchs = touchBank.filter(cur => {
+          if (cur.touchActive) {
+            if (toDownTouchs.filter(down => down.startTimeStamp === cur.startTimeStamp).length) {
+              // let 'down' -> 'up' that without 'move' in middle can be possible, thus present same behavior with Web
+              return false;
+            } else {
+              return true;
+            }
+          }
         });
 
-        this.canvas.dispatchEvent(mouseEvent);
+        // need ...touch here otherwise this.touchBank will change automatically with touchBank
+        this.touchBank = touchBank.map(touch => {return {...touch}});
 
-        // as `node_modules/zdog/js/dragger.js` use window.addEventListener not element.addEventListener on mousemove
-        window.dispatchEvent(mouseEvent);
-
-        props.onMouseMove && props.onMouseMove(mouseEvent);
+        toDownTouchs.map(touch => this.dispatch({touch, type: 'mousedown'}));
+        toUpTouchs.map(touch => this.dispatch({touch, type: 'mouseup'}));
+        toMoveTouchs.map(touch => this.dispatch({touch, type: 'mousemove'}));
       },
       onPanResponderRelease: (event, gestureState) => {
-        // let eventShim = {...event.nativeEvent, type: 'mouseup'};
-        // this.canvas.dispatchEvent(eventShim);
-
-        let mouseEvent = this.eventTouch2Mouse({
-          nativeEvent: event.nativeEvent,
-          type: 'mouseup',
+        // found 2nd finger touch release will not invoke onPanResponderRelease(), so be the work around this.touchBank with toUpTouchs above
+        this.touchBank.map(touch => {
+          if (touch.touchActive) {
+            // actually only last finger touch release will touch.touchActive === true
+            this.dispatch({touch, type: 'mouseup'});
+            touch.touchActive = false;
+          }
         });
-
-        this.canvas.dispatchEvent(mouseEvent);
-
-        window.dispatchEvent(mouseEvent);
-
-        props.onMouseUp && props.onMouseUp(mouseEvent);
       },
       onPanResponderTerminationRequest: () => false,
       onPanResponderTerminate: () => false,
@@ -116,29 +134,48 @@ export default class GCanvasView extends Component {
     disableAutoSwap: false,
   };
 
-  eventTouch2Mouse = ({nativeEvent, type}) => {
-    if (nativeEvent.type) {
-      // real mouse event have `type` but touch not
-      // TODO: test with real mouse
-      return {...nativeEvent};
-    } else {
-      return {
-        altKey: false,
-        button: type === 'mousemove' ? -1 : 0,
-        buttons: type === 'mousemove' ? 0 : 1,
-        clientX: ~~(nativeEvent.locationX * this.panScale),
-        clientY: ~~(nativeEvent.locationY * this.panScale),
-        ctrlKey: false,
-        isTrusted: true,
-        metaKey: false,
-        pageX: ~~(nativeEvent.pageX * this.panScale),
-        pageY: ~~(nativeEvent.pageY * this.panScale),
-        shiftKey: false,
-        target: this.canvas,
-        timeStamp: nativeEvent.timestamp,
-        type,
-      }
+  dispatch = ({touch, type}) => {
+    let pointerEvent = this.touch2PointerEvent({touch, type});
+    this.canvas.dispatchEvent(pointerEvent);
+
+    // as `node_modules/zdog/js/dragger.js` use window.addEventListener not element.addEventListener on mousemove
+    window.dispatchEvent(pointerEvent);
+
+    switch (type) {
+      case 'mousemove':
+        this.props.onMouseMove && this.props.onMouseMove(pointerEvent);
+        break;
+      case 'mousedown':
+        this.props.onMouseDown && this.props.onMouseDown(pointerEvent);
+        break;
+      case 'mouseup':
+          this.props.onMouseUp && this.props.onMouseUp(pointerEvent);
+        break;
+      default:
+        break;
     }
+
+  }
+
+  touch2PointerEvent = ({touch, type}) => {
+    return {
+      altKey: false,
+      button: type === 'mousemove' ? -1 : 0,
+      buttons: type === 'mousemove' ? 0 : 1,
+      clientX: (touch.currentPageX - this.canvasViewPageX) * this.panScale,
+      clientY: (touch.currentPageY - this.canvasViewPageY) * this.panScale,
+      ctrlKey: false,
+      isTrusted: true,
+      metaKey: false,
+      pageX: touch.currentPageX * this.panScale,
+      pageY: touch.currentPageY * this.panScale,
+      pointerId: touch.startTimeStamp,
+      pointerType: "touch",
+      shiftKey: false,
+      target: this.canvas,
+      timeStamp: touch.currentTimeStamp,
+      type, //  to works with babylonjs, type should not be 'pointerdown', 'pointermove' or 'pointerup'
+    };
   }
 
   _onIsReady = (event) => {
@@ -153,6 +190,11 @@ export default class GCanvasView extends Component {
     let width = event.nativeEvent.layout.width | 0; // width is fixed not float just like Web
     let height = event.nativeEvent.layout.height | 0;
     let ref = '' + findNodeHandle(this.refCanvasView);
+
+    this.refCanvasView && this.refCanvasView.measure((x, y, width, height, pageX, pageY) => {
+      this.canvasViewPageX = pageX;
+      this.canvasViewPageY = pageY;
+    });
 
     // When onLayout is invoked again (e.g. change phone orientation), if assign
     // `this.canvas` again, that also means `this` in dispatchEvent() of
