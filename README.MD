@@ -432,7 +432,7 @@ Without modification, code in [Window.devicePixelRatio
 ](https://developer.mozilla.org/en-US/docs/Web/API/Window/devicePixelRatio) will works well.
 
 ## `document.createElement('canvas')` (as offscreen canvas)
-Usage is described in [flyskywhy/react-native-browser-polyfill/src/window.js](https://github.com/flyskywhy/react-native-browser-polyfill/blob/5f1ea23aef92f80fa07f2df0a3c9658d9a7c29a9/src/window.js#L32). On iOS, maybe need layout offscreen canvas then layout normal canvas like what `this.state.hasOc1 && this.state.hasOc2 &&` do in this PixelShapeRN APP commit [can work some to resizeImageData with canvas document.createElement('canvas')](https://github.com/flyskywhy/PixelShapeRN/commit/28b8d6a).
+Usage is described in [flyskywhy/react-native-browser-polyfill/src/window.js](https://github.com/flyskywhy/react-native-browser-polyfill/blob/65a1751087a4f0efaf5912f9118db6956a7975ea/src/window.js#L32). On iOS, maybe need layout offscreen canvas then layout normal canvas like what `this.state.hasOc1 && this.state.hasOc2 &&` do in this PixelShapeRN APP commit [can work some to resizeImageData with canvas document.createElement('canvas')](https://github.com/flyskywhy/PixelShapeRN/commit/28b8d6a).
 
 ## Features
 - Cross-platform, support popular iOS and Android.

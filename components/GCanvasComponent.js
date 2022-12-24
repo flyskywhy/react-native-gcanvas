@@ -124,6 +124,9 @@ export default class GCanvasView extends Component {
     // devicePixelRatio default is undefined and means default is PixelRatio.get() ,
     // ref to "About devicePixelRatio" in README.md
     devicePixelRatio: undefined,
+    // Indicate whether this canvas can be use by document.createElement('canvas') (as offscreen canvas),
+    // ref to README.md for more usage attentions like `zIndex: -100` in style
+    offscreenCanvas: false,
     // only affect webgl
     // false: use AutoSwap, means gcanvas use a setInterval(render, 16) to exec cached cmds
     //        to generate and display graphics
@@ -236,6 +239,10 @@ export default class GCanvasView extends Component {
     );
 
     this.panScale = PixelRatio.get() / this.canvas._devicePixelRatio;
+
+    if (this.props.offscreenCanvas && !global.createCanvasElements.includes(this.canvas)) {
+      global.createCanvasElements.push(this.canvas);
+    }
 
     if (this.props.onCanvasCreate) {
       this.props.onCanvasCreate(this.canvas);

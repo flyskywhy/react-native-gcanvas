@@ -24,6 +24,7 @@
     "gpu",
     "ios",
     "native",
+    "offscreen-canvas",
     "particles-bg",
     "pixel-animation-editor",
     "pixel-art-animation-editor",
@@ -39,7 +40,7 @@
     "zdog"
   ],
   "dependencies": {
-    "@flyskywhy/react-native-browser-polyfill": "^1.0.10"
+    "@flyskywhy/react-native-browser-polyfill": "^2.0.0"
   },
   "private": false,
   "funding": [{
