@@ -3,6 +3,16 @@
 All notable changes of this project will be documented in.
 
 
+## [5.1.0] - 2022-12-24
+
+### Changed
+
+* React Native GCanvas Component
+    * feat: convert gesture event to PointerEvent to support multiple touches with babylonjs demo `Drag and drop` in <https://github.com/flyskywhy/GCanvasRNExamples>, and this can workaround <https://github.com/facebook/react-native/issues/8094>
+    * fix: can not work with document.createElement('canvas') if just exit from another page which also has document.createElement('canvas')
+    * feat: Use more general `offscreenCanvas={true}` instead of `global.createCanvasElements.push(canvas)` to work with document.createElement('canvas') (as offscreen canvas)
+
+
 ## [5.0.2] - 2022-12-22
 
 ### Changed
