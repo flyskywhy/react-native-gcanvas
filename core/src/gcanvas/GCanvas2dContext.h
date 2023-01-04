@@ -158,7 +158,7 @@ public:
     API_EXPORT GCompositeOperation GlobalCompositeOperation();
     API_EXPORT void SetGlobalCompositeOperation(int op);
     API_EXPORT void DoSetGlobalCompositeOperation(GCompositeOperation op,
-                                                  GCompositeOperation alphaOp = COMPOSITE_OP_ADD);
+                                                  GCompositeOperation alphaOp = COMPOSITE_OP_LIGHTER);
 
     API_EXPORT bool ImageSmoothingEnabled() const { return mCurrentState->mImageSmoothingEnabled; }
     API_EXPORT void SetImageSmoothingEnabled(bool smooth) { mCurrentState->mImageSmoothingEnabled = smooth; }

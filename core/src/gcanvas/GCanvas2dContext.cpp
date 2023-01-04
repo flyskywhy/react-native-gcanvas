@@ -25,18 +25,21 @@ using namespace gcanvas;
 GBlendOperationFuncs GCompositeOperationFuncs(int index)
 {
     static GBlendOperationFuncs funcs[] = {
-        {GL_ONE, GL_ONE_MINUS_SRC_ALPHA},                 //0
-        {GL_SRC_ALPHA, GL_ONE},                           //1
-        {GL_DST_COLOR, GL_ONE_MINUS_SRC_ALPHA},           //2
-        {GL_ZERO, GL_ONE_MINUS_SRC_ALPHA},                //3
-        {GL_ONE_MINUS_DST_ALPHA, GL_DST_ALPHA},           //4
-        {GL_DST_ALPHA, GL_ZERO},                          //5
-        {GL_ONE_MINUS_DST_ALPHA, GL_ONE_MINUS_SRC_ALPHA}, //6
-        {GL_ONE, GL_ZERO},                                //7
-        {GL_SRC_ALPHA, GL_DST_ALPHA},                     //8
-        {GL_ONE, GL_ONE},                                 //9
-        {GL_ONE_MINUS_DST_ALPHA, GL_ZERO},                //10
-        {GL_ZERO, GL_SRC_ALPHA},                          //11
+            // implement https://developer.mozilla.org/en-US/docs/Web/API/CanvasRenderingContext2D/globalCompositeOperation
+            // ref to https://github.com/flyskywhy/react-native-gcanvas/commit/2707833#diff-a62d88f30f431b35e7c97880b3ee1fca23fdd97df1062cc91cfa35e8fe8d3ef3
+            // and https://lists.whatwg.org/pipermail/whatwg-whatwg.org/2010-July/027427.html
+            // or https://gist.github.com/victusfate/e6347839e285b69ff486
+            {GL_ONE,                 GL_ONE_MINUS_SRC_ALPHA}, // 0 source-over
+            {GL_DST_ALPHA,           GL_ONE_MINUS_SRC_ALPHA}, // 1 source-atop
+            {GL_DST_ALPHA,           GL_ZERO}, // 2 source-in
+            {GL_ONE_MINUS_DST_ALPHA, GL_ZERO}, // 3 source-out
+            {GL_ONE_MINUS_DST_ALPHA, GL_ONE}, // 4 destination-over
+            {GL_ONE_MINUS_DST_ALPHA, GL_SRC_ALPHA}, // 5 destination-atop
+            {GL_ZERO,                GL_SRC_ALPHA}, // 6 destination-in
+            {GL_ZERO,                GL_ONE_MINUS_SRC_ALPHA}, // 7 destination-out
+            {GL_ONE,                 GL_ONE}, // 8 lighter
+            {GL_ONE,                 GL_ZERO}, // 9 copy
+            {GL_ONE_MINUS_DST_ALPHA, GL_ONE_MINUS_SRC_ALPHA}, // 10 xor
     };
 
     if (index < COMPOSITE_OP_SOURCE_OVER || index >= COMPOSITE_OP_NONE)
@@ -938,7 +941,7 @@ void GCanvasContext::DrawFBOToFBO(GFrameBufferObject &src, GFrameBufferObject &d
 {
     glViewport(0, 0, dest.ExpectedWidth(), dest.ExpectedHeight());
 
-    DoSetGlobalCompositeOperation(COMPOSITE_OP_REPLACE, COMPOSITE_OP_REPLACE);
+    DoSetGlobalCompositeOperation(COMPOSITE_OP_COPY, COMPOSITE_OP_COPY);
 
     PushRectangle4TextureArea(-1, -1, 2, 2, 0, 0,
                               static_cast<float>(src.ExpectedWidth()) / src.Width(),
@@ -1994,7 +1997,7 @@ void GCanvasContext::ClearRect(float x, float y, float w, float h)
 
     GCompositeOperation oldOp = mCurrentState->mGlobalCompositeOp;
     SendVertexBufferToGPU();
-    DoSetGlobalCompositeOperation(COMPOSITE_OP_REPLACE, COMPOSITE_OP_REPLACE);
+    DoSetGlobalCompositeOperation(COMPOSITE_OP_COPY, COMPOSITE_OP_COPY);
 
     PushRectangle(x, y, w, h, 0, 0, 0, 0, mClearColor);
 
