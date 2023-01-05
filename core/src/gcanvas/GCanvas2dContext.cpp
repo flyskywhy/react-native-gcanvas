@@ -40,6 +40,9 @@ GBlendOperationFuncs GCompositeOperationFuncs(int index)
             {GL_ONE,                 GL_ONE}, // 8 lighter
             {GL_ONE,                 GL_ZERO}, // 9 copy
             {GL_ONE_MINUS_DST_ALPHA, GL_ONE_MINUS_SRC_ALPHA}, // 10 xor
+
+            // implement https://stackoverflow.com/questions/30157901/alpha-not-changing-transparency-of-object-using-glsl-shader
+            {GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA}, // 11 let putImageData {255, 255, 255, 0} can result transparence not white just like Web
     };
 
     if (index < COMPOSITE_OP_SOURCE_OVER || index >= COMPOSITE_OP_NONE)
@@ -2093,7 +2096,13 @@ void GCanvasContext::DoDrawImage(float w, float h, int TextureId, float sx,
 
     GColorRGBA color = BlendWhiteColor(this);
     SetTexture(TextureId);
+
+    GCompositeOperation oldOp = mCurrentState->mGlobalCompositeOp;
+    DoSetGlobalCompositeOperation(COMPOSITE_OP_GL_FRAGCOLOR_ALPHA, COMPOSITE_OP_GL_FRAGCOLOR_ALPHA);
+
     PushRectangle(dx, dy, dw, dh, sx / w, sy / h, sw / w, sh / h, color, flipY);
+
+    DoSetGlobalCompositeOperation(oldOp, oldOp);
 }
 
 /**

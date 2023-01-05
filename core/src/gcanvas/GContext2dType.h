@@ -41,6 +41,8 @@ typedef enum
     COMPOSITE_OP_COPY = 9,
     COMPOSITE_OP_XOR = 10,
 
+    COMPOSITE_OP_GL_FRAGCOLOR_ALPHA = 11,
+
     COMPOSITE_OP_NONE,
 } GCompositeOperation;
 

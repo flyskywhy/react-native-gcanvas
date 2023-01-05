@@ -29,6 +29,6 @@ void main()                         \n\
     }else{                                          \n\
         texColor = texture2D(u_texture, v_texCoord);\n\
     }                                               \n\
-    texColor = texColor * v_desColor.a;             \n\
+    texColor.a *= v_desColor.a;                     \n\
     gl_FragColor = texColor;                        \n\
 }"
