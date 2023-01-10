@@ -3,6 +3,15 @@
 All notable changes of this project will be documented in.
 
 
+## [5.1.1] - 2023-01-10
+
+### Changed
+
+* React Native GCanvas Component
+    * fix: let ctx.globalCompositeOperation behavior match <https://developer.mozilla.org/en-US/docs/Web/API/CanvasRenderingContext2D/globalCompositeOperation>
+    * fix: let putImageData {255, 255, 255, 0} can result transparence not white just like Web
+
+
 ## [5.1.0] - 2022-12-24
 
 ### Changed
