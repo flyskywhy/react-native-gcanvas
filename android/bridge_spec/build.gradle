@@ -11,7 +11,6 @@ buildscript {
         maven { url 'https://maven.aliyun.com/nexus/content/groups/public' }
         //本地库，local repository(${user.home}/.m2/repository)
         mavenCentral()
-        jcenter()
         maven {
             url 'https://maven.google.com/'
             name 'Google'
