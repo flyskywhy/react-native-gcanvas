@@ -291,14 +291,16 @@ export default class App extends Component {
       //   this.ctx.drawImage(resources[imageHttpSrc].data, 70, 0, 112, 37);
       //   this.ctx.drawImage(resources[imageRequireSrc].data, 0, 100, 120, 120);
       // };
-      // loader.add(imageHttpSrc).add(imageRequireAsset.uri).load(setup);
+      // loader.add(imageHttpSrc); // imageHttpSrc can be simple string url
+      // loader
+      //   .add({
+      //     url: imageRequireAsset.uri,
+      //     // imageRequireAsset must set loadType in this object when build release
+      //     loadType: Loader.Resource._loadTypeMap[imageRequireAsset.type],
+      //   })
+      //   .load(setup);
 
-      // you can use Loader() above instead of Image() below, but notice that imageRequireSrc
-      // only work with 'resource-loader' in react-native debug/dev mode cause the asset will
-      // be served over `http://localhost:8081` , and won't work in release mode. Maybe someone
-      // can port 'resource-loader' to 'react-native-resource-loader', before that, Loader()
-      // above only support chain `add(different imageHttpSrc)` , if you use imageRequireSrc,
-      // please use Image() below.
+      // you can use Loader() above instead of Image() below, or vice versa
 
       // because already `import '@flyskywhy/react-native-browser-polyfill';` in GCanvasView, so can `new Image()`
       // not `Platform.OS === 'web' ? new Image() : new GImage()` here
