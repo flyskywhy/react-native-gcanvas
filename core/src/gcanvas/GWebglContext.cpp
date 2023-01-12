@@ -1250,7 +1250,7 @@ namespace gcanvas {
         return kContinue;
     }
 
-//new OpenGL ES not Support
+//new OpenGL ES not Support, just return some in packages/gcanvas/src/context/webgl/RenderingContext.js
 //int getContextAttributes(GCanvasWeex *obj, const char *&p)
 //{ // getContextAttributes
 //    return kContinue;

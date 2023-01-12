@@ -594,6 +594,45 @@ export default class WebGLRenderingContext {
     return res;
   }
 
+  // http://web-developer-articles.blogspot.com/2015/12/webgl-rendering-context.html
+  // A current implementation of WebGL in a flagship browser will produce the following list of attributes and their default values:
+  // {
+  // antialias: true
+  // depth: true
+  // premultipliedAlpha: true
+  // preserveDrawingBuffer: false
+  // stencil: false
+  // }
+  //
+  // https://developer.mozilla.org/en-US/docs/Web/API/WebGLRenderingContext/getContextAttributes
+  // the getContextAttributes method returns an object that describes the attributes set on this context, for example:
+  // {
+  //   alpha: true,
+  //   antialias: true,
+  //   depth: true,
+  //   failIfMajorPerformanceCaveat: false,
+  //   powerPreference: "default",
+  //   premultipliedAlpha: true,
+  //   preserveDrawingBuffer: false,
+  //   stencil: false,
+  //   desynchronized: false
+  // }
+  getContextAttributesResult = {
+    alpha: true,
+    antialias: true,
+    depth: true,
+    failIfMajorPerformanceCaveat: false,
+    powerPreference: "default",
+    premultipliedAlpha: false,
+    preserveDrawingBuffer: false,
+    stencil: true,
+    desynchronized: false
+  };
+
+  getContextAttributes = function() {
+    return this.getContextAttributesResult;
+  }
+
   getError = function() {
     const result = WebGLRenderingContext.GBridge.callNative(
       this._canvas.id,

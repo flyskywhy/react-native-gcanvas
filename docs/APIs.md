@@ -196,7 +196,7 @@
 | getFramebufferAttachmentParameter()     | Method   | Implemented   |
 | getExtension()                          | Method   | Implemented   |
 | getError()                              | Method   | Implemented   |
-| getContextAttributes()                  | Method   | *Empty*       |
+| getContextAttributes()                  | Method   | Implemented   |
 | getBufferParameter()                    | Method   | Implemented   |
 | getAttachedShaders()                    | Method   | Implemented   |
 | getActiveUniform()                      | Method   | Implemented   |
