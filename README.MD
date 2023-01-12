@@ -280,6 +280,11 @@ export default class App extends Component {
       const imageHttpSrc =
         'https://gw.alicdn.com/tfs/TB1KwRTlh6I8KJjy0FgXXXXzVXa-225-75.png';
       // `await Asset.fromModule` needs `expo-file-system`, and `expo-file-system` needs
+      // `expo-modules` or old `react-native-unimodules`.
+      // https://github.com/expo/expo/tree/sdk-47/packages/expo-asset said it needs
+      // https://docs.expo.dev/bare/installing-expo-modules/ which also described how to
+      // migrating from `react-native-unimodules`.
+      // The installation of old `react-native-unimodules` can ref to
       // [install react-native-unimodules without install expo](https://github.com/flyskywhy/g/blob/master/i%E4%B8%BB%E8%A7%82%E7%9A%84%E4%BD%93%E9%AA%8C%E6%96%B9%E5%BC%8F/t%E5%BF%AB%E4%B9%90%E7%9A%84%E4%BD%93%E9%AA%8C/%E7%94%B5%E4%BF%A1/Tool/%E7%BC%96%E7%A8%8B%E8%AF%AD%E8%A8%80/JavaScript/React%E4%BD%BF%E7%94%A8%E8%AF%A6%E8%A7%A3.md#install-react-native-unimodules-without-install-expo)
       const imageRequireAsset = await Asset.fromModule(
         require('@flyskywhy/react-native-gcanvas/tools/build_website/assets/logo-gcanvas.png'),
