@@ -96,7 +96,8 @@ float *GFontManagerAndroid::MeasureTextWidthHeight(const char *text, unsigned in
     float *ret = new float[4];
     ret[0] = deltaX;
     ret[1] = maxHeight;
-    ret[2] = ret[3] = 0.0;
+    ret[2] = m_ascender;
+    ret[3] = m_descender;
     return ret;
 }
 

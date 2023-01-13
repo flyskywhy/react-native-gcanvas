@@ -273,6 +273,7 @@ public:
 
     //text
     API_EXPORT float MeasureTextWidth(const char *text, int strLength = 0);
+    API_EXPORT float *MeasureText(const char *text, int strLength = 0);
     API_EXPORT void DrawText(const char *text, float x, float y, float maxWidth = SHRT_MAX);
     API_EXPORT void StrokeText(const char *text, float x, float y, float maxWidth = SHRT_MAX);
 

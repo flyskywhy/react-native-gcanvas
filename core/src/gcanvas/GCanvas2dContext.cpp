@@ -2069,6 +2069,24 @@ float GCanvasContext::MeasureTextWidth(const char *text, int strLength)
     return width / mDevicePixelRatio;
 }
 
+float *GCanvasContext::MeasureText(const char *text, int strLength)
+{
+    if (strLength == 0)
+    {
+        strLength = static_cast<int>(strlen(text));
+    }
+    if (mCurrentState->mFont == nullptr)
+    {
+        mCurrentState->mFont = new GFontStyle(nullptr, mDevicePixelRatio);
+    }
+    float *ret = mFontManager->MeasureTextExt(text, strLength, mCurrentState->mFont);
+    ret[0] = ret[0] / mDevicePixelRatio;
+    ret[1] = ret[1] / mDevicePixelRatio;
+    ret[2] = ret[2] / mDevicePixelRatio;
+    ret[3] = ret[3] / mDevicePixelRatio;
+    return ret;
+}
+
 //image
 void GCanvasContext::DrawImage(int textureId, int textureWidth, int textureHeight,
                                float sx, float sy, float sw, float sh,

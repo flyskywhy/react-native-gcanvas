@@ -512,7 +512,7 @@ export default class CanvasRenderingContext2D {
   measureText = function(text) {
     cancelAnimationFrame(this._canvas._renderLoopId);
     this.flushJsCommands2CallNative('sync', 'execWithoutDisplay');
-    let width = CanvasRenderingContext2D.GBridge.callNative(
+    let tmpMeasure = CanvasRenderingContext2D.GBridge.callNative(
       this.componentId,
       'V' + text + ';',
       false,
@@ -522,7 +522,26 @@ export default class CanvasRenderingContext2D {
     );
     this._canvas._renderLoopId = requestAnimationFrame(this._canvas._renderLoop.bind(this._canvas));
 
-    return {width: parseFloat(width)};
+    let textMetrics = {
+      width: 37.343750,
+      actualBoundingBoxAscent: 18.4,
+      actualBoundingBoxDescent: 5.6,
+    };
+    try {
+      const {width, height, actualBoundingBoxAscent, actualBoundingBoxDescent} = JSON.parse(tmpMeasure);
+      textMetrics.width = width;
+      if (actualBoundingBoxAscent > 0 && actualBoundingBoxDescent > 0) {
+        textMetrics.actualBoundingBoxAscent = actualBoundingBoxAscent;
+        textMetrics.actualBoundingBoxDescent = actualBoundingBoxDescent;
+      } else {
+        textMetrics.actualBoundingBoxAscent = height * 1.15 / 1.5;
+        textMetrics.actualBoundingBoxDescent = height - textMetrics.actualBoundingBoxAscent;
+      }
+    } catch (err) {
+      __DEV__ && console.warn('measureText parse error:' + tmpMeasure);
+    }
+
+    return textMetrics;
   }
 
   isPointInPath = function(x, y) {

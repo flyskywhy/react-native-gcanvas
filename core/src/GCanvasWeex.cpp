@@ -1389,12 +1389,29 @@ void GCanvasWeex::execute2dCommands(const char *renderCommands, int length) {
                 }
 
                 float width = 7.0;
+                float height = 1.5;
+                float actualBoundingBoxAscent = 1.15;
+                float actualBoundingBoxDescent = 0.35;
                 if (textLen > 0) {
                     strncpy(tmpText, pStart, textLen);
                     tmpText[textLen] = 0;
-                    width = mCanvasContext->MeasureTextWidth(tmpText);
+                    float *tmpMeasure = mCanvasContext->MeasureText(tmpText);
+                    width = tmpMeasure[0];
+                    height = tmpMeasure[1];
+                    actualBoundingBoxAscent = tmpMeasure[2];
+                    actualBoundingBoxDescent = tmpMeasure[3];
+                    delete tmpMeasure;
                 }
-                setSyncResult(std::to_string(width));
+                std::string jsonResult = "{\"width\":";
+                jsonResult += std::to_string(width);
+                jsonResult += ",\"height\":";
+                jsonResult += std::to_string(height);
+                jsonResult += ",\"actualBoundingBoxAscent\":";
+                jsonResult += std::to_string(actualBoundingBoxAscent);
+                jsonResult += ",\"actualBoundingBoxDescent\":";
+                jsonResult += std::to_string(actualBoundingBoxDescent);
+                jsonResult += "}";
+                setSyncResult(jsonResult);
 
                 if (*p == ';') ++p;
                 break;

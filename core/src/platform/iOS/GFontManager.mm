@@ -168,6 +168,7 @@ float* iOS_GCanvas_Measure_TextExt(const char *text, unsigned int text_length, G
     float *ret = new float[4];
     ret[0] = fontLayout.metrics.width;
     ret[1] = fontLayout.metrics.ascent + fontLayout.metrics.descent;
-    ret[2] = ret[3] = 0;
+    ret[2] = fontLayout.metrics.ascent;
+    ret[3] = fontLayout.metrics.descent;
     return ret;
 }
