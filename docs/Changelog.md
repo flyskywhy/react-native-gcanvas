@@ -3,6 +3,16 @@
 All notable changes of this project will be documented in.
 
 
+## [5.1.2] - 2023-01-13
+
+### Changed
+
+* React Native GCanvas Component
+    * README.md: install expo-modules instead of react-native-unimodules to install latest expo-asset
+    * feat: support gl.getContextAttributes
+    * fix: let putImageData {255, 255, 255, 0} can result transparence not white just like Web
+
+
 ## [5.1.1] - 2023-01-10
 
 ### Changed
