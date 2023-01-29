@@ -87,6 +87,7 @@ public class GTextureViewCallback implements TextureView.SurfaceTextureListener 
         if (width != 0 && height != 0) {
             mWidth = width;
             mHeight = height;
+            GLog.d("resetGlViewport() in onSurfaceTextureAvailable");
             resetGlViewport();
         }
         GCanvasJNI.refreshArguments(mKey);
@@ -113,6 +114,8 @@ public class GTextureViewCallback implements TextureView.SurfaceTextureListener 
         if (width != 0 && height != 0) {
             mWidth = width;
             mHeight = height;
+            // GLog.d("resetGlViewport() in onSurfaceTextureSizeChanged");
+            // resetGlViewport();
         }
 
         if (null != mDelegateLists) {
