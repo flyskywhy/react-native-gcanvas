@@ -219,6 +219,10 @@ const GBridge = {
 
 
   texImage2D(componentId, ...args) {
+    if (isDebugging) {
+      console.log('>>> texImage2D: ' + componentId, ...args);
+    }
+
     if (isReactNativeAndroid()) {
       const [target, level, internalformat, format, type, image] = args;
       GBridge.GCanvasModule.texImage2D(componentId, target, level, internalformat, format, type, image.src);
@@ -226,6 +230,10 @@ const GBridge = {
   },
 
   texSubImage2D(componentId, ...args) {
+    if (isDebugging) {
+      console.log('>>> texSubImage2D: ' + componentId, ...args);
+    }
+
     if (isReactNativeAndroid()) {
       const [target, level, xoffset, yoffset, format, type, image] = args;
       GBridge.GCanvasModule.texSubImage2D(componentId, target, level, xoffset, yoffset, format, type, image.src);
@@ -233,10 +241,18 @@ const GBridge = {
   },
 
   drawCanvas2Canvas(map) {
+    if (isDebugging) {
+      console.log('>>> drawCanvas2Canvas: ', map);
+    }
+
     GBridge.GCanvasModule.drawCanvas2Canvas(map);
   },
 
   bindImageTexture(componentId, src, imageId) {
+    if (isDebugging) {
+      console.log('>>> bindImageTexture: ' + componentId, src, imageId);
+    }
+
     GBridge.GCanvasModule.bindImageTexture([src, imageId], componentId, function(e) {
 
     });

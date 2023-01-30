@@ -790,7 +790,7 @@ export default class WebGLRenderingContext {
     if (this._supportedExtensions.length === 0) {
       const result = WebGLRenderingContext.GBridge.callNative(
         this._canvas.id,
-        GLmethod.getSupportedExtensions,
+        GLmethod.getSupportedExtensions + '',
       );
       result.split(' ').map(extension => {
         if (extension !== '') {
