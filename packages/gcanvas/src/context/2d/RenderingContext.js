@@ -587,7 +587,8 @@ export default class CanvasRenderingContext2D {
         return;
       }
 
-      this.flushJsCommands2CallNative('sync', 'execWithDisplay');
+      // The reason of 'execWithoutDisplay' not 'execWithDisplay' is ref to below where imageIsCanvas is false
+      this.flushJsCommands2CallNative('sync', 'execWithoutDisplay');
 
       image._context.flushJsCommands2CallNative('sync');
 
@@ -618,7 +619,11 @@ export default class CanvasRenderingContext2D {
       this._drawCommands += 'd' + image._id + ','
                   + srcX + ',' + srcY + ',' + srcW + ',' + srcH + ','
                   + dstX + ',' + dstY + ',' + dstW + ',' + dstH + ';';
-      this.flushJsCommands2CallNative('sync', 'execWithDisplay');
+
+      // If use 'execWithDisplay' here, will cause 2nd image flick with 'forceCanvas = true' of
+      // https://github.com/flyskywhy/GCanvasRNExamples/blob/master/app/components/Pixi.js ,
+      // because in '2d' not 'webgl' PIXI, every PIXI app tick will let all image sprites be drawImage()
+      this.flushJsCommands2CallNative('sync', 'execWithoutDisplay');
     }
   }
 
