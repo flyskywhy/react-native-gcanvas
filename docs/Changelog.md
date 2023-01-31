@@ -3,6 +3,14 @@
 All notable changes of this project will be documented in.
 
 
+## [5.1.3] - 2023-01-31 Happy Chinese New Year
+
+### Changed
+
+* React Native GCanvas Component
+    * fix: 2nd image flick with 'forceCanvas = true' of <https://github.com/flyskywhy/GCanvasRNExamples/blob/master/app/components/Pixi.js>
+
+
 ## [5.1.2] - 2023-01-13
 
 ### Changed
