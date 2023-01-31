@@ -409,6 +409,11 @@ const styles = StyleSheet.create({
 });
 ```
 
+### PIXI
+You can follow the comments in example <https://github.com/flyskywhy/GCanvasRNExamples/blob/master/app/components/Pixi.js> which code is similar to 2D canvas above to use `pixi.js` `@4`, `@5`, `@6` or `@7`.
+
+<img src="https://raw.githubusercontent.com/flyskywhy/GCanvasRNExamples/master/assets/Pixi.gif" width="480">
+
 ## About devicePixelRatio
 Take width as example, in [Window.devicePixelRatio](https://developer.mozilla.org/en-US/docs/Web/API/Window/devicePixelRatio):
 
