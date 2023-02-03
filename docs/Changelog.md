@@ -3,6 +3,14 @@
 All notable changes of this project will be documented in.
 
 
+## [5.1.4] - 2023-02-03
+
+### Changed
+
+* React Native GCanvas Component
+    * fix: touch issue caused by sometimes multiple touches have same startTimeStamp
+
+
 ## [5.1.3] - 2023-01-31 Happy Chinese New Year
 
 ### Changed
