@@ -3,6 +3,14 @@
 All notable changes of this project will be documented in.
 
 
+## [5.1.5] - 2023-02-03
+
+### Changed
+
+* React Native GCanvas Component
+    * fix: since @flyskywhy/react-native-gcanvas@5.1.3, image not display on screen of <https://github.com/flyskywhy/GCanvasRNExamples/blob/master/app/components/Canvas2dDemo.js>
+
+
 ## [5.1.4] - 2023-02-03
 
 ### Changed
