@@ -44,7 +44,7 @@ export default class GCanvasView extends Component {
         let touchBank = event.touchHistory.touchBank;
 
         let toDownTouchs = touchBank.filter(cur => {
-          let preFound = this.touchBank.find(pre => pre.startTimeStamp === cur.startTimeStamp)
+          let preFound = this.touchBank.find(pre => this.touch2PointerId(pre) === this.touch2PointerId(cur));
           if (preFound) {
             if (!preFound.touchActive && cur.touchActive) {
               // new finger touch can be here because `touchActive: false` workaround in onPanResponderGrant()
@@ -61,10 +61,10 @@ export default class GCanvasView extends Component {
             return true;
           }
         });
-        let toUpTouchs = this.touchBank.filter(pre => touchBank.filter(cur => cur.startTimeStamp === pre.startTimeStamp && !cur.touchActive).length && pre.touchActive);
+        let toUpTouchs = this.touchBank.filter(pre => touchBank.filter(cur => this.touch2PointerId(cur) === this.touch2PointerId(pre) && !cur.touchActive).length && pre.touchActive);
         let toMoveTouchs = touchBank.filter(cur => {
           if (cur.touchActive) {
-            if (toDownTouchs.filter(down => down.startTimeStamp === cur.startTimeStamp).length) {
+            if (toDownTouchs.filter(down => this.touch2PointerId(down) === this.touch2PointerId(cur)).length) {
               // let 'down' -> 'up' that without 'move' in middle can be possible, thus present same behavior with Web
               return false;
             } else {
@@ -157,8 +157,7 @@ export default class GCanvasView extends Component {
       default:
         break;
     }
-
-  }
+  };
 
   touch2PointerEvent = ({touch, type}) => {
     return {
@@ -172,14 +171,16 @@ export default class GCanvasView extends Component {
       metaKey: false,
       pageX: touch.currentPageX * this.panScale,
       pageY: touch.currentPageY * this.panScale,
-      pointerId: touch.startTimeStamp,
+      pointerId: this.touch2PointerId(touch),
       pointerType: "touch",
       shiftKey: false,
       target: this.canvas,
       timeStamp: touch.currentTimeStamp,
       type, //  to works with babylonjs, type should not be 'pointerdown', 'pointermove' or 'pointerup'
     };
-  }
+  };
+
+  touch2PointerId = (touch) => touch.startTimeStamp + touch.startPageX + touch.startPageY;
 
   _onIsReady = (event) => {
     if (this.props.onIsReady) {
