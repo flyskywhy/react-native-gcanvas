@@ -3,6 +3,14 @@
 All notable changes of this project will be documented in.
 
 
+## [5.1.6] - 2023-02-17
+
+### Changed
+
+* React Native GCanvas Component
+    fix: since v5.0.2 cause `Unable to compile iOS due to missing return value` #58
+
+
 ## [5.1.5] - 2023-02-03
 
 ### Changed
