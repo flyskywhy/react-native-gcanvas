@@ -118,6 +118,8 @@ RCT_EXPORT_BLOCKING_SYNCHRONOUS_METHOD(setContextType:(NSUInteger)type component
 RCT_EXPORT_BLOCKING_SYNCHRONOUS_METHOD(setDevicePixelRatio:(NSString*)componentId ratio:(CGFloat)ratio)
 {
     [self.gcanvasModule setDevicePixelRatio:componentId ratio:ratio];
+
+    return nil;
 }
 
 RCT_EXPORT_BLOCKING_SYNCHRONOUS_METHOD(resetGlViewport:(NSString*)componentId)
