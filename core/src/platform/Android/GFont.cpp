@@ -94,7 +94,10 @@ bool LoadFace(FT_Library *library, const char *filename,
     error = FT_New_Face(*library, filename, 0, face);
     if (error)
     {
-        assert(filename == 0);
+        // assert(filename == 0);
+        // above will crash, so use LOG_E below instead
+        LOG_E("load font %s FT_Error:%d", filename, error);
+
         FT_Done_FreeType(*library);
         return false;
     }
@@ -652,7 +655,10 @@ bool GFont::LoadFace(const char *filename,
     error = FT_New_Face(mLibrary, filename, mface_index, &mFace);
     if (error)
     {
-        assert(filename == 0);
+        // assert(filename == 0);
+        // above will crash, so use LOG_E below instead
+        LOG_E("load font %s FT_Error:%d", filename, error);
+
         DisposeFreeType();
         return false;
     }
