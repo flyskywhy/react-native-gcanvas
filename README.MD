@@ -446,7 +446,7 @@ Without modification, code in [Window.devicePixelRatio
 ## `document.createElement('canvas')` (as offscreen canvas)
 Usage is described in [flyskywhy/react-native-browser-polyfill/src/window.js](https://github.com/flyskywhy/react-native-browser-polyfill/blob/65a1751087a4f0efaf5912f9118db6956a7975ea/src/window.js#L32). On iOS, maybe need layout offscreen canvas then layout normal canvas like what `this.state.hasOc1 &&` do in this GCanvasRNExamples APP commit [react -> react-native: `Zdog and Tests` step5 document.createElement('canvas') with offscreenCanvas works well](https://github.com/flyskywhy/GCanvasRNExamples/commit/ceded0e).
 
-Since offscreen canvas is used frequently with ctx.drawImage(), so please pay attention to the quirk of `@flyskywhy/react-native-gcanvas`:
+Since offscreen canvas is used frequently with `ctx.drawImage()`, so please pay attention to the quirk of `@flyskywhy/react-native-gcanvas`:
 ```
 this.ctx.drawImage(offscreenCanvas, 0, 0, 100, 100, 0, 0, 100, 100);
 
