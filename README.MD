@@ -447,7 +447,14 @@ Without modification, code in [Window.devicePixelRatio
 Usage is described in [flyskywhy/react-native-browser-polyfill/src/window.js](https://github.com/flyskywhy/react-native-browser-polyfill/blob/65a1751087a4f0efaf5912f9118db6956a7975ea/src/window.js#L32). On iOS, maybe need layout offscreen canvas then layout normal canvas like what `this.state.hasOc1 &&` do in this GCanvasRNExamples APP commit [react -> react-native: `Zdog and Tests` step5 document.createElement('canvas') with offscreenCanvas works well](https://github.com/flyskywhy/GCanvasRNExamples/commit/ceded0e).
 
 ## About fonts
+Here is the result of [Font Picker to fillText](https://github.com/flyskywhy/GCanvasRNExamples/blob/master/app/components/FontPicker2FillText.js) on [@flyskywhy/react-native-gcanvas](https://github.com/flyskywhy/react-native-gcanvas) by [react-native-font-picker](https://github.com/flyskywhy/react-native-font-picker).
+
+<img src="https://raw.githubusercontent.com/flyskywhy/GCanvasRNExamples/master/assets/FontPicker2FillText.gif" width="480">
+
+### custom fonts
 If want to use custom fonts in `@flyskywhy/react-native-gcanvas` as well as React `<Text/>`, please install custom fonts ref to <https://mehrankhandev.medium.com/ultimate-guide-to-use-custom-fonts-in-react-native-77fcdf859cf4> and <https://github.com/callstack/react-native-paper/blob/291d9a90ea2bf2d9a3416170a9a3a1791cf051b0/docs/docs/guides/04-fonts.md?plain=1#L32>, need rename font file name, maybe <https://gist.github.com/keighl/5434540> can do the rename work.
+
+Or just see how the simple install steps of [react-native-font-sim](https://github.com/flyskywhy/react-native-font-sim) can install e.g. `KaiTi.ttf`, and the same steps can also install ttf files in e.g. [react-native-vector-icons](https://github.com/oblador/react-native-vector-icons).
 ```
 import {getFontNames, registerFont} from '@flyskywhy/react-native-gcanvas';
 if (Platform.OS !== 'web') {
@@ -502,7 +509,7 @@ console.log(getFontNames());
   }
 ```
 
-### system fonts
+### system fonts on Android
 Even if some font file in `/system/fonts/` on Android is not included in the return of `getFontNames()`, you can still use it by `registerFont()`! e.g.
 ```
 registerFont('/system/fonts/NotoSansThai-Regular.ttf', {family: 'Thai'});
