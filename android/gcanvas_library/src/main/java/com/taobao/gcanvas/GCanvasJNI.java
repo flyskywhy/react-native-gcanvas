@@ -140,7 +140,11 @@ public class GCanvasJNI {
 
     public static native void addFontFamily(String[] fontNames, String[] fontFiles);
 
+    public static native String[] getFontNames();
+
     public static native void addFallbackFontFamily(String[] fallbackFontFiles);
+
+    public static native void setExtraFontLocation(String extraFontLocation);
 
     public static native void setLogLevel(String logLevel);
 

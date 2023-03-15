@@ -122,6 +122,11 @@ RCT_EXPORT_BLOCKING_SYNCHRONOUS_METHOD(setDevicePixelRatio:(NSString*)componentI
     return nil;
 }
 
+RCT_EXPORT_BLOCKING_SYNCHRONOUS_METHOD(getFontNames)
+{
+    return [UIFont familyNames];
+}
+
 RCT_EXPORT_BLOCKING_SYNCHRONOUS_METHOD(resetGlViewport:(NSString*)componentId)
 {
     [self.gcanvasModule resetGlViewport:componentId];

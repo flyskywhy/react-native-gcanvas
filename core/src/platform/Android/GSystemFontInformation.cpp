@@ -114,13 +114,9 @@ namespace gcanvas {
             return false;
         }
 
-        //字体名转为小写，防止用户传入大小写混合字符串
         int length = strlen(fontName);
         char *newFontName = new char[length + 1];
         strcpy(newFontName, fontName);
-        for (int i = 0; i < length; ++i) {
-            newFontName[i] = tolower(newFontName[i]);
-        }
 
         auto fontListPtr = FindFontFamily(newFontName);
         if (fontListPtr != nullptr) {
@@ -229,4 +225,7 @@ namespace gcanvas {
         return (char *) currentFontFile;
     }
 
+    std::map<const char *, GFontFamily, Lesser> *SystemFontInformation::getFontFamilies() {
+        return &this->mFontFamilies;
+    }
 }

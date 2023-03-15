@@ -101,6 +101,12 @@ public interface IGBridgeModule<JSCallback> {
      */
     void setDevicePixelRatio(String canvasId, double ratio);
 
+    void addFontFamily(String[] fontNames, String[] fontFiles);
+
+    String[] getFontNames();
+
+    void setExtraFontLocation(String extraFontLocation);
+
     void resetGlViewport(String canvasId);
 
     /**

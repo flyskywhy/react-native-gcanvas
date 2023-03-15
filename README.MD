@@ -446,6 +446,77 @@ Without modification, code in [Window.devicePixelRatio
 ## `document.createElement('canvas')` (as offscreen canvas)
 Usage is described in [flyskywhy/react-native-browser-polyfill/src/window.js](https://github.com/flyskywhy/react-native-browser-polyfill/blob/65a1751087a4f0efaf5912f9118db6956a7975ea/src/window.js#L32). On iOS, maybe need layout offscreen canvas then layout normal canvas like what `this.state.hasOc1 &&` do in this GCanvasRNExamples APP commit [react -> react-native: `Zdog and Tests` step5 document.createElement('canvas') with offscreenCanvas works well](https://github.com/flyskywhy/GCanvasRNExamples/commit/ceded0e).
 
+## About fonts
+If want to use custom fonts in `@flyskywhy/react-native-gcanvas` as well as React `<Text/>`, please install custom fonts ref to <https://mehrankhandev.medium.com/ultimate-guide-to-use-custom-fonts-in-react-native-77fcdf859cf4> and <https://github.com/callstack/react-native-paper/blob/291d9a90ea2bf2d9a3416170a9a3a1791cf051b0/docs/docs/guides/04-fonts.md?plain=1#L32>, need rename font file name, maybe <https://gist.github.com/keighl/5434540> can do the rename work.
+```
+import {getFontNames, registerFont} from '@flyskywhy/react-native-gcanvas';
+if (Platform.OS !== 'web') {
+  var RNFS = require('react-native-fs');
+}
+
+console.log(getFontNames());
+// Android print: ['SomeSystemFontFamily', 'some system font family']
+// iOS print:     ['SomeCustomFont-Regular', 'SomeCustomFont-Bold', SomeSystemFontFamily', 'some system font family']
+...
+  copyFileAssets = async () => {
+    if (Platform.OS === 'android') {
+      const files = await RNFS.readDirAssets('fonts');
+      if (files.length) {
+        // If >= Android 11 , destFontsPath can only be under
+        // RNFS.DocumentDirectoryPath (/data/user/0/com.domain.appname/files/)
+        // or
+        // RNFS.ExternalDirectoryPath (/storage/emulated/0/Android/data/com.domain.appname/files)
+        // If < Android 11 and destFontsPath is e.g. `/sdcard/fonts/`, write code here to request filesystem permission
+        // If `adb push` SomeCustomFont-Bold.ttf , also need `adb shell chomd 660` SomeCustomFont-Bold.ttf
+        const destFontsPath = `${RNFS.ExternalDirectoryPath}/fonts`;
+
+        if (!(await RNFS.exists(destFontsPath))) {
+          await RNFS.mkdir(destFontsPath);
+        }
+
+        for (let file of files) {
+          const dest = `${destFontsPath}/${file.name}`;
+          if (!(await RNFS.exists(dest))) {
+            await RNFS.copyFileAssets(`fonts/${file.name}`, dest);
+          }
+
+          registerFont(dest);
+        }
+      }
+    }
+
+    console.warn(getFontNames());
+    // Android print:   ['SomeCustomFont-Regular', 'SomeCustomFont-Bold', SomeSystemFontFamily', 'some system font family']
+    // iOS still print: ['SomeCustomFont-Regular', 'SomeCustomFont-Bold', SomeSystemFontFamily', 'some system font family']
+  }
+
+  drawCanvas = async () => {
+    if (Platform.OS === 'android') {
+      await this.copyFileAssets();
+    }
+    ...
+    // this.ctx.font = '50px SomeSystemFontFamily';
+    // this.ctx.font = '50px times new roman';
+    this.ctx.font = '50px SomeCustomFont-Regular';
+    ...
+  }
+```
+
+### system fonts
+Even if some font file in `/system/fonts/` on Android is not included in the return of `getFontNames()`, you can still use it by `registerFont()`! e.g.
+```
+registerFont('/system/fonts/NotoSansThai-Regular.ttf', {family: 'Thai'});
+this.ctx.font = '30px Thai'; // or just this.ctx.font = '30px';
+this.ctx.fillText('ภาษาไทย泰语Thai', 20, 100);
+```
+or just
+```
+registerFont('/system/fonts/NotoSansThai-Regular.ttf');
+this.ctx.font = '30px NotoSansThai-Regular'; // or just this.ctx.font = '30px';
+this.ctx.fillText('ภาษาไทย泰语Thai', 20, 100);
+```
+And this example can also workaround [can not fillText with thai font family on Android](https://github.com/flyskywhy/react-native-gcanvas/issues/38).
+
 ## Features
 - Cross-platform, support popular iOS and Android.
 - High performance, accelerate graphic draw by OpenGL ES.
