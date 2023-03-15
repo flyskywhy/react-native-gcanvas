@@ -22,6 +22,7 @@ import com.facebook.react.bridge.ReactContextBaseJavaModule;
 import com.facebook.react.bridge.ReactMethod;
 import com.facebook.react.bridge.ReadableArray;
 import com.facebook.react.bridge.ReadableMap;
+import com.facebook.react.bridge.WritableArray;
 import com.facebook.react.bridge.WritableMap;
 import com.taobao.gcanvas.GCanvasJNI;
 import com.taobao.gcanvas.adapters.img.impl.fresco.GCanvasFrescoImageLoader;
@@ -258,6 +259,21 @@ public class GReactModule extends ReactContextBaseJavaModule implements Lifecycl
                 return;
             }
             GCanvasJNI.setDevicePixelRatio(textureView.getCanvasKey(), ratio);
+        }
+
+        @Override
+        public void addFontFamily(String[] fontNames, String[] fontFiles) {
+            GCanvasJNI.addFontFamily(fontNames, fontFiles);
+        }
+
+        @Override
+        public String[] getFontNames() {
+            return GCanvasJNI.getFontNames();
+        }
+
+        @Override
+        public void setExtraFontLocation(String extraFontLocation) {
+            GCanvasJNI.setExtraFontLocation(extraFontLocation);
         }
 
         @Override
@@ -563,6 +579,42 @@ public class GReactModule extends ReactContextBaseJavaModule implements Lifecycl
 
         GLog.d(TAG, "setDevicePixelRatio " + ratio);
         mImpl.setDevicePixelRatio(refId, ratio);
+    }
+
+    public static WritableArray stringArray2WritableArray(String[] stringArr) {
+        int size = stringArr.length;
+        WritableArray writableArr = Arguments.createArray();
+        for (int i = 0; i < size; i++) {
+            writableArr.pushString(stringArr[i]);
+        }
+
+        return writableArr;
+    }
+
+    public static String[] readableArray2StringArray(ReadableArray arr) {
+        int size = arr.size();
+        String[] stringArr = new String[size];
+        for(int i = 0; i < size; i++) {
+            stringArr[i] = (String)arr.getString(i);
+        }
+
+        return stringArr;
+    }
+
+    @ReactMethod(isBlockingSynchronousMethod = true)
+    public void addFontFamily(ReadableArray fontNames, ReadableArray fontFiles) {
+        mImpl.addFontFamily(readableArray2StringArray(fontNames), readableArray2StringArray(fontFiles));
+    }
+
+    @ReactMethod(isBlockingSynchronousMethod = true)
+    public WritableArray getFontNames() {
+        return stringArray2WritableArray(mImpl.getFontNames());
+    }
+
+    @ReactMethod(isBlockingSynchronousMethod = true)
+    public void setExtraFontLocation(String extraFontLocation) {
+        GLog.d(TAG, "setExtraFontLocation " + extraFontLocation);
+        mImpl.setExtraFontLocation(extraFontLocation);
     }
 
     @ReactMethod(isBlockingSynchronousMethod = true)

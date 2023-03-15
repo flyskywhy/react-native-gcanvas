@@ -127,8 +127,6 @@ namespace gcanvas {
                 if (fontFamily.length() > 0) {
                     fontFamily.erase(std::remove(fontFamily.begin(), fontFamily.end(), '\"'),
                                      fontFamily.end());
-                    std::transform(fontFamily.begin(), fontFamily.end(), fontFamily.begin(),
-                                   ::tolower);
                     mFamily = fontFamily;
                 }
             }

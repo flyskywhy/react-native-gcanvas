@@ -3,12 +3,21 @@
 All notable changes of this project will be documented in.
 
 
+## [5.1.7] - 2023-03-15
+
+### Changed
+
+* React Native GCanvas Component
+    * feat: add registerFont() for Android and getFontNames() to work with custom fonts, and workaround #38 can not fillText with thai font family on Android
+    * fix: ctx.fillText(str) crash on some Android device if not run `ctx.font = ` before and str is not char of CJK
+
+
 ## [5.1.6] - 2023-02-17
 
 ### Changed
 
 * React Native GCanvas Component
-    fix: since v5.0.2 cause `Unable to compile iOS due to missing return value` #58
+    * fix: since v5.0.2 cause `Unable to compile iOS due to missing return value` #58
 
 
 ## [5.1.5] - 2023-02-03

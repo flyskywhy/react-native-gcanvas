@@ -43,6 +43,7 @@ namespace gcanvas {
 
         API_EXPORT GFontFamily *FindFontFamily(const char *fontName);
 
+        API_EXPORT std::map<const char *, GFontFamily, Lesser> *getFontFamilies();
 
         char *GetClosestFontFamily(GCanvasContext *context,
                                    const char *currentFontLocation,

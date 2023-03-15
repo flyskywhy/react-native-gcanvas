@@ -21,6 +21,8 @@ import java.util.HashMap;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
+import java.util.concurrent.CountDownLatch;
+import java.util.concurrent.TimeUnit;
 
 
 public class GCanvasJNI {
@@ -88,7 +90,27 @@ public class GCanvasJNI {
             System.loadLibrary("freetype");
             System.loadLibrary("gcanvas");
 
-            GCanvasJNI.setFontFamilies();
+            // At first, I can not get log in Java_com_taobao_gcanvas_GCanvasJNI_addFontFamily,
+            // ref to https://developer.android.com/training/articles/perf-jni?hl=zh-cn#threads
+            // I guess need run GCanvasJNI.setFontFamilies() in a new thread, because
+            // loadInternal() is called by static and if GCanvasJNI.setFontFamilies()
+            // not run in a new thread, native method e.g. GCanvasJNI.addFontFamily()
+            // will not be invoked.
+            // Then actually, I can still get not nullptr from SystemFontInformation::FindFontFamily
+            // if not run GCanvasJNI.setFontFamilies() in a new thread, except also
+            // change SystemFontInformation::InsertFontFamily to just return false,
+            // so new thread is not necessary, the only small issue is that can't get
+            // log in JNI if be called by static, but it's actually be called.
+            // So comment "new Thread(new Runnable()" below.
+            // final CountDownLatch cdl = new CountDownLatch(1);
+            // new Thread(new Runnable() {
+            //     @Override
+            //     public void run() {
+                    GCanvasJNI.setFontFamilies();
+            //         cdl.countDown();
+            //     }
+            // }).start();
+            // cdl.await(300, TimeUnit.MILLISECONDS);
 
         } catch (UnsatisfiedLinkError e) {
             GCanvaslibEnable = false;
@@ -118,7 +140,11 @@ public class GCanvasJNI {
 
     public static native void addFontFamily(String[] fontNames, String[] fontFiles);
 
+    public static native String[] getFontNames();
+
     public static native void addFallbackFontFamily(String[] fallbackFontFiles);
+
+    public static native void setExtraFontLocation(String extraFontLocation);
 
     public static native void setLogLevel(String logLevel);
 

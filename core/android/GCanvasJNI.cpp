@@ -803,6 +803,20 @@ JNIEXPORT void JNICALL Java_com_taobao_gcanvas_GCanvasJNI_addFontFamily(
     }
 }
 
+JNIEXPORT jobjectArray JNICALL Java_com_taobao_gcanvas_GCanvasJNI_getFontNames(
+        JNIEnv *je, jclass jc) {
+    std::map<const char *, GFontFamily, Lesser> *fontFamilies =
+        SystemFontInformation::GetSystemFontInformation()->getFontFamilies();
+    int length = fontFamilies->size();
+    jobjectArray font_names = je->NewObjectArray(length, je->FindClass("java/lang/String"), nullptr);
+    int i = 0;
+    for (auto it = fontFamilies->begin(); it != fontFamilies->end(); ++it) {
+        je->SetObjectArrayElement(font_names, i++, je->NewStringUTF((*it).first));
+    }
+
+    return font_names;
+}
+
 JNIEXPORT void JNICALL Java_com_taobao_gcanvas_GCanvasJNI_addFallbackFontFamily(
         JNIEnv *je, jclass jc, jobjectArray font_files) {
     LOG_D("Canvas JNI::addFallbackFontFamily");
@@ -832,6 +846,21 @@ JNIEXPORT void JNICALL Java_com_taobao_gcanvas_GCanvasJNI_addFallbackFontFamily(
     }
 
     LOG_D("finish to insert fallbackfont.");
+}
+
+JNIEXPORT void JNICALL Java_com_taobao_gcanvas_GCanvasJNI_setExtraFontLocation(
+        JNIEnv *je, jclass jc, jstring extra_font_location) {
+    // extra_font_location_jvm is managed by JVM.
+    const char *extra_font_location_jvm = je->GetStringUTFChars(
+            extra_font_location, 0);
+    if (extra_font_location_jvm == nullptr)
+        return; // return if memory overflows.
+
+    // Set the extra font location.
+    SystemFontInformation::GetSystemFontInformation()->SetExtraFontLocation(
+            extra_font_location_jvm);
+    // Release the string managed by JVM.
+   je->ReleaseStringUTFChars(extra_font_location, extra_font_location_jvm);
 }
 
 JNIEXPORT void JNICALL Java_com_taobao_gcanvas_GCanvasJNI_setLogLevel(

@@ -148,8 +148,14 @@ JNIEXPORT void JNICALL Java_com_taobao_gcanvas_GCanvasJNI_setFallbackFont(
 JNIEXPORT void JNICALL Java_com_taobao_gcanvas_GCanvasJNI_addFontFamily(
         JNIEnv *je, jclass jc, jobjectArray font_names, jobjectArray font_files);
 
+JNIEXPORT jobjectArray JNICALL Java_com_taobao_gcanvas_GCanvasJNI_getFontNames(
+        JNIEnv *je, jclass jc);
+
 JNIEXPORT void JNICALL Java_com_taobao_gcanvas_GCanvasJNI_addFallbackFontFamily(
         JNIEnv *je, jclass jc, jobjectArray font_files);
+
+JNIEXPORT void JNICALL Java_com_taobao_gcanvas_GCanvasJNI_setExtraFontLocation(
+        JNIEnv *je, jclass jc, jstring extra_font_location);
 
 JNIEXPORT void JNICALL Java_com_taobao_gcanvas_GCanvasJNI_setLogLevel(
         JNIEnv *je, jclass jc, jstring logLevel);
