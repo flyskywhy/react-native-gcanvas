@@ -438,8 +438,8 @@ void GRenderer::bindTexture(JNIEnv *env, jobject bitmap, int id, int target, int
     // Check format, only RGB565 & RGBA are supported
     if (info.width <= 0 || info.height <= 0 ||
         (info.format != ANDROID_BITMAP_FORMAT_RGB_565 &&
-         info.format != ANDROID_BITMAP_FORMAT_RGBA_8888) &&
-        info.format != ANDROID_BITMAP_FORMAT_RGBA_4444) {
+         info.format != ANDROID_BITMAP_FORMAT_RGBA_8888 &&
+        info.format != ANDROID_BITMAP_FORMAT_RGBA_4444)) {
         return;
     } else {
         if (info.format == ANDROID_BITMAP_FORMAT_RGB_565) {
