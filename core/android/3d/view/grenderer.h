@@ -85,6 +85,7 @@ public:
     bool m_bindtexture = false;
     GColorRGBA mClearColor;
     bool needDisableImageSmoothing = false; // default mImageSmoothingEnabled is true in core/src/gcanvas/GCanvasState.h
+    bool m_enableFboMsaa = false; // default mEnableFboMsaa is false in core/src/platform/Android/GCanvas2DContextAndroid.h
     float m_device_pixel_ratio = 1.0f;
 
     bool m_initialized = false;

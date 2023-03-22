@@ -3,6 +3,7 @@ package com.taobao.gcanvas.bridges.rn;
 import com.facebook.react.bridge.ReadableArray;
 import com.facebook.react.uimanager.SimpleViewManager;
 import com.facebook.react.uimanager.ThemedReactContext;
+import com.facebook.react.uimanager.annotations.ReactProp;
 
 import java.util.Map;
 import java.util.UUID;
@@ -26,6 +27,11 @@ public class GReactViewManager extends SimpleViewManager<GReactTextureView> {
     @Override
     protected GReactTextureView createViewInstance(ThemedReactContext reactContext) {
         return new GReactTextureView(reactContext, UUID.randomUUID().toString());
+    }
+
+    @ReactProp(name = "isEnableFboMsaa", defaultBoolean = true)
+    public void setEnableFboMsaa(GReactTextureView view, boolean isMsaa) {
+        view.setEnableFboMsaa(isMsaa);
     }
 
     @Override

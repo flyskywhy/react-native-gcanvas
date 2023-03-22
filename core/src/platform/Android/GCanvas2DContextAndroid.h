@@ -101,7 +101,7 @@ protected:
 
 private:
 
-    bool mEnableFboMsaa = true;
+    bool mEnableFboMsaa = false;
     GShaderManager *mShaderManager = nullptr;
 
     GFontCache *mFontCache = nullptr;

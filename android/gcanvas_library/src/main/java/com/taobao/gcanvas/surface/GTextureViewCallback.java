@@ -34,6 +34,7 @@ import java.util.ArrayList;
 public class GTextureViewCallback implements TextureView.SurfaceTextureListener {
     private final String mKey;
     private String mBackgroundColor = "#00000000";  // "#00000000" match [UIColor clearColor] in ios/RCTGCanvasView.m
+    private boolean mEnableFboMsaa = false; // default mEnableFboMsaa is false in core/src/platform/Android/GCanvas2DContextAndroid.h
     private Surface mSurface;
     private int mWidth;
     private int mHeight;
@@ -74,6 +75,10 @@ public class GTextureViewCallback implements TextureView.SurfaceTextureListener 
         if (!TextUtils.isEmpty(color)) {
             mBackgroundColor = color;
         }
+    }
+
+    public void setEnableFboMsaa(boolean isEnableFboMsaa) {
+        mEnableFboMsaa = isEnableFboMsaa;
     }
 
     @TargetApi(Build.VERSION_CODES.JELLY_BEAN)
@@ -127,7 +132,7 @@ public class GTextureViewCallback implements TextureView.SurfaceTextureListener 
 
     public void resetGlViewport() {
         GLog.d("resetGlViewport width:" + mWidth + " height:" + mHeight);
-        onSurfaceChanged(this.mKey, mSurface, 0, mWidth, mHeight, mBackgroundColor);
+        onSurfaceChanged(this.mKey, mSurface, 0, mWidth, mHeight, mBackgroundColor, mEnableFboMsaa);
     }
 
     public boolean onSurfaceTextureDestroyed(SurfaceTexture surface) {
@@ -169,7 +174,7 @@ public class GTextureViewCallback implements TextureView.SurfaceTextureListener 
 
     private native void onSurfaceCreated(String key, Surface surface);
 
-    private native void onSurfaceChanged(String key, Surface surface, int format, int width, int height, String color);
+    private native void onSurfaceChanged(String key, Surface surface, int format, int width, int height, String color, boolean isEnableFboMsaa);
 
     private native void onSurfaceDestroyed(String key, Surface surface);
 

@@ -49,7 +49,8 @@ Java_com_taobao_gcanvas_surface_GTextureViewCallback_onSurfaceChanged(JNIEnv *en
                                                                       jstring key,
                                                                       jobject surface, jint format,
                                                                       jint width, jint height,
-                                                                      jstring clearColor) {
+                                                                      jstring clearColor,
+                                                                      jboolean isEnableFboMsaa) {
     if (!key || !surface) {
         return;
     }
@@ -77,6 +78,7 @@ Java_com_taobao_gcanvas_surface_GTextureViewCallback_onSurfaceChanged(JNIEnv *en
         render->setNativeWindow(window);
         render->m_width = width;
         render->m_height = height;
+        render->m_enableFboMsaa = isEnableFboMsaa;
         if (!render->m_started) {
             if (clearColor) {
                 char *ccolor = jstringToString_(env, clearColor);

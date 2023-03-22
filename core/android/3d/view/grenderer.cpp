@@ -7,7 +7,7 @@
 #include <support/Util.h>
 #include "grenderer.h"
 #include "support/Encode.h"
-
+#include "GCanvas2DContextAndroid.h"
 
 GRenderer::GRenderer(std::string key) : m_egl_context(0),
                                         m_egl_display(0),
@@ -253,6 +253,11 @@ void GRenderer::renderLoop() {
                 mProxy->ReCreateContext();
                 mProxy->SetContextType(m_context_type);
             }
+
+            // OnSurfaceChanged below will invoke GCanvasContext::InitializeGLEnvironment()
+            // then invoke GCanvas2DContextAndroid::InitFBO() which need mEnableFboMsaa
+            // so that SetEnableFboMsaa before OnSurfaceChanged
+            ((GCanvas2DContextAndroid *)(mProxy->GetGCanvasContext()))->SetEnableFboMsaa(m_enableFboMsaa);
 
             mProxy->OnSurfaceChanged(0, 0, m_width, m_height);
 

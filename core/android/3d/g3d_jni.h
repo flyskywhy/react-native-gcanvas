@@ -17,7 +17,7 @@ Java_com_taobao_gcanvas_surface_GTextureViewCallback_onSurfaceCreated(JNIEnv *, 
 
 JNIEXPORT void JNICALL
 Java_com_taobao_gcanvas_surface_GTextureViewCallback_onSurfaceChanged(JNIEnv *, jobject, jstring,
-                                                                      jobject, jint, jint, jint, jstring);
+                                                                      jobject, jint, jint, jint, jstring, jboolean);
 
 
 JNIEXPORT void JNICALL

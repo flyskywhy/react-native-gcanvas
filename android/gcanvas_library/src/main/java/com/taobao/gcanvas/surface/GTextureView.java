@@ -43,6 +43,11 @@ public class GTextureView extends TextureView {
         }
     }
 
+    public void setEnableFboMsaa(boolean isEnableFboMsaa) {
+        if (mCallback != null) {
+            mCallback.setEnableFboMsaa(isEnableFboMsaa);
+        }
+    }
 
     public void addSurfaceTextureListener(TextureView.SurfaceTextureListener listener) {
         if (null == listener) {
