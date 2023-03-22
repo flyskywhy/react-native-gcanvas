@@ -3,6 +3,15 @@
 All notable changes of this project will be documented in.
 
 
+## [6.0.0] - 2023-03-22
+
+### Changed
+
+* React Native GCanvas Component
+    * Small break! Multisample anti-aliasing (MSAA) is disabled by default on Android, need set prop `isEnableFboMsaa={true}` if you want present same behavior on Android and Web.
+    * feat: add prop isEnableFboMsaa for canvas 2d on Android, and now Multisample anti-aliasing (MSAA) by default is disabled #48
+
+
 ## [5.1.7] - 2023-03-15
 
 ### Changed
