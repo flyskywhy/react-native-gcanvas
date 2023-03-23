@@ -532,7 +532,7 @@ registerFont('/system/fonts/NotoSansThai-Regular.ttf');
 this.ctx.font = '30px NotoSansThai-Regular'; // or just this.ctx.font = '30px';
 this.ctx.fillText('ภาษาไทย泰语Thai', 20, 100);
 ```
-And this example can also workaround [can not fillText with thai font family on Android](https://github.com/flyskywhy/react-native-gcanvas/issues/38).
+Actually if not `registerFont()` here, still can fillText 'ภาษาไทย泰语Thai' correctly as `NotoSansThai-Regular.ttf` is already one of fallback fonts in `/etc/fonts.xml` on Android, so `registerFont()` here is just an example`:P`
 
 ## Features
 - Cross-platform, support popular iOS and Android.

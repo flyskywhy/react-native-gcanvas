@@ -125,6 +125,12 @@ public class GFontConfigParser {
             mFontFamilies.clear();
         }
 
+        if (mFallbackFonts == null) {
+            mFallbackFonts = new ArrayList<String>();
+        } else {
+            mFallbackFonts.clear();
+        }
+
         // family set - root node
         Element root = doc.getDocumentElement();
         if (!root.getTagName().equals("familyset")) {
@@ -146,13 +152,6 @@ public class GFontConfigParser {
                 // Acquire name-set node and file-set node
                 NamedNodeMap n = familyNode.getAttributes();
 
-                Node s = familyNode.getAttributes().getNamedItem("name");
-                if (s == null) {
-                    break;
-                } else {
-                    //GLog.w("GFontConfigParser", "family name: " + s.getNodeValue());
-                }
-
                 NodeList fontNodes = ((Element) familyNode).getElementsByTagName("font");
 
                 if (fontNodes == null) {
@@ -163,6 +162,28 @@ public class GFontConfigParser {
                 // Get the length of name-set, file-set.
                 int namesetLength = fontNodes.getLength();
 
+                Node s = familyNode.getAttributes().getNamedItem("name");
+                if (s == null) {
+                    // fallback fonts
+                    for (int j = 0; j < namesetLength; ++j) {
+                        Node fileNode = fontNodes.item(j);
+                        if (fileNode instanceof Element) {
+                            Element fileElement = (Element) fileNode;
+
+                            // need trim() here, otherwise if `.ttf` file name is not at the
+                            // same line with `<font>` in `font.xml`, will cause `text = ""`
+                            String text = fileElement.getTextContent().trim();
+
+                            if (!mFallbackFonts.contains(text)) {
+                                mFallbackFonts.add(text);
+                            }
+                        }
+                    }
+                    continue;
+                } else {
+                    //GLog.w("GFontConfigParser", "family name: " + s.getNodeValue());
+                }
+
                 nameList = new ArrayList<String>();
                 nameList.add(s.getNodeValue());
 
@@ -172,7 +193,7 @@ public class GFontConfigParser {
                     Node fileNode = fontNodes.item(j);
                     if (fileNode instanceof Element) {
                         Element fileElement = (Element) fileNode;
-                        String text = fileElement.getTextContent();
+                        String text = fileElement.getTextContent().trim();
                         fileList.add(text);
                     }
                 }
@@ -260,7 +281,7 @@ public class GFontConfigParser {
                     if (fileNode instanceof Element) {
                         Element fileElement = (Element) fileNode;
                         if (fileElement.getTagName().equals("file")) {
-                            String text = fileElement.getTextContent();
+                            String text = fileElement.getTextContent().trim();
                             fileList.add(text);
                         }
                     }
@@ -272,7 +293,7 @@ public class GFontConfigParser {
                     if (nameNode instanceof Element) {
                         Element nameElement = (Element) nameNode;
                         if (nameElement.getTagName().equals("name")) {
-                            String text = nameElement.getTextContent();
+                            String text = nameElement.getTextContent().trim();
                             nameList.add(text);
                         }
                     }
@@ -334,7 +355,7 @@ public class GFontConfigParser {
                 if (fileNode instanceof Element) {
                     Element fileElement = (Element) fileNode;
                     if (fileElement.getTagName().equals("file")) {
-                        String text = fileElement.getTextContent();
+                        String text = fileElement.getTextContent().trim();
                         mFallbackFonts.add(text);
                     }
                 }
