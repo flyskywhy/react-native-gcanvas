@@ -2,6 +2,13 @@
 
 All notable changes of this project will be documented in.
 
+## [6.0.1] - 2023-03-23
+
+### Changed
+
+* React Native GCanvas Component
+    * feat: support fallback fonts to work with every language on Android by default, thus fix #38 can not fillText with thai font family on Android
+
 
 ## [6.0.0] - 2023-03-22
 
