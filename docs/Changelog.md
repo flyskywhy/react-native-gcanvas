@@ -2,6 +2,14 @@
 
 All notable changes of this project will be documented in.
 
+## [6.0.2] - 2023-04-26
+
+### Changed
+
+* React Native GCanvas Component
+    * fix: iOS if `isGestureResponsible={true}` and touch will `TypeError: undefined is not an object (evaluating 'touch.startTimeStamp'` #61
+
+
 ## [6.0.1] - 2023-03-23
 
 ### Changed
