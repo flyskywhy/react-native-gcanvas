@@ -37,11 +37,11 @@ export default class GCanvasView extends Component {
         // even componentWillUnmount() inovked then componentDidMount() again, the
         // event.touchHistory.touchBank still maintain before componentWillUnmount(),
         // maybe it's a bug of react-native, so be the workaround here
-        this.touchBank = event.touchHistory.touchBank.map(touch => {return {...touch, touchActive: false}});
+        this.touchBank = event.touchHistory.touchBank.filter(touch => !!touch).map(touch => {return {...touch, touchActive: false}});
       },
       onPanResponderMove: (event, gestureState) => {
         // tested multiple touches with babylonjs demo `Drag and drop` in https://github.com/flyskywhy/GCanvasRNExamples
-        let touchBank = event.touchHistory.touchBank;
+        let touchBank = event.touchHistory.touchBank.filter(touch => !!touch);
 
         let toDownTouchs = touchBank.filter(cur => {
           let preFound = this.touchBank.find(pre => this.touch2PointerId(pre) === this.touch2PointerId(cur));
