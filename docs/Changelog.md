@@ -2,6 +2,14 @@
 
 All notable changes of this project will be documented in.
 
+## [6.0.3] - 2023-05-05
+
+### Changed
+
+* React Native GCanvas Component
+    * fix: on iOS sometimes `this.ctx.getImageData()` can't get the text just after `this.ctx.fillText()`
+
+
 ## [6.0.2] - 2023-04-26
 
 ### Changed
