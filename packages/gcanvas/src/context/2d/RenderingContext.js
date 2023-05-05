@@ -664,12 +664,19 @@ export default class CanvasRenderingContext2D {
   getImageData(sx, sy, sw, sh) {
     // if not stop _renderLoop(), sometimes will cause display issue with 'lightener' tool of https://github.com/flyskywhy/PixelShapeRN
     cancelAnimationFrame(this._canvas._renderLoopId);
-    // Use 'sync' + 'execWithoutDisplay' here to make sure last graphics be generated before execute getImageData's 'R'.
     // If use 'async' here, will cause last commands be executed after getImageData's 'sync'.
-    // If use 'execWithDisplay' here, will cause low JS FPS on iOS with 'lightener' tool of https://github.com/flyskywhy/PixelShapeRN ,
-    // because 'lightener' will call getImageData frequently while moving finger, will cause setNeedsDisplay() then
-    // drawInRect() be invoked more than 1 times in 16ms e.g. 1times/1ms thus cause low JS FPS!
-    this.flushJsCommands2CallNative('sync', 'execWithoutDisplay');
+    if (this._drawCommands.includes(';T') || this._drawCommands.startsWith('T')) {
+      // Use 'sync' + 'execWithDisplay' here to make sure last graphics by fillText() be generated
+      // before execute getImageData's 'R', ref to context.fillText in
+      // https://github.com/flyskywhy/react-native-runescape-text/blob/main/src/classes/Motion.js
+      // TODO: more commands other than 'T' if someone issue on github
+      this.flushJsCommands2CallNative('sync', 'execWithDisplay');
+    } else {
+      // If use 'execWithDisplay' here, will cause low JS FPS on iOS with 'lightener' tool of https://github.com/flyskywhy/PixelShapeRN ,
+      // because 'lightener' will call getImageData frequently while moving finger, will cause setNeedsDisplay() then
+      // drawInRect() be invoked more than 1 times in 16ms e.g. 1times/1ms thus cause low JS FPS!
+      this.flushJsCommands2CallNative('sync', 'execWithoutDisplay');
+    }
     // now can getImageData from last generated (even not displayed) graphics, otherwise will `return new ImageData(w, h)`
     // thus `this.ctx.putImageData()` has no effect with the first 'Click me to draw some on canvas' in README.md
 
