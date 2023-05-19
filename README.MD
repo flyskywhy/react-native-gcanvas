@@ -588,3 +588,7 @@ To support my work, please consider donate.
 ## License
 
 This project is licensed under the Apache License - see the [LICENSE](./docs/LICENSE.md) file for details
+
+## Star History
+
+[![Star History Chart](https://api.star-history.com/svg?repos=flyskywhy/react-native-gcanvas&type=Date)](https://star-history.com/#flyskywhy/react-native-gcanvas&Date)
