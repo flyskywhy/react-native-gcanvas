@@ -2,6 +2,15 @@
 
 All notable changes of this project will be documented in.
 
+## [6.0.4] - 2023-06-14
+
+### Changed
+
+* React Native GCanvas Component
+    * fix: (again 06a7064) a bug that will no display while quit from a drawer item page to current webgl page which is still maintain mounted by react-navigation on Android caused by 0c51446 in v2.3.10
+    * webgl_demo/cube.js: fix maybe will stuck APP if use it as children
+
+
 ## [6.0.3] - 2023-05-05
 
 ### Changed
