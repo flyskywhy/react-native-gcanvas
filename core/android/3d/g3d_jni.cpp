@@ -70,9 +70,7 @@ Java_com_taobao_gcanvas_surface_GTextureViewCallback_onSurfaceChanged(JNIEnv *en
     if (!render) {
         LOG_D("onSurfaceChanged new render : %s", str_chars);
         render = GManager::getSingleton()->newRenderer(cxx_string);
-    }
-
-    if (render) {
+    } else if (render->m_width != width || render->m_height != height) {
         ANativeWindow *window = ANativeWindow_fromSurface(env, surface);
         LOG_D("onSurfaceChanged ANativeWindow_fromSurface");
         render->setNativeWindow(window);
