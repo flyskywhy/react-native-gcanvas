@@ -297,6 +297,9 @@ export default class App extends Component {
                 {
                   flex: 1,
                   width: '100%',
+                  //
+                  // width: 200,
+                  // height: 300,
                 } /* canvas with react-native-web can't use width and height in styles.gcanvas */
               }
             />
@@ -326,8 +329,14 @@ const styles = StyleSheet.create({
     backgroundColor: '#F5FCFF',
   },
   gcanvas: {
-    flex: 1,
-    width: '100%',
+    // flex: 1,
+    // width: '100%',
+    // above maybe will stuck APP
+    // if let this component as a children of another component,
+    // so use below
+    width: 200,
+    height: 300,
+
     // backgroundColor: '#FF000030', // TextureView doesn't support displaying a background drawable since Android API 24
   },
   welcome: {
