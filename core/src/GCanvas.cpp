@@ -60,7 +60,7 @@ void GCanvas::OnSurfaceChanged(int x, int y, int width, int height) {
     glGetIntegerv(GL_MAX_RENDERBUFFER_SIZE, &maxRenderbufferSize);
 
     if ((maxRenderbufferSize <= width) || (maxRenderbufferSize <= height)) {
-        
+
         LOG_EXCEPTION(mHooks, mContextId, "surfacesize_exceed_max",
                           "<function:%s, maxSize:%d, width:%d, height:%d>", __FUNCTION__,
                           maxRenderbufferSize, width, height);

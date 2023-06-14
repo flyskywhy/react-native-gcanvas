@@ -74,7 +74,7 @@ public class GReactTextureView extends GTextureView implements LifecycleEventLis
 
     @Override
     public void onSurfaceTextureAvailable(SurfaceTexture surface, int width, int height) {
-        Log.d("GReactTextureView", "onSurfaceTextureAvailable");
+        Log.d("GReactTextureView", "onSurfaceTextureAvailable width:" + width + " height:" + height);
         if (!mIsReady) {
             // onSurfaceTextureAvailable is sometimes called with 0 size texture
             // and immediately followed by onSurfaceTextureSizeChanged with actual size

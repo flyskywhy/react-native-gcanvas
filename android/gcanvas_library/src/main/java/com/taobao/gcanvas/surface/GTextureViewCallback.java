@@ -83,7 +83,7 @@ public class GTextureViewCallback implements TextureView.SurfaceTextureListener 
 
     @TargetApi(Build.VERSION_CODES.JELLY_BEAN)
     public void onSurfaceTextureAvailable(SurfaceTexture surface, int width, int height) {
-        GLog.d("on surfaceTexture Available.");
+        GLog.d("on surfaceTexture Available width:" + width + " height:" + height);
         if (mSurface == null) {
             mSurface = new Surface(surface);
         }
