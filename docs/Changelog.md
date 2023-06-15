@@ -2,6 +2,14 @@
 
 All notable changes of this project will be documented in.
 
+## [6.0.5] - 2023-06-15
+
+### Changed
+
+* React Native GCanvas Component
+    * add props isResetGlViewportAfterSetWidthOrHeight={false} to let webgl 3d can continue gl call loop without restart it by drawSome() after rotate screenOrientation
+
+
 ## [6.0.4] - 2023-06-14
 
 ### Changed
