@@ -52,6 +52,7 @@ export default class App extends Component {
     canvas.width = width;
     canvas.height = height;
 
+    // if isResetGlViewportAfterSetWidthOrHeight is true, you can use below
     this.interval && clearInterval(this.interval);
     this.drawSome();
   };
@@ -308,6 +309,7 @@ export default class App extends Component {
               onCanvasResize={this.onCanvasResize}
               onCanvasCreate={this.initCanvas}
               onIsReady={(value) => (this.isGReactTextureViewReady = value)}
+              isResetGlViewportAfterSetWidthOrHeight={true /* default is true, generally true for canvas 2d and false for webgl 3d */}
               disableAutoSwap={false /* Default is false. Only affect webgl. No matter true or false can offer 60 JS FPS. Most webgl APP has it's own gl.clear in it's own loop, so most webgl APP can set disableAutoSwap to true if display effect will be better */}
               style={styles.gcanvas}
             />
@@ -329,13 +331,13 @@ const styles = StyleSheet.create({
     backgroundColor: '#F5FCFF',
   },
   gcanvas: {
-    // flex: 1,
-    // width: '100%',
+    flex: 1,
+    width: '100%',
     // above maybe will stuck APP
     // if let this component as a children of another component,
-    // so use below
-    width: 200,
-    height: 300,
+    // you can use below
+    // width: 200,
+    // height: 300,
 
     // backgroundColor: '#FF000030', // TextureView doesn't support displaying a background drawable since Android API 24
   },

@@ -121,6 +121,13 @@ export default class GCanvasView extends Component {
     // so the default value is false, and if you want to be exactly
     // compatible with Web, you can set it to true
     isAutoClearRectBeforePutImageData: false,
+    // With canvas 2d, generally be true, so that can resolve issue
+    // [Canvas resize](https://github.com/flyskywhy/react-native-gcanvas/issues/32).
+    // If canvas 2d also have ctx call loop like usage of 'zdog', also can be true.
+    // With webgl 3d, generally be false, so that can
+    // [let webgl 3d can continue gl call loop without restart it by drawSome() after rotate screenOrientation]
+    // (https://github.com/flyskywhy/GCanvasRNExamples/commit/3cd2f3f).
+    isResetGlViewportAfterSetWidthOrHeight: true,
     // devicePixelRatio default is undefined and means default is PixelRatio.get() ,
     // ref to "About devicePixelRatio" in README.md
     devicePixelRatio: undefined,
@@ -233,6 +240,7 @@ export default class GCanvasView extends Component {
       },
       {
         isAutoClearRectBeforePutImageData: this.props.isAutoClearRectBeforePutImageData,
+        isResetGlViewportAfterSetWidthOrHeight: this.props.isResetGlViewportAfterSetWidthOrHeight,
         devicePixelRatio: this.props.devicePixelRatio,
         disableAutoSwap: this.props.disableAutoSwap,
         bridge: ReactNativeBridge,

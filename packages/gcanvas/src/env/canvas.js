@@ -20,13 +20,23 @@ export default class GCanvas extends Element {
 
   _needRender = true;
 
-  constructor(id, {isAutoClearRectBeforePutImageData, devicePixelRatio, disableAutoSwap, style}) {
+  constructor(
+    id,
+    {
+      isAutoClearRectBeforePutImageData,
+      isResetGlViewportAfterSetWidthOrHeight,
+      devicePixelRatio,
+      disableAutoSwap,
+      style,
+    },
+  ) {
     super('canvas');
     this.id = id;
     this.disabled = false;
     this.webglInterval = null;
 
     this._isAutoClearRectBeforePutImageData = isAutoClearRectBeforePutImageData;
+    this._isResetGlViewportAfterSetWidthOrHeight = isResetGlViewportAfterSetWidthOrHeight;
     this._devicePixelRatio = devicePixelRatio || PixelRatio.get();
     this._disableAutoSwap = disableAutoSwap;
     this._swapBuffers = () => {
@@ -67,7 +77,7 @@ export default class GCanvas extends Element {
         this._context.drawingBufferWidth = this._clientWidth * PixelRatio.get() | 0;
       }
 
-      this. _conditionallyResetGlViewport();
+      this._conditionallyResetGlViewport();
     }
     this._width = value | 0; // width is fixed not float just like Web
   }
@@ -84,12 +94,16 @@ export default class GCanvas extends Element {
         this._context.drawingBufferHeight = this._clientHeight * PixelRatio.get() | 0;
       }
 
-      this. _conditionallyResetGlViewport();
+      this._conditionallyResetGlViewport();
     }
     this._height = value | 0;
   }
 
   _conditionallyResetGlViewport() {
+    if (!this._isResetGlViewportAfterSetWidthOrHeight) {
+      return;
+    }
+
     let isNormalCanvas = true;
     if (global.createCanvasElements) {
       if (global.createCanvasElements.findIndex(canvas => canvas === this) > -1) {

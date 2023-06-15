@@ -12,7 +12,18 @@ export let Image = GImage;
 export let WeexBridge = GBridgeWeex;
 export let ReactNativeBridge = GBridgeReactNative;
 
-export function enable(el, { bridge, debug, isAutoClearRectBeforePutImageData, devicePixelRatio, disableAutoSwap, disableComboCommands } = {}) {
+export function enable(
+  el,
+  {
+    bridge,
+    debug,
+    isAutoClearRectBeforePutImageData,
+    isResetGlViewportAfterSetWidthOrHeight,
+    devicePixelRatio,
+    disableAutoSwap,
+    disableComboCommands,
+  } = {},
+) {
   const GBridge = GImage.GBridge = GCanvas.GBridge = GWebGLRenderingContext.GBridge = GContext2D.GBridge = bridge;
 
   GBridge.callEnable(el.ref, [
@@ -22,7 +33,7 @@ export function enable(el, { bridge, debug, isAutoClearRectBeforePutImageData, d
     false, // newCanvasMode
     1, // compatible
     'white', // clearColor
-    false // sameLevel: newCanvasMode = true && true => GCanvasView and Webview is same level
+    false, // sameLevel: newCanvasMode = true && true => GCanvasView and Webview is same level
   ]);
 
   if (debug === true) {
@@ -32,7 +43,13 @@ export function enable(el, { bridge, debug, isAutoClearRectBeforePutImageData, d
     GBridge.callEnableDisableCombo();
   }
 
-  var canvas = new GCanvas(el.ref, {isAutoClearRectBeforePutImageData, devicePixelRatio, disableAutoSwap, style: el.style});
+  var canvas = new GCanvas(el.ref, {
+    isAutoClearRectBeforePutImageData,
+    isResetGlViewportAfterSetWidthOrHeight,
+    devicePixelRatio,
+    disableAutoSwap,
+    style: el.style,
+  });
 
   return canvas;
 }

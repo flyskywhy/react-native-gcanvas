@@ -232,6 +232,8 @@ export default class App extends Component {
   onCanvasResize = ({width, height, canvas}) => {
     canvas.width = width;
     canvas.height = height;
+
+    // if isResetGlViewportAfterSetWidthOrHeight is true, you can use below
     this.drawSome();
   };
 
@@ -380,6 +382,7 @@ export default class App extends Component {
             onIsReady={(value) => (this.isGReactTextureViewReady = value)}
             isGestureResponsible={true /* Here is just for example, you can remove this line because default is true */}
             isAutoClearRectBeforePutImageData={false /* default is false, only for canvas 2d, if you want to be exactly compatible with Web, you can set it to true */}
+            isResetGlViewportAfterSetWidthOrHeight={true /* default is true, generally true for canvas 2d and false for webgl 3d */}
             isEnableFboMsaa={false /* default is false, only for Android, only for canvas 2d, if you want anti-aliasing present same behavior on Android and Web, you can set it to true */ }
             devicePixelRatio={undefined /* Here is just for example, you can remove this line because default is undefined and means default is PixelRatio.get(), ref to "About devicePixelRatio" below */}
             style={styles.gcanvas}
@@ -401,14 +404,14 @@ const styles = StyleSheet.create({
     backgroundColor: '#F5FCFF',
   },
   gcanvas: {
-    // flex: 1,
-    // width: '100%',
+    flex: 1,
+    width: '100%',
     // above maybe will cause
     //     WARN     getImageData: not good to be here, should refactor source code somewhere
     // if let this component as a children of another component,
-    // so use below
-    width: 200,
-    height: 300,
+    // you can use below
+    // width: 200,
+    // height: 300,
 
     // backgroundColor: '#FF000030', // TextureView doesn't support displaying a background drawable since Android API 24
   },
