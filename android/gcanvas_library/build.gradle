@@ -10,16 +10,7 @@ android {
     sourceSets {
         main {
             manifest.srcFile 'AndroidManifest.xml'
-
-            // According to https://developer.android.com/studio/releases/gradle-plugin#cmake-imported-targets
-            // when >= `com.android.tools.build:gradle:4.0.0` (means RN >= 0.64) in `/androidbuild.gradle`,
-            // with `jniLibs.srcDirs` below will cause compile error `More than one file was found with OS independent path 'lib/armeabi-v7a/libfreetype.so'`.
-            // When >= `com.android.tools.build:gradle:3.5.0` (means RN >= 0.62) in `/androidbuild.gradle`.
-            // without `jniLibs.srcDirs` below can pass compile but will run crash `java.lang.UnsatisfiedLinkError: No implementation found for void com.taobao.gcanvas.GCanvasJNI.setContextType`.
-            // Since RN 0.64.0 use FLIPPER_VERSION 0.75.1 so comes the `compareTo`.
-            if ("${FLIPPER_VERSION}".compareTo('0.75.0') < 0) {
-                jniLibs.srcDirs '../../core/android/freetype-prebuilt/libs'
-            }
+            jniLibs.srcDirs '../../core/android/freetype-prebuilt/libs'
         }
     }
 
