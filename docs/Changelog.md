@@ -2,6 +2,14 @@
 
 All notable changes of this project will be documented in.
 
+## [6.0.6] - 2023-06-28
+
+### Changed
+
+* React Native GCanvas Component
+    * fix: gradle-plugin 4.x comes from RN 0.64 will run crash `gcanvas is not found.dlopen failed: library "libfreetype.so" not found` and then `java.lang.UnsatisfiedLinkError: No implementation found for void com.taobao.gcanvas.GCanvasJNI.setContextType`
+
+
 ## [6.0.5] - 2023-06-15
 
 ### Changed
