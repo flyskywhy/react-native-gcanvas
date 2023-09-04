@@ -2,6 +2,14 @@
 
 All notable changes of this project will be documented in.
 
+## [6.0.7] - 2023-09-04
+
+### Changed
+
+* React Native GCanvas Component
+    * fix: 15MB iOS memory leak when recreate canvas #42
+
+
 ## [6.0.6] - 2023-06-28
 
 ### Changed
