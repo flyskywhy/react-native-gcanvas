@@ -98,6 +98,7 @@ static NSMutableDictionary  *_staticModuleExistDict;
 }
 
 - (void)dealloc{
+//    NSLog(@"dealloc GCanvasModule");
     [NSObject cancelPreviousPerformRequestsWithTarget:self];
     [[NSNotificationCenter defaultCenter] removeObserver:self];
 }
@@ -479,6 +480,7 @@ static NSMutableDictionary  *_staticModuleExistDict;
 }
 
 - (void)onGCanvasCompUnloadedNotify:(NSNotification*)notification{
+//    NSLog(@"onGCanvasCompUnloadedNotify...");
     NSString *componentId = notification.userInfo[@"componentId"];
 
     [self.gcanvasObjectDict enumerateKeysAndObjectsUsingBlock:^(NSString *compId, GCanvasObject *gcanvasInst, BOOL * _Nonnull stop) {
@@ -493,8 +495,12 @@ static NSMutableDictionary  *_staticModuleExistDict;
     }];
 
     [self.gcanvasObjectDict removeObjectForKey:componentId];
+    self.gcanvasObjectDict = nil;
 
     [_staticModuleExistDict removeObjectForKey:[self.deletage gcanvasModuleInstanceId]];
+    if( _staticModuleExistDict.count == 0 ){
+        _staticFirstContext = nil;
+    }
 }
 
 - (void)onGCanvasResetNotify:(NSNotification*)notification{

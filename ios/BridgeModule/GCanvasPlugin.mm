@@ -103,6 +103,7 @@ void nsLog(const char *tag, const char *log) {
 }
 
 - (void)dealloc{
+//    NSLog(@"dealloc GCanvasPlugin");
     [self removeGCanvas];
 }
 
