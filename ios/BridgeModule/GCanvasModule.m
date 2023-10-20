@@ -441,23 +441,22 @@ static NSMutableDictionary  *_staticModuleExistDict;
     }
 
     if (gcanvasInst.component) {
-        __block UIImage *image;
+        Boolean isJpeg = [mimeType isEqualToString:@"image/jpeg"];
+        __block NSData *data;
+        UIGraphicsImageDrawingActions actions = ^(UIGraphicsImageRendererContext * _Nonnull rendererContext) {
+            [gcanvasInst.component.glkview.layer renderInContext:(CGContextRef)rendererContext];
+        };
+
         dispatch_sync(dispatch_get_main_queue(), ^{
-            UIGraphicsBeginImageContextWithOptions(gcanvasInst.component.glkview.bounds.size, NO, [UIScreen mainScreen].scale);
-            [gcanvasInst.component.glkview drawViewHierarchyInRect:gcanvasInst.component.glkview.frame afterScreenUpdates:YES];
-            image = UIGraphicsGetImageFromCurrentImageContext();
-            UIGraphicsEndImageContext();
+            UIGraphicsImageRenderer *renderer = [[UIGraphicsImageRenderer alloc] initWithSize:gcanvasInst.component.glkview.bounds.size];
+            if (isJpeg) {
+                data = [renderer JPEGDataWithCompressionQuality:quality actions:actions];
+            } else {
+                data = [renderer PNGDataWithActions:actions];
+            }
         });
 
-        NSData *data;
-        NSString *base64Str = @"data:image/png;base64,";
-        if ([mimeType isEqualToString:@"image/jpeg"]) {
-            data = UIImageJPEGRepresentation(image, quality);
-            base64Str = @"data:image/jpeg;base64,";
-        } else {
-            data = UIImagePNGRepresentation(image);
-        }
-
+        NSString *base64Str = isJpeg ?  @"data:image/jpeg;base64," : @"data:image/png;base64,";
         return [base64Str stringByAppendingString:[data base64EncodedStringWithOptions:0]];
     } else {
         return @"";
