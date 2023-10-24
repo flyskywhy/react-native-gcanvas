@@ -2,6 +2,14 @@
 
 All notable changes of this project will be documented in.
 
+## [6.0.8] - 2023-10-24
+
+### Changed
+
+* React Native GCanvas Component
+    * fix: toDataURL() crash On iOS 17 #66
+
+
 ## [6.0.7] - 2023-09-04
 
 ### Changed
