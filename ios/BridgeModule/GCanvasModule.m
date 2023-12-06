@@ -496,10 +496,6 @@ static NSMutableDictionary  *_staticModuleExistDict;
     [self.gcanvasObjectDict removeObjectForKey:componentId];
     if( self.gcanvasObjectDict.count == 0 ){
         self.gcanvasObjectDict = nil;
-    }
-
-    [_staticModuleExistDict removeObjectForKey:[self.deletage gcanvasModuleInstanceId]];
-    if( _staticModuleExistDict.count == 0 ){
         _staticFirstContext = nil;
     }
 }
