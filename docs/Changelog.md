@@ -2,6 +2,14 @@
 
 All notable changes of this project will be documented in.
 
+## [6.0.9] - 2023-12-06
+
+### Changed
+
+* React Native GCanvas Component
+    * fix: bug from 6.0.7 that on iOS can't draw some on 1st stack canvas page again when unmount from 2nd stack canvas page of react-navigation
+
+
 ## [6.0.8] - 2023-10-24
 
 ### Changed
