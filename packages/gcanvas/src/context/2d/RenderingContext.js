@@ -587,7 +587,12 @@ export default class CanvasRenderingContext2D {
         return;
       }
 
-      this.flushJsCommands2CallNative('sync', 'execWithDisplay');
+      // If use 'execWithDisplay' here, will cause 2nd imageIsCanvas flick of
+      // https://github.com/flyskywhy/GCanvasRNExamples/blob/master/app/components/AudioWaveSurfer.js
+      //
+      // Even if use flushJsCommands2CallNative here, will cause imageIsCanvas not display on screen if
+      // not follow by other ctx.some().
+      this.flushJsCommands2CallNative('sync', 'execWithoutDisplay');
 
       image._context.flushJsCommands2CallNative('sync');
 
