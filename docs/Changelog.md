@@ -2,6 +2,14 @@
 
 All notable changes of this project will be documented in.
 
+## [6.0.10] - 2023-12-07
+
+### Changed
+
+* React Native GCanvas Component
+    * fix: flick of ctx.drawImage() with imageIsCanvas of https://github.com/flyskywhy/GCanvasRNExamples/blob/master/app/components/AudioWaveSurfer.js
+
+
 ## [6.0.9] - 2023-12-06
 
 ### Changed
