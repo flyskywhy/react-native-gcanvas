@@ -1,3 +1,14 @@
+import groovy.json.JsonSlurper
+
+// read the React-Native version of local app
+def parseAppRnVersion() {
+   def inputFile = new File(rootDir, '../node_modules/react-native/package.json')
+   def json = new JsonSlurper().parseText(inputFile.text)
+   return json.version as String
+}
+
+def (appRnMajorVersion, appRnMinorVersion, appRnPatchVersion) = parseAppRnVersion().tokenize('.')
+
 allprojects {
     project.ext.id = "You Should Change It"
     project.ext.meta = [:]
@@ -40,14 +51,18 @@ buildscript {
 //     delete rootProject.buildDir
 // }
 
+def safeExtGet(prop, fallback) {
+    rootProject.ext.has(prop) ? rootProject.ext.get(prop) : fallback
+}
+
 ext {
     localExtensions = [
         sdks: [
         'Gradle'        : '3.0.1',
-        'CompileSDK'    : 28,
-        'BuildTool'     : '28.0.3',
-        'MinSDK'        : 16,
-        'TargetSDK'     : 28,
+        'CompileSDK'    : safeExtGet('compileSdkVersion', Integer.parseInt(appRnMinorVersion) < 68 ? 30 : 31),
+        'BuildTool'     : safeExtGet('buildToolsVersion', Integer.parseInt(appRnMinorVersion) < 68 ? '30.0.2' : '31.0.0'),
+        'MinSDK'        : safeExtGet('minSdkVersion', 23),
+        'TargetSDK'     : safeExtGet('targetSdkVersion', 30),
         'Fresco'        : '1.8.0',
         'Picasso'       : '2.5.2',
         'JUnit'         : '4.12',
