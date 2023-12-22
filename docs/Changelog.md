@@ -2,6 +2,14 @@
 
 All notable changes of this project will be documented in.
 
+## [6.0.11] - 2023-12-22
+
+### Changed
+
+* React Native GCanvas Component
+    * fix: Cant build on react native 0.72.0 #65
+
+
 ## [6.0.10] - 2023-12-07
 
 ### Changed
