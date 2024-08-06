@@ -152,8 +152,10 @@ void GRenderer::start() {
 void GRenderer::stop() {
 
     LOG_D("start to stop grenderer thread.");
+    pthread_mutex_lock(&m_mutex);
     m_requestExit = true;
     pthread_cond_signal(&m_cond);
+    pthread_mutex_unlock(&m_mutex);
 
     LOG_D("nofity finished.");
     if (m_started) {
@@ -219,9 +221,13 @@ void GRenderer::drawFrame() {
 }
 
 void GRenderer::renderLoop() {
-    while (!m_requestExit) {
+    while (1) {
 
         pthread_mutex_lock(&m_mutex);
+
+        if (m_requestExit) {
+            break;
+        }
 
         if (!mProxy || (mProxy && !mProxy->continueProcess() &&
                         !m_viewportchanged && !m_requestSurfaceDestroy)) {
@@ -346,6 +352,7 @@ void GRenderer::requestCreateCanvas(const std::string contextid) {
 
     if (!m_createCanvas) {
         LOG_D("haven't created the canvas, creating...");
+        pthread_mutex_lock(&m_mutex);
         if (!mProxy) {
             mProxy = new GcanvasWeexAndroid(mContextId, this);
             mProxy->CreateContext();
@@ -356,6 +363,7 @@ void GRenderer::requestCreateCanvas(const std::string contextid) {
             m_sendEvent = true;
         }
         pthread_cond_signal(&m_cond);
+        pthread_mutex_unlock(&m_mutex);
     } else {
         LOG_D("already created the canvas");
     }
@@ -363,8 +371,10 @@ void GRenderer::requestCreateCanvas(const std::string contextid) {
 
 void GRenderer::requestViewportChanged() {
     LOG_D("requestViewportChanged");
+    pthread_mutex_lock(&m_mutex);
     m_viewportchanged = true;
     pthread_cond_signal(&m_cond);
+    pthread_mutex_unlock(&m_mutex);
     waitUtilTimeout(&m_SyncSem, GCANVAS_TIMEOUT);
 }
 
@@ -412,12 +422,14 @@ void GRenderer::drawImageData(int tw, int th, const std::string base64ImageData,
 
         // above can't work, don't know why, so use addBitmapQueue below
 
-        mProxy->addBitmapQueue(p);
-        m_bindtexture = true;
-
         LOG_D("start to drawImageData,tw=%d,th=%d,sx=%d,sy=%d,sw=%d,sh=%d,dx=%d,dy=%d,dw=%d,dh=%d\n",
               tw, th, sx, sy, sw, sh, dx, dy, dw, dh);
+
+        pthread_mutex_lock(&m_mutex);
+        mProxy->addBitmapQueue(p);
+        m_bindtexture = true;
         pthread_cond_signal(&m_cond);
+        pthread_mutex_unlock(&m_mutex);
 
         gcanvas::waitUtilTimeout(&m_SyncSem, GCANVAS_TIMEOUT);
 
@@ -478,12 +490,14 @@ void GRenderer::bindTexture(JNIEnv *env, jobject bitmap, int id, int target, int
     p->id = id;
 
     if (mProxy != nullptr) {
-        mProxy->addBitmapQueue(p);
-        m_bindtexture = true;
-
         LOG_D("start to require bindtexure,width=%d,height=%d,target=%d,level=%d,internalformat=%d,format=%d,type=%d\n",
               info.width, info.height, target, level, internalformat, format, type);
+
+        pthread_mutex_lock(&m_mutex);
+        mProxy->addBitmapQueue(p);
+        m_bindtexture = true;
         pthread_cond_signal(&m_cond);
+        pthread_mutex_unlock(&m_mutex);
 
         gcanvas::waitUtilTimeout(&m_SyncSem, GCANVAS_TIMEOUT);
 
@@ -496,9 +510,10 @@ void GRenderer::bindTexture(JNIEnv *env, jobject bitmap, int id, int target, int
 
 void GRenderer::surfaceDestroy() {
     LOG_D("surface destroy request in grenderer.");
+    pthread_mutex_lock(&m_mutex);
     m_requestSurfaceDestroy = true;
     pthread_cond_signal(&m_cond);
-
+    pthread_mutex_unlock(&m_mutex);
 }
 
 bool GRenderer::sendEvent() {
