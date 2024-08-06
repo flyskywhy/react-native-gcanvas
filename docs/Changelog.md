@@ -2,6 +2,14 @@
 
 All notable changes of this project will be documented in.
 
+## [6.0.12] - 2024-08-06
+
+### Changed
+
+* React Native GCanvas Component
+    * fix: on Android sometimes APP stuck (only FlatList can be move) by multi-thread lock while unmount <GCanvasView/>
+
+
 ## [6.0.11] - 2023-12-22
 
 ### Changed
