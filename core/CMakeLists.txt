@@ -29,7 +29,7 @@ include_directories("./android/3d")
 include_directories("./android/3d/jsc")
 include_directories("./android/3d/util")
 include_directories("./android/3d/view")
-include_directories("./android/freetype-prebuilt/include")
+include_directories("./android/freetype/include")
 
 
 set(SRC_FILES
@@ -124,10 +124,114 @@ find_library( # Sets the name of the path variable.
         # you want CMake to locate.
         log)
 
+# freetype v2.5 ~ v2.9.1
+#set(FREETYPE_SRC_FILES
+#        ./android/freetype/src/autofit/autofit.c
+#        ./android/freetype/src/base/basepic.c
+#        ./android/freetype/src/base/ftapi.c
+#        ./android/freetype/src/base/ftbase.c
+#        ./android/freetype/src/base/ftbbox.c
+#        ./android/freetype/src/base/ftbitmap.c
+#        ./android/freetype/src/base/ftdbgmem.c
+#        ./android/freetype/src/base/ftdebug.c
+#        ./android/freetype/src/base/ftglyph.c
+#        ./android/freetype/src/base/ftinit.c
+#        ./android/freetype/src/base/ftpic.c
+#        ./android/freetype/src/base/ftstroke.c
+#        ./android/freetype/src/base/ftsynth.c
+#        ./android/freetype/src/base/ftsystem.c
+#        ./android/freetype/src/bdf/bdf.c
+#        ./android/freetype/src/cid/type1cid.c
+#        ./android/freetype/src/cff/cff.c
+#        ./android/freetype/src/gzip/ftgzip.c
+#        ./android/freetype/src/lzw/ftlzw.c
+#        ./android/freetype/src/pcf/pcf.c
+#        ./android/freetype/src/pfr/pfr.c
+#        ./android/freetype/src/psaux/psaux.c
+#        ./android/freetype/src/pshinter/pshinter.c
+#        ./android/freetype/src/psnames/psnames.c
+#        ./android/freetype/src/raster/raster.c
+#        ./android/freetype/src/sfnt/sfnt.c
+#        ./android/freetype/src/smooth/smooth.c
+#        ./android/freetype/src/truetype/truetype.c
+#        ./android/freetype/src/type1/type1.c
+#        ./android/freetype/src/type42/type42.c
+#        ./android/freetype/src/winfonts/winfnt.c )
 
-add_library(freetype SHARED IMPORTED)
-set_target_properties(freetype PROPERTIES IMPORTED_LOCATION
-        ${CMAKE_CURRENT_SOURCE_DIR}/android/freetype-prebuilt/libs/${ANDROID_ABI}/libfreetype.so)
+# freetype v2.12.0
+#set(FREETYPE_SRC_FILES
+#        ./android/freetype/src/autofit/autofit.c
+#        ./android/freetype/src/base/ftbase.c
+#        ./android/freetype/src/base/ftbbox.c
+#        ./android/freetype/src/base/ftbitmap.c
+#        ./android/freetype/src/base/ftdbgmem.c
+#        ./android/freetype/src/base/ftdebug.c
+#        ./android/freetype/src/base/ftglyph.c
+#        ./android/freetype/src/base/ftinit.c
+#        ./android/freetype/src/base/ftstroke.c
+#        ./android/freetype/src/base/ftsynth.c
+#        ./android/freetype/src/base/ftsystem.c
+#        ./android/freetype/src/bdf/bdf.c
+#        ./android/freetype/src/cid/type1cid.c
+#        ./android/freetype/src/cff/cff.c
+#        ./android/freetype/src/gzip/ftgzip.c
+#        ./android/freetype/src/lzw/ftlzw.c
+#        ./android/freetype/src/pcf/pcf.c
+#        ./android/freetype/src/pfr/pfr.c
+#        ./android/freetype/src/psaux/psaux.c
+#        ./android/freetype/src/pshinter/pshinter.c
+#        ./android/freetype/src/psnames/psnames.c
+#        ./android/freetype/src/raster/raster.c
+#        ./android/freetype/src/sdf/ftbsdf.c
+#        ./android/freetype/src/sdf/ftsdf.c
+#        ./android/freetype/src/sdf/ftsdfcommon.c
+#        ./android/freetype/src/sdf/ftsdfrend.c
+#        ./android/freetype/src/sfnt/sfnt.c
+#        ./android/freetype/src/smooth/smooth.c
+#        ./android/freetype/src/svg/svg.c
+#        ./android/freetype/src/truetype/truetype.c
+#        ./android/freetype/src/type1/type1.c
+#        ./android/freetype/src/type42/type42.c
+#        ./android/freetype/src/winfonts/winfnt.c )
+
+# freetype v2.13.3
+set(FREETYPE_SRC_FILES
+        ./android/freetype/src/autofit/autofit.c
+        ./android/freetype/src/base/ftbase.c
+        ./android/freetype/src/base/ftbbox.c
+        ./android/freetype/src/base/ftbitmap.c
+        ./android/freetype/src/base/ftdbgmem.c
+        ./android/freetype/src/base/ftdebug.c
+        ./android/freetype/src/base/ftglyph.c
+        ./android/freetype/src/base/ftinit.c
+        ./android/freetype/src/base/ftmm.c
+        ./android/freetype/src/base/ftstroke.c
+        ./android/freetype/src/base/ftsynth.c
+        ./android/freetype/src/base/ftsystem.c
+        ./android/freetype/src/bdf/bdf.c
+        ./android/freetype/src/cid/type1cid.c
+        ./android/freetype/src/cff/cff.c
+        ./android/freetype/src/gzip/ftgzip.c
+        ./android/freetype/src/lzw/ftlzw.c
+        ./android/freetype/src/pcf/pcf.c
+        ./android/freetype/src/pfr/pfr.c
+        ./android/freetype/src/psaux/psaux.c
+        ./android/freetype/src/pshinter/pshinter.c
+        ./android/freetype/src/psnames/psnames.c
+        ./android/freetype/src/raster/raster.c
+        ./android/freetype/src/sdf/ftbsdf.c
+        ./android/freetype/src/sdf/ftsdf.c
+        ./android/freetype/src/sdf/ftsdfcommon.c
+        ./android/freetype/src/sdf/ftsdfrend.c
+        ./android/freetype/src/sfnt/sfnt.c
+        ./android/freetype/src/smooth/smooth.c
+        ./android/freetype/src/svg/svg.c
+        ./android/freetype/src/truetype/truetype.c
+        ./android/freetype/src/type1/type1.c
+        ./android/freetype/src/type42/type42.c
+        ./android/freetype/src/winfonts/winfnt.c )
+
+add_library(freetype SHARED ${FREETYPE_SRC_FILES})
 
 
 target_link_libraries( # Specifies the target library.
@@ -143,3 +247,18 @@ target_link_libraries( # Specifies the target library.
         # included in the NDK.
         ${log-lib})
 
+
+# here use ${log-lib} to support logcat with e.g. LOGD in freetype source code by
+# add below #define code into ./android/freetype/include/freetype/internal/ftdebug.h
+#
+# #include <android/log.h>
+# #define TAG "freetype"
+# #define LOGD(...) __android_log_print(ANDROID_LOG_DEBUG,TAG ,__VA_ARGS__)
+# #define LOGI(...) __android_log_print(ANDROID_LOG_INFO,TAG ,__VA_ARGS__)
+# #define LOGW(...) __android_log_print(ANDROID_LOG_WARN,TAG ,__VA_ARGS__)
+# #define LOGE(...) __android_log_print(ANDROID_LOG_ERROR,TAG ,__VA_ARGS__)
+# #define LOGF(...) __android_log_print(ANDROID_LOG_FATAL,TAG ,__VA_ARGS__)
+#
+target_link_libraries(
+        freetype
+        ${log-lib})

@@ -127,8 +127,6 @@ If compile error `Could not get resource 'https://maven.google.com/com/facebook/
 
 If compile error `More than one file was found with OS independent path 'lib/armeabi-v7a/libfreetype.so'`, please not use `com.android.tools.build:gradle:4.x` in `/android/build.gradle`, just use `com.android.tools.build:gradle:3.5.3` or other version according to <https://developer.android.com/studio/releases/gradle-plugin#cmake-imported-targets>.
 
-If run crash `gcanvas is not found.dlopen failed: library "libfreetype.so" not found` and then `java.lang.UnsatisfiedLinkError: No implementation found for void com.taobao.gcanvas.GCanvasJNI.setContextType` in emulator, please run APP on real device cause generally Android emulator is x86, and `core/android/freetype-prebuilt/` only exist ARM libs, and its source code <http://gitlab.alibaba-inc.com/gcanvas/freetype2_android> described in `core/android/freetype-prebuilt/README.md` can not be accessed. I also tried <https://github.com/castle-engine/android-freetype> and can produce freetype x86 libs, but will crash when running, PR is welcome.
-
 #### iOS
 
 Add below into `/ios/Podfile`
