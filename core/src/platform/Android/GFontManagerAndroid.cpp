@@ -30,7 +30,7 @@ GFontManagerAndroid::~GFontManagerAndroid() {
 }
 
 
-void GFontManagerAndroid::DrawText(const unsigned short *text,
+void GFontManagerAndroid::DrawText(const unsigned int *text,
                                    unsigned int text_length, float x, float y,
                                    bool isStroke, gcanvas::GFontStyle *fontStyle) {
     if (text == nullptr || text_length == 0) {
@@ -58,9 +58,9 @@ float *GFontManagerAndroid::MeasureTextWidthHeight(const char *text, unsigned in
         return ret;
     }
 
-    Utf8ToUCS2 *lbData = new Utf8ToUCS2(text, textLength);
-    unsigned short *ucs = lbData->ucs2;
-    textLength = lbData->ucs2len;
+    Utf8ToUCS4 *lbData = new Utf8ToUCS4(text, textLength);
+    unsigned int *ucs = lbData->ucs4;
+    textLength = lbData->ucs4len;
 
     std::vector<GFont *> fonts;
 
@@ -125,10 +125,10 @@ float *GFontManagerAndroid::PreMeasureTextHeight(const char *text,
         return ret;
     }
 
-    Utf8ToUCS2 *lbData = new Utf8ToUCS2(text, text_length);
+    Utf8ToUCS4 *lbData = new Utf8ToUCS4(text, text_length);
 
-    unsigned short *ucs = lbData->ucs2;
-    text_length = lbData->ucs2len;
+    unsigned int *ucs = lbData->ucs4;
+    text_length = lbData->ucs4len;
 
     std::vector<GFont *> fonts;
 
@@ -162,7 +162,7 @@ float *GFontManagerAndroid::PreMeasureTextHeight(const char *text,
 }
 
 void GFontManagerAndroid::AdjustTextPenPoint(std::vector<GFont *> font,
-                                             const unsigned short *text,
+                                             const unsigned int *text,
                                              unsigned int textLength,
                                              bool isStroke,
         /*out*/ float &x,

@@ -36,8 +36,8 @@ void GCanvasContext::DrawTextWithLength(const char *text, int strLength, float x
     }
 
 
-    Utf8ToUCS2 *lbData = new Utf8ToUCS2(text, strLength);
-    FillText(lbData->ucs2, lbData->ucs2len, x, y,
+    Utf8ToUCS4 *lbData = new Utf8ToUCS4(text, strLength);
+    FillText(lbData->ucs4, lbData->ucs4len, x, y,
                              isStroke, scaleWidth);
 
     delete lbData;

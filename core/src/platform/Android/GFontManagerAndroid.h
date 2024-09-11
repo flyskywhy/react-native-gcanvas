@@ -28,7 +28,7 @@ public:
 
     virtual ~GFontManagerAndroid();
 
-    void DrawText(const unsigned short *text,
+    void DrawText(const unsigned int *text,
                   unsigned int text_length, float x, float y,
                   bool isStroke, gcanvas::GFontStyle *fontStyle);
     float* MeasureTextWidthHeight(const char *text,
@@ -43,7 +43,7 @@ public:
     void SetFontCache(GFontCache *fontCache);
 private:
     void AdjustTextPenPoint(std::vector<GFont *> font,
-                            const unsigned short *text,
+                            const unsigned int *text,
                             unsigned int textLength,
                             bool isStroke,
             /*out*/ float &x,

@@ -16,7 +16,7 @@
 
 
 
-extern void iOS_GCanvas_Draw_Text(const unsigned short *text, unsigned int text_length, float x, float y, bool isStroke, GCanvasContext *context, void* fontContext);
+extern void iOS_GCanvas_Draw_Text(const unsigned int *text, unsigned int text_length, float x, float y, bool isStroke, GCanvasContext *context, void* fontContext);
 extern float iOS_GCanvas_Measure_Text(const char *text, unsigned int text_length, GCanvasContext *context, void* fontContext);
 float* iOS_GCanvas_Measure_TextExt(const char *text, unsigned int text_length, GCanvasContext *context, void* fontContext);
 
@@ -28,7 +28,7 @@ public:
 
     virtual ~GFontManagerImplement();
 
-    void DrawText(const unsigned short *text,
+    void DrawText(const unsigned int *text,
                   unsigned int text_length, float x, float y,
                   bool isStroke, gcanvas::GFontStyle *fontStyle);
     
@@ -67,7 +67,7 @@ GFontManagerImplement::GFontManagerImplement(GCanvasContext *context) : GFontMan
     [curFont setTreemap: &mTreemap];
 }
 
-void GFontManagerImplement::DrawText(const unsigned short *text,
+void GFontManagerImplement::DrawText(const unsigned int *text,
                                      unsigned int text_length, float x, float y,
                                      bool isStroke, gcanvas::GFontStyle *fontStyle)
 {
@@ -110,7 +110,7 @@ float* GFontManagerImplement::MeasureTextExt(const char *text, unsigned int text
  * @param context       see GCanvasContext
  *
  */
-void iOS_GCanvas_Draw_Text(const unsigned short *text, unsigned int text_length, float x, float y, bool isStroke, GCanvasContext *context, void* fontContext){
+void iOS_GCanvas_Draw_Text(const unsigned int *text, unsigned int text_length, float x, float y, bool isStroke, GCanvasContext *context, void* fontContext){
     if (text == nullptr || text_length == 0 || context == nullptr || fontContext == nullptr) {
         return;
     }

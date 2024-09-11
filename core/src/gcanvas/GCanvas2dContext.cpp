@@ -80,7 +80,7 @@ GColorRGBA BlendStrokeColor(GCanvasContext *context)
     return BlendColor(context, context->StrokeStyle());
 }
 
-void GCanvasContext::FillText(const unsigned short *text, unsigned int text_length,
+void GCanvasContext::FillText(const unsigned int *text, unsigned int text_length,
                               float x, float y, bool isStroke, float scaleWidth)
 {
     ApplyFillStylePipeline(isStroke);
@@ -1476,7 +1476,7 @@ void GCanvasContext::DrawTextWithLength(const char *text, int strLength, float x
             scaleWidth = maxWidth / measureWidth;
         }
     }
-    FillText((const unsigned short *)text,
+    FillText((const unsigned int *)text,
              (unsigned int)strLength, x, y, isStroke, scaleWidth);
 
     DoSetGlobalCompositeOperation(old_op, old_op);

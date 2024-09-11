@@ -27,7 +27,7 @@ public:
           delete mFontCache;
     };
 
-    void DrawText(const unsigned short *text,
+    void DrawText(const unsigned int *text,
                   unsigned int text_length, float x, float y,
                   bool isStroke, gcanvas::GFontStyle *fontStyle);
 
@@ -41,7 +41,7 @@ public:
 
 private:
     void adjustTextPenPoint(std::vector<GFont *> font,
-                            const unsigned short *text,
+                            const unsigned int *text,
                             unsigned int textLength,
                             bool isStroke,
             /*out*/ float &x,
@@ -72,7 +72,7 @@ GFontManagerImplement::GFontManagerImplement(GCanvasContext *context) : GFontMan
 
 }
 
-void GFontManagerImplement::DrawText(const unsigned short *text,
+void GFontManagerImplement::DrawText(const unsigned int *text,
                                      unsigned int text_length, float x, float y,
                                      bool isStroke, gcanvas::GFontStyle *fontStyle)
 {
@@ -110,10 +110,10 @@ float GFontManagerImplement::MeasureText(const char *text,
         return 0;
     }
 
-    Utf8ToUCS2 *lbData = new Utf8ToUCS2(text, textLength);
+    Utf8ToUCS4 *lbData = new Utf8ToUCS4(text, textLength);
 
-    unsigned short *ucs = lbData->ucs2;
-    textLength = lbData->ucs2len;
+    unsigned int *ucs = lbData->ucs4;
+    textLength = lbData->ucs4len;
 
     std::vector<GFont *> fonts;
 
@@ -145,7 +145,7 @@ float GFontManagerImplement::MeasureText(const char *text,
 }
 
 void GFontManagerImplement::adjustTextPenPoint(std::vector<GFont *> font,
-                                               const unsigned short *text,
+                                               const unsigned int *text,
                                                unsigned int textLength,
                                                bool isStroke,
         /*out*/ float &x,

@@ -314,7 +314,7 @@ public:
     void BeforeClip();
     void AfterClip();
 
-    API_EXPORT void FillText(const unsigned short *text, unsigned int text_length,
+    API_EXPORT void FillText(const unsigned int *text, unsigned int text_length,
                              float x, float y, bool isStroke, float scaleWidth = 1.0);
 
     //fbo

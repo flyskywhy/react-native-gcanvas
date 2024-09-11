@@ -38,7 +38,7 @@ public:
     virtual  ~GFontManager() = default;
 
 
-    virtual void DrawText(const unsigned short *text,
+    virtual void DrawText(const unsigned int *text,
                           unsigned int text_length, float x, float y,
                           bool isStroke, gcanvas::GFontStyle *fontStyle)=0;
 
