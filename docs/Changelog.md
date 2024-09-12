@@ -2,6 +2,16 @@
 
 All notable changes of this project will be documented in.
 
+## [6.0.13] - 2024-08-28
+
+### Changed
+
+* React Native GCanvas Component
+    * fix: support x86 and x86_64 ABI  used in e.g. Android emulator #6 #19
+    * feat: ctx.fillText() now support ucs4 instead of ucs2
+    * feat: ctx.fillText() can display some emoji e.g. U+2328 , but can not display more
+
+
 ## [6.0.12] - 2024-08-06
 
 ### Changed
