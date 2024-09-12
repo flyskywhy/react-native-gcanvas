@@ -173,19 +173,14 @@ namespace gcanvas
 
     char *GFontFamily::GetProperFontFile() {
 
-        // GFontFamilyItem* closetItem = nullptr;
-        // if(fontItems.size() > 0) {
-        //     closetItem = &fontItems[0];
-        // }
-        // if (closetItem != nullptr) {
-        //     return (char *)closetItem->font_file_name;
-        // }
-        //
-        // above will cause crash at `assert(glyph)` in Android/GFont.cpp
-        // if fontItems[0].font_file_name e.g. HarmonyOS_Sans.ttf is
-        // not compatible with react-native-gcanvas/core/android/freetype-prebuilt
-        // so just use below
-        //
+        GFontFamilyItem* closetItem = nullptr;
+        if(fontItems.size() > 0) {
+            closetItem = &fontItems[0];
+        }
+        if (closetItem != nullptr) {
+            return (char *)closetItem->font_file_name;
+        }
+
         return "NotoSansCJK-Regular.ttc";
     }
 

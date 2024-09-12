@@ -102,25 +102,36 @@ bool LoadFace(FT_Library *library, const char *filename,
         return false;
     }
 
-    error = FT_Select_Charmap(*face, FT_ENCODING_UNICODE);
-    if (error)
+    if (FT_HAS_FIXED_SIZES(*face))
     {
-        FT_Done_Face(*face);
-        FT_Done_FreeType(*library);
-        return false;
-    }
+        error = FT_Select_Size(*face, 0);
+        if (error)
+        {
+            FT_Done_Face(*face);
+            FT_Done_FreeType(*library);
+            return false;
+        }
+    } else {
+        error = FT_Select_Charmap(*face, FT_ENCODING_UNICODE);
+        if (error)
+        {
+            FT_Done_Face(*face);
+            FT_Done_FreeType(*library);
+            return false;
+        }
 
-    float sizeW = scaleFontX;//size * mCurrentState->mscaleFontX;
-    float sizeH = scaleFontY;//size * mCurrentState->mscaleFontY;
-    error = FT_Set_Char_Size(*face, (int)(sizeW * 64), (int)(sizeH * 64), (FT_UInt) 72 * hres, 72);
-    if (error)
-    {
-        FT_Done_Face(*face);
-        FT_Done_FreeType(*library);
-        return false;
-    }
+        float sizeW = scaleFontX;//size * mCurrentState->mscaleFontX;
+        float sizeH = scaleFontY;//size * mCurrentState->mscaleFontY;
+        error = FT_Set_Char_Size(*face, (int)(sizeW * 64), (int)(sizeH * 64), (FT_UInt) 72 * hres, 72);
+        if (error)
+        {
+            FT_Done_Face(*face);
+            FT_Done_FreeType(*library);
+            return false;
+        }
 
-    FT_Set_Transform(*face, &matrix, nullptr);
+        FT_Set_Transform(*face, &matrix, nullptr);
+    }
 
     return true;
 }
@@ -256,7 +267,12 @@ const GGlyph *GFont::GetGlyph(const wchar_t charcode, bool isStroke)
     buffer[0] = charcode;
     loadGlyphs(buffer, isStroke);
     glyph = mFontManager.mGlyphCache.GetGlyph(mFontName, charcode, GetCurrentScaleFontName(mContext), isStroke);
-    assert(glyph);
+
+    // TODO: ⌚ (U+231A)         Crash with assert(glyph)  GetClosestFontFamily() to be /system/fonts/NotoColorEmoji.ttf
+    //       ⌨️ (U+2328 U+FE0F)  Can display but no color  GetClosestFontFamily() to be /system/fonts/NotoSansSymbols-Regular-Subsetted.ttf
+    //       🫖 (U+1FAD6)        Can not display           GetClosestFontFamily() to be /system/fonts/NotoColorEmoji.ttf
+    // assert(glyph);
+
     return glyph;
 
 
@@ -383,6 +399,20 @@ void GFont::loadGlyphs(const wchar_t *charcodes,bool isStroke)
     /* Load each glyph */
     for (size_t i = 0; i < wcslen(charcodes); ++i)
     {
+        if (charcodes[i] == 0xFE0E || charcodes[i] == 0xFE0F)
+        {
+            // ref to https://github.com/AndrewRyanChama/matrix-react-sdk/blob/fe674e894880967d2f7308beacf9caf9722df2cf/src/emoji.ts#L96
+            // U+FE0F (and U+FE0E) is just variation selector but not glyph
+            // ref to [Emoji Catalog](https://projects.iamcal.com/emoji-data/table.htm)
+            // TODO: how to deal with U+200D ?
+            continue;
+        }
+
+        if (FT_HAS_FIXED_SIZES(mFace))
+        {
+            flags |= FT_LOAD_COLOR;
+        }
+
         int ft_bitmap_width = 0;
         int ft_bitmap_rows = 0;
         int ft_bitmap_pitch = 0;
@@ -663,25 +693,38 @@ bool GFont::LoadFace(const char *filename,
         return false;
     }
 
-    error = FT_Select_Charmap(mFace, FT_ENCODING_UNICODE);
-    if (error)
+    if (FT_HAS_FIXED_SIZES(mFace))
     {
-        DisposeFreeTypeFace();
-        DisposeFreeType();
-        return false;
-    }
+        // ref to [How to render color emoji font with FreeType 2.5](https://gist.github.com/jokertarot/7583938)
+        error = FT_Select_Size(mFace, 0);
+        if (error)
+        {
+            DisposeFreeTypeFace();
+            DisposeFreeType();
+            return false;
+        }
+    } else {
+        error = FT_Select_Charmap(mFace, FT_ENCODING_UNICODE);
+        if (error)
+        {
+            DisposeFreeTypeFace();
+            DisposeFreeType();
+            return false;
+        }
 
-    float sizeW = size * mContext->mCurrentState->mscaleFontX;
-    float sizeH = size * mContext->mCurrentState->mscaleFontY;
-    error = FT_Set_Char_Size(mFace, (int)(sizeW * 64), (int)(sizeH * 64), (FT_UInt) 72 * hres, 72);
-    if (error)
-    {
-        DisposeFreeTypeFace();
-        DisposeFreeType();
-        return false;
-    }
+        float sizeW = size * mContext->mCurrentState->mscaleFontX;
+        float sizeH = size * mContext->mCurrentState->mscaleFontY;
+        error = FT_Set_Char_Size(mFace, (int)(sizeW * 64), (int)(sizeH * 64), (FT_UInt) 72 * hres, 72);
 
-    FT_Set_Transform(mFace, &matrix, nullptr);
+        if (error)
+        {
+            DisposeFreeTypeFace();
+            DisposeFreeType();
+            return false;
+        }
+
+        FT_Set_Transform(mFace, &matrix, nullptr);
+    }
 
     return true;
 }
