@@ -234,6 +234,25 @@ set(FREETYPE_SRC_FILES
 add_library(freetype SHARED ${FREETYPE_SRC_FILES})
 
 
+# ref to [How to integrate libpng in my own project's CMakeLists.txt](https://github.com/pnggroup/libpng/issues/342#issuecomment-864589614)
+
+# libpng configurable options
+
+set(PNG_SHARED ON CACHE BOOL "" FORCE)
+set(PNG_STATIC OFF CACHE BOOL "" FORCE)
+set(PNG_EXECUTABLES OFF CACHE BOOL "" FORCE) # we only want lib
+set(PNG_TESTS OFF CACHE BOOL "" FORCE) # we only want lib
+set(SKIP_INSTALL_ALL OFF CACHE BOOL "" FORCE) # we only want lib
+
+# add libpng
+
+include_directories(./android/libpng)
+# generated files from libpng during build
+include_directories(${CMAKE_CURRENT_BINARY_DIR}/libpng)
+
+add_subdirectory(./android/libpng)
+
+
 target_link_libraries( # Specifies the target library.
         gcanvas
         GLESv1_CM
@@ -261,4 +280,5 @@ target_link_libraries( # Specifies the target library.
 #
 target_link_libraries(
         freetype
+        png
         ${log-lib})
