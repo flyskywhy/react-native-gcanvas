@@ -140,7 +140,7 @@ public:
     GCanvasState *GetCurrentState() { return mCurrentState; }
 
     GTexture *GetFboTexture();
-    GTexture *GetFontTexture();
+    GTexture *GetFontTexture(bool isPixelModeRgba = false);
 
 
     //non-w3c API
@@ -419,6 +419,7 @@ protected:
     bool mIsGLInited = false;
     GFrameBufferObjectPool mFrameBufferPool;
     GTexture *mFontTexture = nullptr;
+    GTexture *mFontTextureRgba = nullptr;
 
     bool mHiQuality;
 

@@ -342,6 +342,12 @@ GTexture *GCanvasContext::GetFboTexture()
 
 GCanvasContext::~GCanvasContext()
 {
+    if (mFontTextureRgba != nullptr)
+    {
+        GLuint textureId = mFontTextureRgba->GetTextureID();
+        glDeleteTextures(1, &textureId);
+    }
+
     if (mFontTexture != nullptr)
     {
         GLuint textureId = mFontTexture->GetTextureID();
@@ -1438,16 +1444,27 @@ void GCanvasContext::UseRadialGradientPipeline(bool isStroke)
     }
 }
 
-GTexture *GCanvasContext::GetFontTexture()
+GTexture *GCanvasContext::GetFontTexture(bool isPixelModeRgba)
 {
-    if (!mFontTexture)
-    {
-        std::vector<GCanvasLog> logVec;
-        mFontTexture = new GTexture(FontTextureWidth, FontTextureHeight, GL_ALPHA, nullptr, &logVec);
-        LOG_EXCEPTION_VECTOR(mHooks, mContextId.c_str(), logVec);
-    }
+    if (isPixelModeRgba) {
+        if (!mFontTextureRgba)
+        {
+            std::vector<GCanvasLog> logVec;
+            mFontTextureRgba = new GTexture(FontTextureWidth, FontTextureHeight, GL_RGBA, nullptr, &logVec);
+            LOG_EXCEPTION_VECTOR(mHooks, mContextId.c_str(), logVec);
+        }
 
-    return mFontTexture;
+        return mFontTextureRgba;
+    } else {
+        if (!mFontTexture)
+        {
+            std::vector<GCanvasLog> logVec;
+            mFontTexture = new GTexture(FontTextureWidth, FontTextureHeight, GL_ALPHA, nullptr, &logVec);
+            LOG_EXCEPTION_VECTOR(mHooks, mContextId.c_str(), logVec);
+        }
+
+        return mFontTexture;
+    }
 }
 
 //////////////////////////////////////////////////

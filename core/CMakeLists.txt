@@ -9,6 +9,7 @@ set(CMAKE_CXX_VISIBILITY_PRESET hidden)
 set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -std=c++14 -fno-exceptions -fno-unwind-tables")
 
 add_definitions(-DFT2_BUILD_LIBRARY)
+add_definitions(-DFT2_PNG_RGBA_NOT_BGRA)
 add_definitions(-DANDROID)
 
 if ((${ANDROID_ARM_NEON}) AND (${ANDROID_ABI} MATCHES arm*))

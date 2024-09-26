@@ -223,8 +223,7 @@ void GFont::DrawText(const wchar_t *text, GCanvasContext *context, float &x,
 void GFont::drawGlyph(const GGlyph *glyph, GCanvasContext *context, float x,
                       float y, GColorRGBA color)
 {
-    context->SetTexture(glyph->texture->GetTextureID());
-
+    GLuint textureId = glyph->texture->GetTextureID();
     float x0 = (float) (x + (glyph->offsetX / mContext->mCurrentState->mscaleFontX));
     float y0 = (float) (y - (glyph->offsetY / mContext->mCurrentState->mscaleFontY));
     float w = glyph->width / mContext->mCurrentState->mscaleFontX;
@@ -234,8 +233,22 @@ void GFont::drawGlyph(const GGlyph *glyph, GCanvasContext *context, float x,
     float s1 = glyph->s1;
     float t1 = glyph->t1;
 
-    context->PushRectangle(x0, y0, w, h, s0, t0, s1 - s0, t1 - t0,
-                           color);
+    if (mFace->glyph->bitmap.pixel_mode == FT_PIXEL_MODE_BGRA)
+    {
+        GTreemap &treemap = mFontManager.mTreemap;
+        int fontTextureWidth = treemap.GetWidth();
+        int fontTextureHeight = treemap.GetHeight();
+        context->Save();
+        context->DrawImage(textureId, fontTextureWidth, fontTextureHeight,
+                           s0 * fontTextureWidth, t0 * fontTextureHeight,
+                           (s1 - s0) * fontTextureWidth, (t1 - t0) * fontTextureHeight,
+                           x0, y0, w, h);
+        context->Restore();
+    } else {
+        context->SetTexture(textureId);
+        context->PushRectangle(x0, y0, w, h, s0, t0, s1 - s0, t1 - t0,
+                               color);
+    }
 }
 
 void GFont::SetFontCallback(
@@ -267,11 +280,7 @@ const GGlyph *GFont::GetGlyph(const wchar_t charcode, bool isStroke)
     buffer[0] = charcode;
     loadGlyphs(buffer, isStroke);
     glyph = mFontManager.mGlyphCache.GetGlyph(mFontName, charcode, GetCurrentScaleFontName(mContext), isStroke);
-
-    // TODO: ⌚ (U+231A)         Can display but no color  GetClosestFontFamily() to be /system/fonts/NotoColorEmoji.ttf
-    //       ⌨️ (U+2328 U+FE0F)  Can display but no color  GetClosestFontFamily() to be /system/fonts/NotoSansSymbols-Regular-Subsetted.ttf
-    //       🫖 (U+1FAD6)        Can display but no color  GetClosestFontFamily() to be /system/fonts/NotoColorEmoji.ttf
-    // assert(glyph);
+    // assert(glyph); // comment it to avoid crash in some rare case that glyph is nullptr
 
     return glyph;
 
@@ -313,8 +322,8 @@ void GFont::LoadGlyph(wchar_t charcode, int ftBitmapWidth, int ftBitmapHeight,
                       unsigned char *bitmapBuffer, int left, int top,
                       float advanceX, float advanceY, bool isStroke)
 {
-
-    GTexture *texture = mContext->GetFontTexture();
+    bool isPixelModeRgba = mFace->glyph->bitmap.pixel_mode == FT_PIXEL_MODE_BGRA;
+    GTexture *texture = mContext->GetFontTexture(isPixelModeRgba);
     GTreemap &treemap = mFontManager.mTreemap;
 
     GRect rect;
@@ -335,9 +344,13 @@ void GFont::LoadGlyph(wchar_t charcode, int ftBitmapWidth, int ftBitmapHeight,
             GGlyph glyph;
             glyph.charcode = charcode;
             glyph.texture = texture;
-            glyph.bitmapBuffer = new unsigned char[ftBitmapWidth * ftBitmapHeight];
-            memcpy(glyph.bitmapBuffer, bitmapBuffer, ftBitmapWidth * ftBitmapHeight);
-
+            unsigned int bitmapBufferLength = ftBitmapWidth * ftBitmapHeight;
+            if (isPixelModeRgba) {
+                bitmapBufferLength *= 4;
+            }
+            glyph.bitmapBuffer = new unsigned char[bitmapBufferLength];
+            memcpy(glyph.bitmapBuffer, bitmapBuffer, bitmapBufferLength);
+            glyph.isPixelModeRgba = isPixelModeRgba;
             glyph.width = ftBitmapWidth;
             glyph.height = ftBitmapHeight;
             glyph.outlineType = 0;
@@ -408,12 +421,20 @@ void GFont::loadGlyphs(const wchar_t *charcodes,bool isStroke)
             // U+FE0F (and U+FE0E) is just variation selector but not glyph
             // ref to [Emoji Catalog](https://projects.iamcal.com/emoji-data/table.htm)
             // TODO: how to deal with U+200D ?
+            // TODO: how to deal with U+20E3 ?
+
+            // TODO: deal with U+FE0F on e.g. ⌨️ (U+2328 U+FE0F)
+//       ⌚ (U+231A)         Can display with FT_PIXEL_MODE_BGRA     GetClosestFontFamily() to be /system/fonts/NotoColorEmoji.ttf
+//       🛏️ (U+1F6CF U+FE0F) Can display with FT_PIXEL_MODE_BGRA     GetClosestFontFamily() to be /system/fonts/NotoColorEmoji.ttf
+// TODO: ⌨️ (U+2328  U+FE0F) Can display without FT_PIXEL_MODE_BGRA  GetClosestFontFamily() to be /system/fonts/NotoSansSymbols-Regular-Subsetted.ttf
+// TODO: 🅰️ (U+1F170 U+FE0F) Can display without FT_PIXEL_MODE_BGRA  GetClosestFontFamily() to be /system/fonts/NotoSansCJK-Regular.ttc
+//       🫖 (U+1FAD6)        Can display with FT_PIXEL_MODE_BGRA     GetClosestFontFamily() to be /system/fonts/NotoColorEmoji.ttf
             continue;
         }
 
         if (FT_HAS_FIXED_SIZES(mFace))
         {
-            // flags |= FT_LOAD_COLOR;
+            flags |= FT_LOAD_COLOR;
         }
 
         int ft_bitmap_width = 0;

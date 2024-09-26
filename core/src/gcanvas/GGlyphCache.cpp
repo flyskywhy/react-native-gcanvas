@@ -42,7 +42,7 @@ const GGlyph *GGlyphCache::GetGlyph(const std::string& fontName,
 
 bool GGlyphCache::LoadGlyphTexture(GGlyph &glyph)
 {
-    GTexture *texture = mContext->GetFontTexture();
+    GTexture *texture = mContext->GetFontTexture(glyph.isPixelModeRgba);
     GTreemap &treemap = mFontManager.mTreemap;
 
     GRect rect;

@@ -155,10 +155,16 @@
           blue  = multiply_alpha( alpha, blue  );
         }
 
+#ifdef FT2_PNG_RGBA_NOT_BGRA
+        base[0] = (unsigned char)red;
+        base[1] = (unsigned char)green;
+        base[2] = (unsigned char)blue;
+#else
         base[0] = (unsigned char)blue;
         base[1] = (unsigned char)green;
         base[2] = (unsigned char)red;
-        base[3] = (unsigned char)alpha;
+#endif
+         base[3] = (unsigned char)alpha;
       }
     }
   }
@@ -183,9 +189,15 @@
       unsigned int    blue  = base[2];
 
 
+#ifdef FT2_PNG_RGBA_NOT_BGRA
+      base[0] = (unsigned char)red;
+      base[1] = (unsigned char)green;
+      base[2] = (unsigned char)blue;
+#else
       base[0] = (unsigned char)blue;
       base[1] = (unsigned char)green;
       base[2] = (unsigned char)red;
+#endif
       base[3] = 0xFF;
     }
   }

@@ -54,6 +54,7 @@ struct GGlyph
 
     GTexture *texture;
     unsigned char *bitmapBuffer;
+    bool isPixelModeRgba;
     /**
      * Glyph's width in pixels.
      */
