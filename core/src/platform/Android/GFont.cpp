@@ -268,9 +268,9 @@ const GGlyph *GFont::GetGlyph(const wchar_t charcode, bool isStroke)
     loadGlyphs(buffer, isStroke);
     glyph = mFontManager.mGlyphCache.GetGlyph(mFontName, charcode, GetCurrentScaleFontName(mContext), isStroke);
 
-    // TODO: ⌚ (U+231A)         Crash with assert(glyph)  GetClosestFontFamily() to be /system/fonts/NotoColorEmoji.ttf
+    // TODO: ⌚ (U+231A)         Can display but no color  GetClosestFontFamily() to be /system/fonts/NotoColorEmoji.ttf
     //       ⌨️ (U+2328 U+FE0F)  Can display but no color  GetClosestFontFamily() to be /system/fonts/NotoSansSymbols-Regular-Subsetted.ttf
-    //       🫖 (U+1FAD6)        Can not display           GetClosestFontFamily() to be /system/fonts/NotoColorEmoji.ttf
+    //       🫖 (U+1FAD6)        Can display but no color  GetClosestFontFamily() to be /system/fonts/NotoColorEmoji.ttf
     // assert(glyph);
 
     return glyph;
@@ -385,7 +385,10 @@ void GFont::loadGlyphs(const wchar_t *charcodes,bool isStroke)
     FT_Face face=mFace;
 
     FT_Int32 flags = 0;
-    flags |= FT_LOAD_NO_BITMAP;
+    if (!FT_HAS_FIXED_SIZES(mFace))
+    {
+        flags |= FT_LOAD_NO_BITMAP;
+    }
 
     if (mHinting)
     {
@@ -410,7 +413,7 @@ void GFont::loadGlyphs(const wchar_t *charcodes,bool isStroke)
 
         if (FT_HAS_FIXED_SIZES(mFace))
         {
-            flags |= FT_LOAD_COLOR;
+            // flags |= FT_LOAD_COLOR;
         }
 
         int ft_bitmap_width = 0;
