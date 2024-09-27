@@ -45,6 +45,8 @@ public:
 
     GFont *GetOrCreateFont(GCanvasContext *context, const std::string contextId,
                            gcanvas::GFontStyle *fontStyle, wchar_t charCode, const float size);
+    GFont *GetOrCreateEmojiFont(GCanvasContext *context, const std::string contextId,
+                                gcanvas::GFontStyle *fontStyle, wchar_t charCode, const float size);
 
 #else
     GFont *GetOrCreateFont(const std::string &key);
@@ -68,6 +70,9 @@ private:
 
     char *TryDefaultFallbackFont(const wchar_t charCode, const float size,
                                  const char *currentFontLocation);
+
+    char *TryDefaultEmojiFont(const wchar_t charCode, const float size,
+                              const char *currentFontLocation);
 
     char *TryOtherFallbackFont(GCanvasContext *context, const wchar_t charCode, const float size,
                                const char *currentFontLocation, gcanvas::GFontStyle *fontStyle);

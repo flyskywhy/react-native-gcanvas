@@ -28,28 +28,29 @@ public:
 
     virtual ~GFontManagerAndroid();
 
-    void DrawText(const unsigned int *text,
-                  unsigned int text_length, float x, float y,
+    void DrawText(const unsigned int *ucs,
+                  unsigned int ucsLength, float x, float y,
                   bool isStroke, gcanvas::GFontStyle *fontStyle);
     float* MeasureTextWidthHeight(const char *text,
-                                  unsigned int text_length, gcanvas::GFontStyle *fontStyle);
+                                  unsigned int textLength, gcanvas::GFontStyle *fontStyle);
     float MeasureText(const char *text,
-                      unsigned int text_length, gcanvas::GFontStyle *fontStyle);
+                      unsigned int textLength, gcanvas::GFontStyle *fontStyle);
     float* MeasureTextExt(const char *text,
-                          unsigned int text_length, gcanvas::GFontStyle *fontStyle);
+                          unsigned int textLength, gcanvas::GFontStyle *fontStyle);
     float* PreMeasureTextHeight(const char *text,
-                                unsigned int text_length, gcanvas::GFontStyle *fontStyle);
+                                unsigned int textLength, gcanvas::GFontStyle *fontStyle);
 
     void SetFontCache(GFontCache *fontCache);
 private:
     void AdjustTextPenPoint(std::vector<GFont *> font,
-                            const unsigned int *text,
-                            unsigned int textLength,
+                            const unsigned int *ucs,
+                            unsigned int ucsLength,
                             bool isStroke,
             /*out*/ float &x,
             /*out*/ float &y);
 
     GFont *GetFontByCharCode(wchar_t charCode, gcanvas::GFontStyle *fontStyle);
+    GFont *GetEmojiFont(wchar_t charCode, gcanvas::GFontStyle *fontStyle);
 
     void FillTextInternal(GFont *font, bool isStroke, wchar_t text, float &x, float y);
 

@@ -80,7 +80,7 @@ GColorRGBA BlendStrokeColor(GCanvasContext *context)
     return BlendColor(context, context->StrokeStyle());
 }
 
-void GCanvasContext::FillText(const unsigned int *text, unsigned int text_length,
+void GCanvasContext::FillText(const unsigned int *ucs, unsigned int ucsLength,
                               float x, float y, bool isStroke, float scaleWidth)
 {
     ApplyFillStylePipeline(isStroke);
@@ -95,7 +95,7 @@ void GCanvasContext::FillText(const unsigned int *text, unsigned int text_length
     Save();
     DoTranslate(x, y);
     DoScale(1 / mDevicePixelRatio * scaleWidth, 1 / mDevicePixelRatio);
-    mFontManager->DrawText(text, text_length, 0, 0, isStroke, mCurrentState->mFont);
+    mFontManager->DrawText(ucs, ucsLength, 0, 0, isStroke, mCurrentState->mFont);
     Restore();
 
     mCurrentState->mShader->SetOverideTextureColor(0);
@@ -1493,6 +1493,7 @@ void GCanvasContext::DrawTextWithLength(const char *text, int strLength, float x
             scaleWidth = maxWidth / measureWidth;
         }
     }
+    // TODO: Utf8ToUCS4
     FillText((const unsigned int *)text,
              (unsigned int)strLength, x, y, isStroke, scaleWidth);
 

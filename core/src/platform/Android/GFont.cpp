@@ -111,7 +111,9 @@ bool LoadFace(FT_Library *library, const char *filename,
             FT_Done_FreeType(*library);
             return false;
         }
-    } else {
+    }
+    else
+    {
         error = FT_Select_Charmap(*face, FT_ENCODING_UNICODE);
         if (error)
         {
@@ -415,23 +417,6 @@ void GFont::loadGlyphs(const wchar_t *charcodes,bool isStroke)
     /* Load each glyph */
     for (size_t i = 0; i < wcslen(charcodes); ++i)
     {
-        if (charcodes[i] == 0xFE0E || charcodes[i] == 0xFE0F)
-        {
-            // ref to https://github.com/AndrewRyanChama/matrix-react-sdk/blob/fe674e894880967d2f7308beacf9caf9722df2cf/src/emoji.ts#L96
-            // U+FE0F (and U+FE0E) is just variation selector but not glyph
-            // ref to [Emoji Catalog](https://projects.iamcal.com/emoji-data/table.htm)
-            // TODO: how to deal with U+200D ?
-            // TODO: how to deal with U+20E3 ?
-
-            // TODO: deal with U+FE0F on e.g. ⌨️ (U+2328 U+FE0F)
-//       ⌚ (U+231A)         Can display with FT_PIXEL_MODE_BGRA     GetClosestFontFamily() to be /system/fonts/NotoColorEmoji.ttf
-//       🛏️ (U+1F6CF U+FE0F) Can display with FT_PIXEL_MODE_BGRA     GetClosestFontFamily() to be /system/fonts/NotoColorEmoji.ttf
-// TODO: ⌨️ (U+2328  U+FE0F) Can display without FT_PIXEL_MODE_BGRA  GetClosestFontFamily() to be /system/fonts/NotoSansSymbols-Regular-Subsetted.ttf
-// TODO: 🅰️ (U+1F170 U+FE0F) Can display without FT_PIXEL_MODE_BGRA  GetClosestFontFamily() to be /system/fonts/NotoSansCJK-Regular.ttc
-//       🫖 (U+1FAD6)        Can display with FT_PIXEL_MODE_BGRA     GetClosestFontFamily() to be /system/fonts/NotoColorEmoji.ttf
-            continue;
-        }
-
         if (FT_HAS_FIXED_SIZES(mFace))
         {
             flags |= FT_LOAD_COLOR;
@@ -727,7 +712,9 @@ bool GFont::LoadFace(const char *filename,
             DisposeFreeType();
             return false;
         }
-    } else {
+    }
+    else
+    {
         error = FT_Select_Charmap(mFace, FT_ENCODING_UNICODE);
         if (error)
         {

@@ -57,6 +57,54 @@ void GFontCache::clear()
 #ifdef GFONT_LOAD_BY_FREETYPE
 
 GFont *
+GFontCache::GetOrCreateEmojiFont(GCanvasContext *context, std::string contextId, GFontStyle *fontStyle,
+                                 wchar_t charCode, const float size)
+{
+    const char *key = "emoji_font";
+    std::map<std::string, GFontSet>::iterator iter = mFontCache.find(key);
+    if (iter != mFontCache.end())
+    {
+        return iter->second.font;
+    }
+
+    const char *defaultSystemFontLocation = "/system/fonts/";
+
+    auto systemFontLocation = SystemFontInformation::GetSystemFontInformation()
+            ->GetSystemFontLocation();
+    const char *currentFontLocation = (systemFontLocation != nullptr)
+                                      ? systemFontLocation
+                                      : defaultSystemFontLocation;
+
+    const char *currentFontFile = nullptr;
+
+    currentFontFile = TryDefaultEmojiFont(charCode, size, currentFontLocation);
+
+    if (nullptr == currentFontFile)
+    {
+        return GetOrCreateFont(context, contextId, fontStyle, charCode, size);
+    }
+    else
+    {
+        std::string fontFileFullPath = currentFontLocation;
+        if (currentFontFile[0] == '/')
+        {
+            fontFileFullPath = currentFontFile;
+        }
+        else
+        {
+            fontFileFullPath += currentFontFile;
+        }
+
+        GFont *font = new GFont(context, mFontManager, fontFileFullPath.c_str(), size);
+
+        GFontSet &fontSet = mFontCache[key];
+        fontSet.font = font;
+
+        return font;
+    }
+}
+
+GFont *
 GFontCache::GetOrCreateFont(GCanvasContext *context, std::string contextId, GFontStyle *fontStyle,
                             wchar_t charCode, const float size)
 {
@@ -230,6 +278,26 @@ char *GFontCache::TryDefaultFallbackFont(const wchar_t charCode,
     }
 }
 
+char *GFontCache::TryDefaultEmojiFont(const wchar_t charCode,
+                                      const float size,
+                                      const char *currentFontLocation)
+{
+    auto defaultFontFile = "NotoColorEmoji.ttf";
+
+    std::string fontFileFullPath = currentFontLocation;
+    fontFileFullPath += defaultFontFile;
+
+    bool exist = this->IsGlyphExistedInFont(charCode, size, fontFileFullPath);
+    if (exist)
+    {
+        return (char *) defaultFontFile;
+    }
+    else
+    {
+        return nullptr;
+    }
+}
+
 char *GFontCache::TryOtherFallbackFont(GCanvasContext *context, const wchar_t charCode,
                                        const float size,
                                        const char *currentFontLocation, GFontStyle *fontStyle)
@@ -300,25 +368,36 @@ bool GFontCache::LoadFace(FT_Library *library, const char *filename,
         return false;
     }
 
-    error = FT_Select_Charmap(*face, FT_ENCODING_UNICODE);
-    if (error)
+    if (FT_HAS_FIXED_SIZES(*face))
     {
-        FT_Done_Face(*face);
-        FT_Done_FreeType(*library);
-        return false;
-    }
+        error = FT_Select_Size(*face, 0);
+        if (error)
+        {
+            FT_Done_Face(*face);
+            FT_Done_FreeType(*library);
+            return false;
+        }
+    } else {
+        error = FT_Select_Charmap(*face, FT_ENCODING_UNICODE);
+        if (error)
+        {
+            FT_Done_Face(*face);
+            FT_Done_FreeType(*library);
+            return false;
+        }
 
-    float sizeW = size * mFontManager.mContext->mCurrentState->mscaleFontX;
-    float sizeH = size * mFontManager.mContext->mCurrentState->mscaleFontY;
-    error = FT_Set_Char_Size(*face, (int)(sizeW * 64), (int)(sizeH * 64), (FT_UInt) 72 * hres, 72);
-    if (error)
-    {
-        FT_Done_Face(*face);
-        FT_Done_FreeType(*library);
-        return false;
-    }
+        float sizeW = size * mFontManager.mContext->mCurrentState->mscaleFontX;
+        float sizeH = size * mFontManager.mContext->mCurrentState->mscaleFontY;
+        error = FT_Set_Char_Size(*face, (int)(sizeW * 64), (int)(sizeH * 64), (FT_UInt) 72 * hres, 72);
+        if (error)
+        {
+            FT_Done_Face(*face);
+            FT_Done_FreeType(*library);
+            return false;
+        }
 
-    FT_Set_Transform(*face, &matrix, nullptr);
+        FT_Set_Transform(*face, &matrix, nullptr);
+    }
 
     return true;
 }

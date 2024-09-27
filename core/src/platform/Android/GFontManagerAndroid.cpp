@@ -30,22 +30,39 @@ GFontManagerAndroid::~GFontManagerAndroid() {
 }
 
 
-void GFontManagerAndroid::DrawText(const unsigned int *text,
-                                   unsigned int text_length, float x, float y,
+void GFontManagerAndroid::DrawText(const unsigned int *ucs,
+                                   unsigned int ucsLength, float x, float y,
                                    bool isStroke, gcanvas::GFontStyle *fontStyle) {
-    if (text == nullptr || text_length == 0) {
+    if (ucs == nullptr || ucsLength == 0) {
         return;
     }
     std::vector<GFont *> fonts;
 
-    for (unsigned int i = 0; i < text_length; ++i) {
-        fonts.push_back(GetFontByCharCode(text[i], fontStyle));
+    for (unsigned int i = 0; i < ucsLength; ++i) {
+        if ((i < ucsLength - 1 && (
+                ucs[i + 1] == UCS4_EMOJI_SELECTOR ||
+                ucs[i + 1] == UCS4_ZERO_WIDTH_JOINER
+            )) || (
+                i > 0 && ucs[i - 1] == UCS4_ZERO_WIDTH_JOINER
+            ) || ucs[i] == UCS4_COMBINING_ENCLOSING_KEYCAP
+        ) {
+            fonts.push_back(GetEmojiFont(ucs[i], fontStyle));
+        } else {
+            fonts.push_back(GetFontByCharCode(ucs[i], fontStyle));
+        }
     }
 
-    AdjustTextPenPoint(fonts, text, text_length, isStroke, x, y);
+    AdjustTextPenPoint(fonts, ucs, ucsLength, isStroke, x, y);
 
-    for (unsigned int i = 0; i < text_length; ++i) {
-        FillTextInternal(fonts[i], isStroke, text[i], x, y);
+    for (unsigned int i = 0; i < ucsLength; ++i) {
+        if (ucs[i] == UCS4_EMOJI_SELECTOR ||
+            ucs[i] == UCS4_TEXT_SELECTOR ||
+            ucs[i] == UCS4_ZERO_WIDTH_JOINER
+        ) {
+            continue;
+        }
+
+        FillTextInternal(fonts[i], isStroke, ucs[i], x, y);
     }
 }
 
@@ -60,17 +77,34 @@ float *GFontManagerAndroid::MeasureTextWidthHeight(const char *text, unsigned in
 
     Utf8ToUCS4 *lbData = new Utf8ToUCS4(text, textLength);
     unsigned int *ucs = lbData->ucs4;
-    textLength = lbData->ucs4len;
+    unsigned int ucsLength = lbData->ucs4len;
 
     std::vector<GFont *> fonts;
 
-    for (unsigned int i = 0; i < textLength; ++i) {
-        fonts.push_back(GetFontByCharCode(ucs[i], fontStyle));
+    for (unsigned int i = 0; i < ucsLength; ++i) {
+        if ((i < ucsLength - 1 && (
+                ucs[i + 1] == UCS4_EMOJI_SELECTOR ||
+                ucs[i + 1] == UCS4_ZERO_WIDTH_JOINER
+            )) || (
+                i > 0 && ucs[i - 1] == UCS4_ZERO_WIDTH_JOINER
+            ) || ucs[i] == UCS4_COMBINING_ENCLOSING_KEYCAP
+        ) {
+            fonts.push_back(GetEmojiFont(ucs[i], fontStyle));
+        } else {
+            fonts.push_back(GetFontByCharCode(ucs[i], fontStyle));
+        }
     }
 
     float deltaX = 0;
     float maxHeight = 0;
-    for (unsigned int i = 0; i < textLength; ++i) {
+    for (unsigned int i = 0; i < ucsLength; ++i) {
+        if (ucs[i] == UCS4_EMOJI_SELECTOR ||
+            ucs[i] == UCS4_TEXT_SELECTOR ||
+            ucs[i] == UCS4_ZERO_WIDTH_JOINER
+        ) {
+            continue;
+        }
+
         auto glyph = fonts[i]->GetGlyph(ucs[i], false);
 
         if (glyph != nullptr) {
@@ -117,30 +151,47 @@ float *GFontManagerAndroid::MeasureTextExt(const char *text, unsigned int textLe
 }
 
 float *GFontManagerAndroid::PreMeasureTextHeight(const char *text,
-                                                 unsigned int text_length,
+                                                 unsigned int textLength,
                                                  gcanvas::GFontStyle *fontStyle) {
-    if (text == nullptr || text_length == 0) {
+    if (text == nullptr || textLength == 0) {
         float *ret = new float[4];
         ret[0] = ret[1] = ret[2] = ret[3] = 0.0;
         return ret;
     }
 
-    Utf8ToUCS4 *lbData = new Utf8ToUCS4(text, text_length);
+    Utf8ToUCS4 *lbData = new Utf8ToUCS4(text, textLength);
 
     unsigned int *ucs = lbData->ucs4;
-    text_length = lbData->ucs4len;
+    unsigned int ucsLength = lbData->ucs4len;
 
     std::vector<GFont *> fonts;
 
-    for (unsigned int i = 0; i < text_length; ++i) {
-        fonts.push_back(GetFontByCharCode(ucs[i], fontStyle));
+    for (unsigned int i = 0; i < ucsLength; ++i) {
+        if ((i < ucsLength - 1 && (
+                ucs[i + 1] == UCS4_EMOJI_SELECTOR ||
+                ucs[i + 1] == UCS4_ZERO_WIDTH_JOINER
+            )) || (
+                i > 0 && ucs[i - 1] == UCS4_ZERO_WIDTH_JOINER
+            ) || ucs[i] == UCS4_COMBINING_ENCLOSING_KEYCAP
+        ) {
+            fonts.push_back(GetEmojiFont(ucs[i], fontStyle));
+        } else {
+            fonts.push_back(GetFontByCharCode(ucs[i], fontStyle));
+        }
     }
 
     float top = 0;
     float height = 0;
     float ascender = 0;
     float descender = 0;
-    for (unsigned int i = 0; i < text_length; ++i) {
+    for (unsigned int i = 0; i < ucsLength; ++i) {
+        if (ucs[i] == UCS4_EMOJI_SELECTOR ||
+            ucs[i] == UCS4_TEXT_SELECTOR ||
+            ucs[i] == UCS4_ZERO_WIDTH_JOINER
+        ) {
+            continue;
+        }
+
         auto glyph = fonts[i]->GetGlyph(ucs[i], false);
 
         if (glyph != nullptr) {
@@ -162,8 +213,8 @@ float *GFontManagerAndroid::PreMeasureTextHeight(const char *text,
 }
 
 void GFontManagerAndroid::AdjustTextPenPoint(std::vector<GFont *> font,
-                                             const unsigned int *text,
-                                             unsigned int textLength,
+                                             const unsigned int *ucs,
+                                             unsigned int ucsLength,
                                              bool isStroke,
         /*out*/ float &x,
         /*out*/ float &y) {
@@ -171,8 +222,8 @@ void GFontManagerAndroid::AdjustTextPenPoint(std::vector<GFont *> font,
         mContext->mCurrentState->mTextAlign != GTextAlign::TEXT_ALIGN_LEFT) {
         auto left_x = x;
         auto delta_x = 0.0f;
-        for (unsigned int i = 0; i < textLength; ++i) {
-            auto glyph = font[i]->GetGlyph(text[i], isStroke);
+        for (unsigned int i = 0; i < ucsLength; ++i) {
+            auto glyph = font[i]->GetGlyph(ucs[i], isStroke);
 
             if (glyph != nullptr) {
                 delta_x += glyph->advanceX / mContext->mCurrentState->mscaleFontX;
@@ -188,7 +239,7 @@ void GFontManagerAndroid::AdjustTextPenPoint(std::vector<GFont *> font,
     }
 
     GFont *font0 = font[0];
-    font0->GetGlyph(text[0], isStroke);
+    font0->GetGlyph(ucs[0], isStroke);
     auto font_metrics = font0->GetMetrics();
     auto ascender = font_metrics->ascender / mContext->mCurrentState->mscaleFontY;
     auto descender = font_metrics->descender / mContext->mCurrentState->mscaleFontY;
@@ -239,6 +290,19 @@ GFont *GFontManagerAndroid::GetFontByCharCode(wchar_t charCode, gcanvas::GFontSt
     GFont *font = mFontCache->GetOrCreateFont(mContext,
                                               mContext->mContextId,
                                               fontStyle, charCode, size);
+    return font;
+}
+
+GFont *GFontManagerAndroid::GetEmojiFont(wchar_t charCode, gcanvas::GFontStyle *fontStyle) {
+    float devicePixelRatio = 1;
+    if (mContext->GetHiQuality()) {
+        devicePixelRatio = mContext->mDevicePixelRatio;
+    }
+    float size = fontStyle->GetSize() * devicePixelRatio;
+
+    GFont *font = mFontCache->GetOrCreateEmojiFont(mContext,
+                                                   mContext->mContextId,
+                                                   fontStyle, charCode, size);
     return font;
 }
 
