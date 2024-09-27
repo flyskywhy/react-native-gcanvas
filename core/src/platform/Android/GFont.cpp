@@ -196,7 +196,9 @@ void GFont::DrawText(wchar_t text, GCanvasContext *context, float &x, float y,
     if (glyph != nullptr)
     {
         drawGlyph(glyph, context, x, y, color);
-        x += glyph->advanceX / mContext->mCurrentState->mscaleFontX;
+        if (text != UCS4_COMBINING_ENCLOSING_KEYCAP) {
+            x += glyph->advanceX / mContext->mCurrentState->mscaleFontX;
+        }
     }
 
 }

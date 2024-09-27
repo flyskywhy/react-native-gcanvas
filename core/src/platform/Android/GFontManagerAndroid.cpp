@@ -62,7 +62,14 @@ void GFontManagerAndroid::DrawText(const unsigned int *ucs,
             continue;
         }
 
-        FillTextInternal(fonts[i], isStroke, ucs[i], x, y);
+        if (i < ucsLength - 2 && ucs[i + 2] == UCS4_COMBINING_ENCLOSING_KEYCAP) {
+            // ref to (U+0031 U+FE0F U+20E3) in https://projects.iamcal.com/emoji-data/table.htm
+            FillTextInternal(fonts[i + 2], isStroke, ucs[i + 2], x, y);
+            FillTextInternal(fonts[i], isStroke, ucs[i], x, y);
+            i += 2;
+        } else {
+            FillTextInternal(fonts[i], isStroke, ucs[i], x, y);
+        }
     }
 }
 
@@ -100,7 +107,8 @@ float *GFontManagerAndroid::MeasureTextWidthHeight(const char *text, unsigned in
     for (unsigned int i = 0; i < ucsLength; ++i) {
         if (ucs[i] == UCS4_EMOJI_SELECTOR ||
             ucs[i] == UCS4_TEXT_SELECTOR ||
-            ucs[i] == UCS4_ZERO_WIDTH_JOINER
+            ucs[i] == UCS4_ZERO_WIDTH_JOINER ||
+            ucs[i] == UCS4_COMBINING_ENCLOSING_KEYCAP
         ) {
             continue;
         }
@@ -187,7 +195,8 @@ float *GFontManagerAndroid::PreMeasureTextHeight(const char *text,
     for (unsigned int i = 0; i < ucsLength; ++i) {
         if (ucs[i] == UCS4_EMOJI_SELECTOR ||
             ucs[i] == UCS4_TEXT_SELECTOR ||
-            ucs[i] == UCS4_ZERO_WIDTH_JOINER
+            ucs[i] == UCS4_ZERO_WIDTH_JOINER ||
+            ucs[i] == UCS4_COMBINING_ENCLOSING_KEYCAP
         ) {
             continue;
         }
@@ -223,6 +232,14 @@ void GFontManagerAndroid::AdjustTextPenPoint(std::vector<GFont *> font,
         auto left_x = x;
         auto delta_x = 0.0f;
         for (unsigned int i = 0; i < ucsLength; ++i) {
+            if (ucs[i] == UCS4_EMOJI_SELECTOR ||
+                ucs[i] == UCS4_TEXT_SELECTOR ||
+                ucs[i] == UCS4_ZERO_WIDTH_JOINER ||
+                ucs[i] == UCS4_COMBINING_ENCLOSING_KEYCAP
+            ) {
+                continue;
+            }
+
             auto glyph = font[i]->GetGlyph(ucs[i], isStroke);
 
             if (glyph != nullptr) {
