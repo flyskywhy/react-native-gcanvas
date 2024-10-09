@@ -237,7 +237,7 @@ void GFont::drawGlyph(const GGlyph *glyph, GCanvasContext *context, float x,
     float s1 = glyph->s1;
     float t1 = glyph->t1;
 
-    if (mFace->glyph->bitmap.pixel_mode == FT_PIXEL_MODE_BGRA)
+    if (mFace && mFace->glyph->bitmap.pixel_mode == FT_PIXEL_MODE_BGRA)
     {
         GTreemap &treemap = mFontManager.mTreemap;
         int fontTextureWidth = treemap.GetWidth();
@@ -326,7 +326,7 @@ void GFont::LoadGlyph(wchar_t charcode, int ftBitmapWidth, int ftBitmapHeight,
                       unsigned char *bitmapBuffer, int left, int top,
                       float advanceX, float advanceY, bool isStroke)
 {
-    bool isPixelModeRgba = mFace->glyph->bitmap.pixel_mode == FT_PIXEL_MODE_BGRA;
+    bool isPixelModeRgba = mFace && mFace->glyph->bitmap.pixel_mode == FT_PIXEL_MODE_BGRA;
     GTexture *texture = mContext->GetFontTexture(isPixelModeRgba);
     GTreemap &treemap = mFontManager.mTreemap;
 

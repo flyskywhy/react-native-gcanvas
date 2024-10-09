@@ -39,13 +39,7 @@ void GFontManagerAndroid::DrawText(const unsigned int *ucs,
     std::vector<GFont *> fonts;
 
     for (unsigned int i = 0; i < ucsLength; ++i) {
-        if ((i < ucsLength - 1 && (
-                ucs[i + 1] == UCS4_EMOJI_SELECTOR ||
-                ucs[i + 1] == UCS4_ZERO_WIDTH_JOINER
-            )) || (
-                i > 0 && ucs[i - 1] == UCS4_ZERO_WIDTH_JOINER
-            ) || ucs[i] == UCS4_COMBINING_ENCLOSING_KEYCAP
-        ) {
+        if (isCharcodeEmoji(ucs, ucsLength, i)) {
             fonts.push_back(GetEmojiFont(ucs[i], fontStyle));
         } else {
             fonts.push_back(GetFontByCharCode(ucs[i], fontStyle));
@@ -89,13 +83,7 @@ float *GFontManagerAndroid::MeasureTextWidthHeight(const char *text, unsigned in
     std::vector<GFont *> fonts;
 
     for (unsigned int i = 0; i < ucsLength; ++i) {
-        if ((i < ucsLength - 1 && (
-                ucs[i + 1] == UCS4_EMOJI_SELECTOR ||
-                ucs[i + 1] == UCS4_ZERO_WIDTH_JOINER
-            )) || (
-                i > 0 && ucs[i - 1] == UCS4_ZERO_WIDTH_JOINER
-            ) || ucs[i] == UCS4_COMBINING_ENCLOSING_KEYCAP
-        ) {
+        if (isCharcodeEmoji(ucs, ucsLength, i)) {
             fonts.push_back(GetEmojiFont(ucs[i], fontStyle));
         } else {
             fonts.push_back(GetFontByCharCode(ucs[i], fontStyle));
@@ -175,13 +163,7 @@ float *GFontManagerAndroid::PreMeasureTextHeight(const char *text,
     std::vector<GFont *> fonts;
 
     for (unsigned int i = 0; i < ucsLength; ++i) {
-        if ((i < ucsLength - 1 && (
-                ucs[i + 1] == UCS4_EMOJI_SELECTOR ||
-                ucs[i + 1] == UCS4_ZERO_WIDTH_JOINER
-            )) || (
-                i > 0 && ucs[i - 1] == UCS4_ZERO_WIDTH_JOINER
-            ) || ucs[i] == UCS4_COMBINING_ENCLOSING_KEYCAP
-        ) {
+        if (isCharcodeEmoji(ucs, ucsLength, i)) {
             fonts.push_back(GetEmojiFont(ucs[i], fontStyle));
         } else {
             fonts.push_back(GetFontByCharCode(ucs[i], fontStyle));
