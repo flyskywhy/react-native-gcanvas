@@ -41,7 +41,7 @@ static inline bool isCharcodeEmoji(const unsigned int *ucs, unsigned int ucsLeng
         //     NotoColorEmoji.ttf, if no iterEmoji, after emoji ❤️ (U+2764 U+FE0F) then emoji 💪 (U+1F4AA),
         //     U+FE0F will cause fallbackFont be HarmonyOS_Sans.ttf , thus U+1F4AA will use
         //     HarmonyOS_Sans.ttf and cause no display.
-        //         std::map<std::string, GFontSet>::iterator iterEmoji = mFontCache.find("emoji_font");
+        //         std::map<std::string, GFontSet>::iterator iterEmoji = mFontCache.find("%s_emoji_%s_");
         //         if (iterEmoji != mFontCache.end())
         //         {
         //             if (iterEmoji->second.font->IsGlyphExistedInFont(charCode))

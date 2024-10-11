@@ -60,7 +60,9 @@ GFont *
 GFontCache::GetOrCreateEmojiFont(GCanvasContext *context, std::string contextId, GFontStyle *fontStyle,
                                  wchar_t charCode, const float size)
 {
-    const char *key = "emoji_font";
+    char key[256] = {0};
+    snprintf(key, 256, "%s_emoji_%s_", contextId.c_str(),
+             GetCurrentScaleFontName(context).c_str());
     std::map<std::string, GFontSet>::iterator iter = mFontCache.find(key);
     if (iter != mFontCache.end())
     {
