@@ -190,21 +190,22 @@ GFont::~GFont()
 }
 
 void GFont::DrawText(wchar_t text, GCanvasContext *context, float &x, float y,
-                     GColorRGBA color, bool isStroke)
+                     GColorRGBA color, bool isStroke, const float sizeRatio)
 {
     const GGlyph *glyph = GetGlyph(text, isStroke);
     if (glyph != nullptr)
     {
-        drawGlyph(glyph, context, x, y, color);
-        if (text != UCS4_COMBINING_ENCLOSING_KEYCAP) {
-            x += glyph->advanceX / mContext->mCurrentState->mscaleFontX;
+        drawGlyph(glyph, context, x, y, color, sizeRatio);
+        if (text != UCS4_COMBINING_ENCLOSING_KEYCAP)
+        {
+            x += sizeRatio * glyph->advanceX / mContext->mCurrentState->mscaleFontX;
         }
     }
 
 }
 
 void GFont::DrawText(const wchar_t *text, GCanvasContext *context, float &x,
-                     float y, GColorRGBA color, bool isStroke)
+                     float y, GColorRGBA color, bool isStroke, const float sizeRatio)
 {
     if (text == nullptr || wcslen(text) == 0)
     {
@@ -217,21 +218,24 @@ void GFont::DrawText(const wchar_t *text, GCanvasContext *context, float &x,
 
         if (glyph != nullptr)
         {
-            drawGlyph(glyph, context, x, y, color);
-            x += glyph->advanceX / mContext->mCurrentState->mscaleFontX;
+            drawGlyph(glyph, context, x, y, color, sizeRatio);
+            if (text[i] != UCS4_COMBINING_ENCLOSING_KEYCAP)
+            {
+                x += sizeRatio * glyph->advanceX / mContext->mCurrentState->mscaleFontX;
+            }
         }
     }
 
 }
 
 void GFont::drawGlyph(const GGlyph *glyph, GCanvasContext *context, float x,
-                      float y, GColorRGBA color)
+                      float y, GColorRGBA color, const float sizeRatio)
 {
     GLuint textureId = glyph->texture->GetTextureID();
-    float x0 = (float) (x + (glyph->offsetX / mContext->mCurrentState->mscaleFontX));
-    float y0 = (float) (y - (glyph->offsetY / mContext->mCurrentState->mscaleFontY));
-    float w = glyph->width / mContext->mCurrentState->mscaleFontX;
-    float h = glyph->height / mContext->mCurrentState->mscaleFontY;
+    float x0 = (float) (x + (sizeRatio * glyph->offsetX / mContext->mCurrentState->mscaleFontX));
+    float y0 = (float) (y - (sizeRatio * glyph->offsetY / mContext->mCurrentState->mscaleFontY));
+    float w = sizeRatio * glyph->width / mContext->mCurrentState->mscaleFontX;
+    float h = sizeRatio * glyph->height / mContext->mCurrentState->mscaleFontY;
     float s0 = glyph->s0;
     float t0 = glyph->t0;
     float s1 = glyph->s1;

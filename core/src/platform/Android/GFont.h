@@ -29,6 +29,10 @@
 #endif
 
 
+// With test, this magic number seems display nearly same height when mixed text and color emoji.
+// With react-native-runescape-text options.scale = 1 (= '16px'), 128 looks better than 130 or 125 by eye.
+#define COLOR_EMOJI_VS_TEXT_POINT_SIZE_RATIO 128
+
 class GCanvasContext;
 
 
@@ -79,9 +83,9 @@ public:
     ~GFont();
 
     void DrawText(wchar_t text, GCanvasContext *context, float &x, float y,
-                  GColorRGBA color, bool isStroke);
+                  GColorRGBA color, bool isStroke, const float sizeRatio);
     void DrawText(const wchar_t *text, GCanvasContext *context, float &x,
-                  float y, GColorRGBA color, bool isStroke);
+                  float y, GColorRGBA color, bool isStroke, const float sizeRatio);
 
     const GGlyph *GetGlyph(const wchar_t charcode, bool isStroke);
     void RemoveGlyph(const wchar_t charcode, bool isStroke);
@@ -95,6 +99,14 @@ public:
 
     const std::string &GetFontName() const;
 
+    float GetSizeRatio() {
+        if (mFace && mFace->glyph->bitmap.pixel_mode == FT_PIXEL_MODE_BGRA) {
+            return mPointSize / COLOR_EMOJI_VS_TEXT_POINT_SIZE_RATIO;
+        } else {
+            return 1;
+        }
+    }
+
     static void
     SetFontCallback(void *(*getFontCallback)(const char *fontDefinition),
                     bool (*getFontImageCallback)(
@@ -105,7 +117,7 @@ public:
     bool IsGlyphExistedInFont(const wchar_t charCode);
 private:
     void drawGlyph(const GGlyph *glyph, GCanvasContext *context, float x,
-                   float y, GColorRGBA color);
+                   float y, GColorRGBA color, const float sizeRatio);
 
     static void *(*getFontCallback)(const char *fontDefinition);
     static bool (*getFontImageCallback)(void *font, wchar_t charcode,

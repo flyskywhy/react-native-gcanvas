@@ -104,14 +104,14 @@ float *GFontManagerAndroid::MeasureTextWidthHeight(const char *text, unsigned in
         auto glyph = fonts[i]->GetGlyph(ucs[i], false);
 
         if (glyph != nullptr) {
-            deltaX += glyph->advanceX / mContext->mCurrentState->mscaleFontX;
+            deltaX += fonts[i]->GetSizeRatio() * glyph->advanceX / mContext->mCurrentState->mscaleFontX;
         }
     }
 
     if (fonts.size() > 0) {
         //文本高度本来应该去除上下空白的，但是laya1，还是有点问题，所以这个高度，还是用老的高度ascender+descender绝对值
-        maxHeight = fabs(fonts[0]->GetMetrics()->ascender / mContext->mCurrentState->mscaleFontY) +
-                    fabs(fonts[0]->GetMetrics()->descender / mContext->mCurrentState->mscaleFontY);
+        maxHeight = fabs(fonts[0]->GetSizeRatio() * fonts[0]->GetMetrics()->ascender / mContext->mCurrentState->mscaleFontY) +
+                    fabs(fonts[0]->GetSizeRatio() * fonts[0]->GetMetrics()->descender / mContext->mCurrentState->mscaleFontY);
     }
 
     //如果满足条件则，返回不带空白的文字高度
@@ -188,8 +188,8 @@ float *GFontManagerAndroid::PreMeasureTextHeight(const char *text,
         if (glyph != nullptr) {
             top = glyph->offsetY / mContext->mCurrentState->mscaleFontY;
             height = glyph->height / mContext->mCurrentState->mscaleFontY;
-            ascender = fonts[i]->GetMetrics()->ascender / mContext->mCurrentState->mscaleFontY;
-            descender = fonts[0]->GetMetrics()->descender / mContext->mCurrentState->mscaleFontY;
+            ascender = fonts[i]->GetSizeRatio() * fonts[i]->GetMetrics()->ascender / mContext->mCurrentState->mscaleFontY;
+            descender = fonts[0]->GetSizeRatio() * fonts[0]->GetMetrics()->descender / mContext->mCurrentState->mscaleFontY;
         }
     }
 
@@ -203,7 +203,7 @@ float *GFontManagerAndroid::PreMeasureTextHeight(const char *text,
     return ret;
 }
 
-void GFontManagerAndroid::AdjustTextPenPoint(std::vector<GFont *> font,
+void GFontManagerAndroid::AdjustTextPenPoint(std::vector<GFont *> fonts,
                                              const unsigned int *ucs,
                                              unsigned int ucsLength,
                                              bool isStroke,
@@ -222,10 +222,10 @@ void GFontManagerAndroid::AdjustTextPenPoint(std::vector<GFont *> font,
                 continue;
             }
 
-            auto glyph = font[i]->GetGlyph(ucs[i], isStroke);
+            auto glyph = fonts[i]->GetGlyph(ucs[i], isStroke);
 
             if (glyph != nullptr) {
-                delta_x += glyph->advanceX / mContext->mCurrentState->mscaleFontX;
+                delta_x += fonts[i]->GetSizeRatio() * glyph->advanceX / mContext->mCurrentState->mscaleFontX;
             }
         }
 
@@ -237,11 +237,12 @@ void GFontManagerAndroid::AdjustTextPenPoint(std::vector<GFont *> font,
         }
     }
 
-    GFont *font0 = font[0];
+    GFont *font0 = fonts[0];
     font0->GetGlyph(ucs[0], isStroke);
     auto font_metrics = font0->GetMetrics();
-    auto ascender = font_metrics->ascender / mContext->mCurrentState->mscaleFontY;
-    auto descender = font_metrics->descender / mContext->mCurrentState->mscaleFontY;
+    auto size_ratio = font0->GetSizeRatio();
+    auto ascender = size_ratio * font_metrics->ascender / mContext->mCurrentState->mscaleFontY;
+    auto descender = size_ratio * font_metrics->descender / mContext->mCurrentState->mscaleFontY;
 
     //m_ascender，m_descender不能除scale，因为在PreMeasureTextHeight获取这两个值时，已经除过了
     float m_ascender = mContext->mCurrentState->mFont->GetAscender();
@@ -305,14 +306,15 @@ GFont *GFontManagerAndroid::GetEmojiFont(wchar_t charCode, gcanvas::GFontStyle *
     return font;
 }
 
-
 void GFontManagerAndroid::FillTextInternal(GFont *font, bool isStroke, wchar_t charcode,
                                            float &x, float y) {
+    float sizeRatio = font->GetSizeRatio();
+
     if (isStroke) {
-        font->DrawText(charcode, mContext, x, y, mContext->StrokeStyle(), isStroke);
+        font->DrawText(charcode, mContext, x, y, mContext->StrokeStyle(), isStroke, sizeRatio);
 
     } else {
-        font->DrawText(charcode, mContext, x, y, mContext->FillStyle(), isStroke);
+        font->DrawText(charcode, mContext, x, y, mContext->FillStyle(), isStroke, sizeRatio);
 
     }
 }
