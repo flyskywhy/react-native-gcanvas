@@ -125,7 +125,7 @@ Sometimes will meet compile error `java.io.FileNotFoundException: SOME_PATH/.cxx
 
 If compile error `Could not get resource 'https://maven.google.com/com/facebook/react/react-native/maven-metadata.xml'`, you can remove `'https://maven.google.com/'` in `react-native-gcanvas/build.gradle` .
 
-If compile error `More than one file was found with OS independent path 'lib/armeabi-v7a/libfreetype.so'`, please not use `com.android.tools.build:gradle:4.x` in `/android/build.gradle`, just use `com.android.tools.build:gradle:3.5.3` or other version according to <https://developer.android.com/studio/releases/gradle-plugin#cmake-imported-targets>.
+If compile error `Expected output file at .../libpng16d.so for target png but there was none`, please not use `com.android.tools.build:gradle:7.3.1` in `/android/build.gradle`, just use `com.android.tools.build:gradle:7.4.1` or other version according to <https://developer.android.com/studio/releases/gradle-plugin#cmake-imported-targets>.
 
 #### iOS
 
