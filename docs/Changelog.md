@@ -2,6 +2,15 @@
 
 All notable changes of this project will be documented in.
 
+## [6.0.14] - 2024-10-12
+
+### Changed
+
+* React Native GCanvas Component
+    * feat: on Android ctx.fillText() can display most color emoji
+    * fix: on Android compile error `Expected output file at .../libpng16d.so for target png but there was none`
+
+
 ## [6.0.13] - 2024-08-28
 
 ### Changed
