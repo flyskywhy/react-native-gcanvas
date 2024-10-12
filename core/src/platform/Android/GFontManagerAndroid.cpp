@@ -41,6 +41,10 @@ void GFontManagerAndroid::DrawText(const unsigned int *ucs,
     for (unsigned int i = 0; i < ucsLength; ++i) {
         if (isCharcodeEmoji(ucs, ucsLength, i)) {
             fonts.push_back(GetEmojiFont(ucs[i], fontStyle));
+
+            // need this at the first glance to make sure the mFace of the first
+            // emoji after a text is not nullptr when the first emoji run GetSizeRatio()
+            fonts[i]->GetGlyph(ucs[i], isStroke);
         } else {
             fonts.push_back(GetFontByCharCode(ucs[i], fontStyle));
         }
