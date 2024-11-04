@@ -2,6 +2,14 @@
 
 All notable changes of this project will be documented in.
 
+## [6.0.15] - 2024-11-04
+
+### Changed
+
+* React Native GCanvas Component
+    * fix: build fails that missing "pnglibconf.h" in npm package #84
+
+
 ## [6.0.14] - 2024-10-12
 
 ### Changed
