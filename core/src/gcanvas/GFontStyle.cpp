@@ -128,6 +128,15 @@ namespace gcanvas {
                     fontFamily.erase(std::remove(fontFamily.begin(), fontFamily.end(), '\"'),
                                      fontFamily.end());
                     mFamily = fontFamily;
+                    ++index;
+                    while (index < ct) {
+                        fontFamily = parts[index];
+                        fontFamily.erase(std::remove(fontFamily.begin(), fontFamily.end(), '\"'),
+                                         fontFamily.end());
+                        mFamily += " " + fontFamily;
+                        ++index;
+                    }
+                    break;
                 }
             }
 
