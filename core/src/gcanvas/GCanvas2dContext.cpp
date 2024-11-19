@@ -9,6 +9,7 @@
 
 #include "GCanvas2dContext.h"
 #include "GShaderManager.h"
+#include "../support/CharacterSet.h"
 #include "../GCanvas.hpp"
 #include "../support/GLUtil.h"
 
@@ -1493,10 +1494,12 @@ void GCanvasContext::DrawTextWithLength(const char *text, int strLength, float x
             scaleWidth = maxWidth / measureWidth;
         }
     }
-    // TODO: Utf8ToUCS4
-    FillText((const unsigned int *)text,
-             (unsigned int)strLength, x, y, isStroke, scaleWidth);
 
+    Utf8ToUCS4 *lbData = new Utf8ToUCS4(text, strLength);
+    FillText(lbData->ucs4, lbData->ucs4len, x, y,
+                             isStroke, scaleWidth);
+
+    delete lbData;
     DoSetGlobalCompositeOperation(old_op, old_op);
 }
 #endif

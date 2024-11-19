@@ -151,7 +151,7 @@ static NSMutableDictionary *staticFontInstaceDict;
             family = @"Arial";
         }
     }
-    
+ 
     NSMutableDictionary *attrs = [NSMutableDictionary dictionary];
     // family
     attrs[(NSString *)kCTFontFamilyNameAttribute] = family;
@@ -223,26 +223,23 @@ static NSMutableDictionary *staticFontInstaceDict;
     }
 }
 
-- (GFontLayout *)getLayoutForString:(NSString *)string withFontStyle:(NSString *)fontStyle
+- (GFontLayout *)getLayoutForString:(const unsigned int *)ucs ucsLength:(unsigned int)ucsLength withFontStyle:(NSString *)fontStyle
 {
     GTextMetrics metrics = {
         .width = 0,
         .ascent = 0,
         .descent = 0,
     };
-    NSMutableData *layoutData = [NSMutableData dataWithCapacity:string.length];
+    NSMutableData *layoutData = [NSMutableData dataWithCapacity:ucsLength];
 
     GFontLayout *fontLayout = [[GFontLayout alloc] init];
     fontLayout.glyphLayout = layoutData;
     fontLayout.glyphCount = 0;
   
     int offsetX = 0;
-    NSInteger i,n = [string length];
-    unichar c;
-    // 这里对编码格式的支持有问题
-    for (i = 0; i < n; i++) {
-        c = [string characterAtIndex:i];
-        [self getGlyphForChar:c withFontStyle:fontStyle withFontLayout:fontLayout withOffsetX:&offsetX];
+    NSInteger i;
+    for (i = 0; i < ucsLength; i++) {
+        [self getGlyphForChar:ucs[i] withFontStyle:fontStyle withFontLayout:fontLayout withOffsetX:&offsetX];
         ++fontLayout.glyphCount;
     }
     
@@ -254,7 +251,8 @@ static NSMutableDictionary *staticFontInstaceDict;
     return fontLayout;
 }
 
-- (void)drawString:(NSString *)string
+- (void)drawString:(const unsigned int *)ucs
+         ucsLength:(unsigned int)ucsLength
      withFontStyle:(NSString*)fontStyle
         withLayout:(GFontLayout*)fontLayout
       withPosition:(CGPoint)destPoint
@@ -262,13 +260,10 @@ static NSMutableDictionary *staticFontInstaceDict;
     int offsetX = 0;
     GColorRGBA color = self.isStroke ? BlendStrokeColor(context) : BlendFillColor(context);
 
-    NSInteger i,n = [string length];
-    unichar c;
-    for (i = 0; i < n; i++) {
-        c = [string characterAtIndex:i];
-        
+    NSInteger i;
+    for (i = 0; i < ucsLength; i++) {
         //TODO fontSize
-        const GGlyph *pGlyph = glyphCache->GetGlyph([fontStyle UTF8String], c, fontStyle.UTF8String, self.isStroke);
+        const GGlyph *pGlyph = glyphCache->GetGlyph([fontStyle UTF8String], ucs[i], fontStyle.UTF8String, self.isStroke);
         if (pGlyph) {
             GFontGlyphLayout gl;
             

@@ -8,6 +8,7 @@
  */
 #include "../../gcanvas/GFontManager.h"
 #include "../../gcanvas/GCanvas2dContext.h"
+#include "../../support/CharacterSet.h"
 #include "../../support/Log.h"
 #include "../../GCanvas.hpp"
 #import "GCVFont.h"
@@ -110,8 +111,8 @@ float* GFontManagerImplement::MeasureTextExt(const char *text, unsigned int text
  * @param context       see GCanvasContext
  *
  */
-void iOS_GCanvas_Draw_Text(const unsigned int *text, unsigned int text_length, float x, float y, bool isStroke, GCanvasContext *context, void* fontContext){
-    if (text == nullptr || text_length == 0 || context == nullptr || fontContext == nullptr) {
+void iOS_GCanvas_Draw_Text(const unsigned int *ucs, unsigned int ucsLength, float x, float y, bool isStroke, GCanvasContext *context, void* fontContext){
+    if (ucs == nullptr || ucsLength == 0 || context == nullptr || fontContext == nullptr) {
         return;
     }
     
@@ -119,8 +120,7 @@ void iOS_GCanvas_Draw_Text(const unsigned int *text, unsigned int text_length, f
     GCVFont *curFont = (__bridge GCVFont*)fontContext;
     
     [curFont resetWithFontStyle:current_state_->mFont isStroke:isStroke];
-    NSString *string = [[NSString alloc] initWithBytes:text length:text_length encoding:NSUTF8StringEncoding];
-    GFontLayout *fontLayout = [curFont getLayoutForString:string withFontStyle:[NSString stringWithUTF8String:current_state_->mFont->GetName().c_str()]];
+    GFontLayout *fontLayout = [curFont getLayoutForString:ucs ucsLength:ucsLength withFontStyle:[NSString stringWithUTF8String:current_state_->mFont->GetName().c_str()]];
     CGPoint destPoint = [curFont adjustTextPenPoint:CGPointMake(x, y)
                                           textAlign:current_state_->mTextAlign
                                            baseLine:current_state_->mTextBaseline
@@ -130,7 +130,7 @@ void iOS_GCanvas_Draw_Text(const unsigned int *text, unsigned int text_length, f
     
     glActiveTexture(GL_TEXTURE0);
     
-    [curFont drawString:string withFontStyle:[NSString stringWithUTF8String:current_state_->mFont->GetName().c_str()] withLayout:fontLayout withPosition:destPoint];
+    [curFont drawString:ucs ucsLength:ucsLength withFontStyle:[NSString stringWithUTF8String:current_state_->mFont->GetName().c_str()] withLayout:fontLayout withPosition:destPoint];
     
     
 }
@@ -140,13 +140,18 @@ float iOS_GCanvas_Measure_Text(const char *text, unsigned int text_length, GCanv
         return 0;
     }
     
-    GCanvasState *current_state_ = context->GetCurrentState();
+    Utf8ToUCS4 *lbData = new Utf8ToUCS4(text, text_length);
+    unsigned int *ucs = lbData->ucs4;
+    unsigned int ucsLength = lbData->ucs4len;
+
+   GCanvasState *current_state_ = context->GetCurrentState();
     GCVFont *curFont = (__bridge GCVFont*)fontContext;
     
     [curFont resetWithFontStyle:current_state_->mFont isStroke:false];
-    NSString *string = [[NSString alloc] initWithBytes:text length:text_length encoding:NSUTF8StringEncoding];
-    GFontLayout *fontLayout = [curFont getLayoutForString:string withFontStyle:[NSString stringWithUTF8String:current_state_->mFont->GetName().c_str()]];
+    GFontLayout *fontLayout = [curFont getLayoutForString:(const unsigned int *)ucs ucsLength:(unsigned int)ucsLength withFontStyle:[NSString stringWithUTF8String:current_state_->mFont->GetName().c_str()]];
     
+    delete lbData;
+
     return fontLayout.metrics.width;
 }
 
@@ -158,13 +163,19 @@ float* iOS_GCanvas_Measure_TextExt(const char *text, unsigned int text_length, G
         return ret;
     }
     
+    Utf8ToUCS4 *lbData = new Utf8ToUCS4(text, text_length);
+    unsigned int *ucs = lbData->ucs4;
+    unsigned int ucsLength = lbData->ucs4len;
+
     GCanvasState *current_state_ = context->GetCurrentState();
     GCVFont *curFont = (__bridge GCVFont*)fontContext;
     
     [curFont resetWithFontStyle:current_state_->mFont isStroke:false];
     NSString *string = [[NSString alloc] initWithBytes:text length:text_length encoding:NSUTF8StringEncoding];
-    GFontLayout *fontLayout = [curFont getLayoutForString:string withFontStyle:[NSString stringWithUTF8String:current_state_->mFont->GetName().c_str()]];
+    GFontLayout *fontLayout = [curFont getLayoutForString:(const unsigned int *)ucs ucsLength:(unsigned int)ucsLength  withFontStyle:[NSString stringWithUTF8String:current_state_->mFont->GetName().c_str()]];
     
+    delete lbData;
+
     float *ret = new float[4];
     ret[0] = fontLayout.metrics.width;
     ret[1] = fontLayout.metrics.ascent + fontLayout.metrics.descent;

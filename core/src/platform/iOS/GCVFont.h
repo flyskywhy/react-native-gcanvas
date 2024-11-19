@@ -80,13 +80,13 @@ class GCanvasContext;
 /**
  * Get getLayoutForString.
  *
- * @param string        input string
+ * @param ucs        ucs4
  *
  * return  return GFontLayout
  */
-- (GFontLayout *)getLayoutForString:(NSString *)string withFontStyle:(NSString*)fontStyle;
+- (GFontLayout *)getLayoutForString:(const unsigned int *)ucs ucsLength:(unsigned int)ucsLength withFontStyle:(NSString *)fontStyle;
 
-- (void )drawString:(NSString *)string withFontStyle:(NSString*)fontStyle withLayout:(GFontLayout*)fontLayout withPosition:(CGPoint)destPoint;
+- (void )drawString:(const unsigned int *)ucs ucsLength:(unsigned int)ucsLength withFontStyle:(NSString*)fontStyle withLayout:(GFontLayout*)fontLayout withPosition:(CGPoint)destPoint;
 
 - (void) getGlyphForChar:(wchar_t)c withFontStyle:(NSString*)fontStyle withFontLayout:(GFontLayout *) fontLayout withOffsetX:(int*) x;
 

@@ -7,7 +7,7 @@
  * the LICENSE file in the root directory of this source tree.
  */
 #include "CharacterSet.h"
-#include "support/Log.h"
+#include "Log.h"
 #include <unicode/utf.h>
 
 Utf8ToUCS4::Utf8ToUCS4(const Utf8ToUCS4 &utf8)
