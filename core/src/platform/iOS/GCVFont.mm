@@ -237,9 +237,9 @@ static NSMutableDictionary *staticFontInstaceDict;
     fontLayout.glyphCount = 0;
   
     int offsetX = 0;
-    NSInteger i;
-    for (i = 0; i < ucsLength; i++) {
-        [self getGlyphForChar:ucs[i] withFontStyle:fontStyle withFontLayout:fontLayout withOffsetX:&offsetX];
+    for (int i = 0; i < ucsLength; i++) {
+        bool isPixelModeRgba = isCharcodeEmoji(ucs, ucsLength, i);
+        [self getGlyphForChar:ucs[i] isPixelModeRgba:isPixelModeRgba withFontStyle:fontStyle withFontLayout:fontLayout withOffsetX:&offsetX];
         ++fontLayout.glyphCount;
     }
     
@@ -275,19 +275,37 @@ static NSMutableDictionary *staticFontInstaceDict;
             if (gl.info.texture != NULL){
                 textureId = gl.info.texture->GetTextureID();
             }
-            context->SetTexture(textureId);
             
             GGlyph &glyphInfo = gl.info;
-            float gx = destPoint.x + gl.xpos + glyphInfo.offsetX / context->mCurrentState->mscaleFontX;
-            float gy = destPoint.y - (glyphInfo.height / context->mCurrentState->mscaleFontY + glyphInfo.offsetY / context->mCurrentState->mscaleFontY);
-            context->PushRectangle(gx, gy, glyphInfo.width / context->mCurrentState->mscaleFontX, glyphInfo.height / context->mCurrentState->mscaleFontY, glyphInfo.s0,
-                                   glyphInfo.t1, glyphInfo.s1-glyphInfo.s0, glyphInfo.t0-glyphInfo.t1,
-                                   color);
+            float x0 = (float) (destPoint.x + gl.xpos + glyphInfo.offsetX / context->mCurrentState->mscaleFontX);
+            float y0 = (float) (destPoint.y - (glyphInfo.height / context->mCurrentState->mscaleFontY + glyphInfo.offsetY / context->mCurrentState->mscaleFontY));
+            float w = glyphInfo.width / context->mCurrentState->mscaleFontX;
+            float h = glyphInfo.height / context->mCurrentState->mscaleFontY;
+            float s0 = glyphInfo.s0;
+            float t0 = glyphInfo.t0;
+            float s1 = glyphInfo.s1;
+            float t1 = glyphInfo.t1;
+
+            if (glyphInfo.isPixelModeRgba)
+            {
+                int fontTextureWidth = treemap->GetWidth();
+                int fontTextureHeight = treemap->GetHeight();
+                context->Save();
+                context->DrawImage(textureId, fontTextureWidth, fontTextureHeight,
+                                   s0 * fontTextureWidth, t1 * fontTextureHeight,
+                                   (s1 - s0) * fontTextureWidth, (t0 - t1) * fontTextureHeight,
+                                   x0, y0, w, h);
+                context->Restore();
+            } else {
+                context->SetTexture(textureId);
+                context->PushRectangle(x0, y0, w, h, s0, t1, s1 - s0, t0 - t1, color);
+           }
         }
     }
 }
 
 - (void)getGlyphForChar:(wchar_t)c
+        isPixelModeRgba:(bool)isPixelModeRgba
           withFontStyle:(NSString *)fontStyle
          withFontLayout:(GFontLayout *)fontLayout
             withOffsetX:(int *)offsetX
@@ -359,8 +377,9 @@ static NSMutableDictionary *staticFontInstaceDict;
 
             CGGlyph glyph = glyphs[g];
             gl.info.charcode = c;
+            gl.info.isPixelModeRgba = isPixelModeRgba;
             gl.xpos = positions[g].x + *offsetX;
-
+            // NSLog(@"charcode: %x font: %@", c, fontStyle);
             [curFont createGlyph:glyph withFont:runFont withFontStyle:fontStyle glyphInfo:&gl.info];
             *offsetX += gl.info.advanceX;
             metrics.ascent = MAX(metrics.ascent, gl.info.height + gl.info.offsetY - glyphPadding);
@@ -377,8 +396,57 @@ static NSMutableDictionary *staticFontInstaceDict;
     CFRelease(line);
 }
 
+// ref to LoadGlyph() in core/src/platform/Android/GFont.cpp
+- (void)LoadGlyph:(int)ftBitmapWidth
+   ftBitmapHeight:(int)ftBitmapHeight
+     bitmapBuffer:(unsigned char *)bitmapBuffer
+    withFontStyle:(NSString *)fontStyle
+        glyphInfo:(GGlyph *)glyph
+{
+    GTexture *texture = context->GetFontTexture(glyph->isPixelModeRgba);
+
+    GRect rect;
+    GSize size(ftBitmapWidth, ftBitmapHeight);
+    bool failed = true;
+    while (failed)
+    {
+        failed = !treemap->Add(size, rect);
+        if (failed)
+        {
+            context->SendVertexBufferToGPU();
+            treemap->Clear();
+            glyphCache->ClearGlyphsTexture();
+        }
+        else
+        {
+            texture->UpdateTexture(bitmapBuffer, rect.x, rect.y, rect.width, rect.height);
+            glyph->texture = texture;
+            unsigned int bitmapBufferLength = ftBitmapWidth * ftBitmapHeight;
+            if (glyph->isPixelModeRgba) {
+                bitmapBufferLength *= 4;
+            }
+            glyph->bitmapBuffer = new unsigned char[bitmapBufferLength];
+            memcpy(glyph->bitmapBuffer, bitmapBuffer, bitmapBufferLength);
+            glyph->width = ftBitmapWidth;
+            glyph->height = ftBitmapHeight;
+            glyph->outlineType = 0;
+            glyph->outlineThickness = 0;
+            glyph->s0 = (float) rect.x / treemap->GetWidth();
+            glyph->t0 = (float) rect.y / treemap->GetHeight();
+            glyph->s1 = (float) (rect.x + rect.width) / treemap->GetWidth();
+            glyph->t1 = (float) (rect.y + rect.height) / treemap->GetHeight();
+
+            glyphCache->Insert([fontStyle UTF8String], glyph->charcode, [fontStyle UTF8String], self.isStroke, *glyph);
+        }
+
+    }
+
+}
+
 - (void)createGlyph:(CGGlyph)glyph withFont:(CTFontRef)font withFontStyle:(NSString *)fontStyle glyphInfo:(GGlyph *)glyphInfo
 {
+    bool isPixelModeRgba = glyphInfo->isPixelModeRgba;
+
     CGRect bbRect;
     CTFontGetBoundingRectsForGlyphs(font, kCTFontOrientationDefault, &glyph, &bbRect, 1);
     CGSize advance;
@@ -396,8 +464,12 @@ static NSMutableDictionary *staticFontInstaceDict;
     int pxWidth = floorf((glyphInfo->width * contentScale) / 8 + 1) * 8;
     int pxHeight = floorf((glyphInfo->height * contentScale) / 8 + 1) * 8;
     
-    NSMutableData *pixels = [NSMutableData dataWithLength:pxWidth * pxHeight];
-    CGContextRef context = CGBitmapContextCreate(pixels.mutableBytes, pxWidth, pxHeight, 8, pxWidth, NULL, kCGImageAlphaOnly);
+    NSMutableData *pixels = [NSMutableData dataWithLength:pxWidth * pxHeight * (isPixelModeRgba ? 4 : 1)];
+    CGColorSpaceRef colorSpace = isPixelModeRgba ? CGColorSpaceCreateDeviceRGB() : NULL;
+    CGContextRef context = CGBitmapContextCreate(pixels.mutableBytes, pxWidth, pxHeight, 8, pxWidth * (isPixelModeRgba ? 4 : 1), colorSpace, isPixelModeRgba ? kCGImageAlphaPremultipliedLast : kCGImageAlphaOnly);
+    if (colorSpace) {
+        CFRelease(colorSpace);
+    }
     
     CGContextSetFontSize(context, pointSize);
     CGContextTranslateCTM(context, 0.0, pxHeight);
@@ -406,7 +478,11 @@ static NSMutableDictionary *staticFontInstaceDict;
     // Fill or stroke?
     if (!self.isStroke) {
         CGContextSetTextDrawingMode(context, kCGTextFill);
-        CGContextSetGrayFillColor(context, 1.0, 1.0);
+        if (isPixelModeRgba) {
+            CGContextSetRGBFillColor(context, 1.0, 1.0, 1.0, 1.0);
+        } else {
+            CGContextSetGrayFillColor(context, 1.0, 1.0);
+        }
     } else {
         CGContextSetTextDrawingMode(context, kCGTextStroke);
         CGContextSetGrayStrokeColor(context, 1.0, 1.0);
@@ -420,9 +496,7 @@ static NSMutableDictionary *staticFontInstaceDict;
     glyphInfo->width = pxWidth;
     glyphInfo->height = pxHeight;
     glyphInfo->texture = nullptr;
-    glyphInfo->bitmapBuffer = new unsigned char[pxWidth * pxHeight];
-    memcpy(glyphInfo->bitmapBuffer, pixels.bytes, pxWidth * pxHeight);
-    glyphCache->Insert([fontStyle UTF8String], glyphInfo->charcode, [fontStyle UTF8String], self.isStroke, *glyphInfo);
+    [self LoadGlyph:pxWidth ftBitmapHeight:pxHeight bitmapBuffer:(unsigned char *)(pixels.bytes) withFontStyle:fontStyle glyphInfo:glyphInfo];
     
     CGContextRelease(context);
 }

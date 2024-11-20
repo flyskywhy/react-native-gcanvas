@@ -88,7 +88,7 @@ class GCanvasContext;
 
 - (void )drawString:(const unsigned int *)ucs ucsLength:(unsigned int)ucsLength withFontStyle:(NSString*)fontStyle withLayout:(GFontLayout*)fontLayout withPosition:(CGPoint)destPoint;
 
-- (void) getGlyphForChar:(wchar_t)c withFontStyle:(NSString*)fontStyle withFontLayout:(GFontLayout *) fontLayout withOffsetX:(int*) x;
+- (void) getGlyphForChar:(wchar_t)c isPixelModeRgba:(bool)isPixelModeRgba withFontStyle:(NSString*)fontStyle withFontLayout:(GFontLayout *) fontLayout withOffsetX:(int*) x;
 
 /**
  * Create font texture with FontGlyph info
