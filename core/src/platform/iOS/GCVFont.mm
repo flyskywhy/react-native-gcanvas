@@ -17,6 +17,7 @@
 
 #define GCV_FONT_TEXTURE_SIZE 1024
 #define GCV_FONT_GLYPH_PADDING 0
+#define EMOJI_FONT @"Apple Color Emoji"
 
 #pragma mark - GFontLayout
 @implementation GFontLayout
@@ -236,10 +237,10 @@ static NSMutableDictionary *staticFontInstaceDict;
     fontLayout.glyphLayout = layoutData;
     fontLayout.glyphCount = 0;
   
-    int offsetX = 0;
+    float offsetX = 0;
     for (int i = 0; i < ucsLength; i++) {
         bool isPixelModeRgba = isCharcodeEmoji(ucs, ucsLength, i);
-        [self getGlyphForChar:ucs[i] isPixelModeRgba:isPixelModeRgba withFontStyle:fontStyle withFontLayout:fontLayout withOffsetX:&offsetX];
+        [self getGlyphForChar:ucs[i] isPixelModeRgba:isPixelModeRgba withFontStyle:isPixelModeRgba ? EMOJI_FONT : fontStyle withFontLayout:fontLayout withOffsetX:&offsetX];
         ++fontLayout.glyphCount;
     }
     
@@ -251,55 +252,69 @@ static NSMutableDictionary *staticFontInstaceDict;
     return fontLayout;
 }
 
+- (void)FillTextInternal:(NSString*)fontStyle charcode:(wchar_t)charcode offsetX:(float &)offsetX withPosition:(CGPoint)destPoint
+{
+    const GGlyph *pGlyph = glyphCache->GetGlyph([fontStyle UTF8String], charcode, fontStyle.UTF8String, self.isStroke);
+    if (pGlyph) {
+        GFontGlyphLayout gl;
+
+        gl.info = *pGlyph;
+        gl.xpos = offsetX;
+
+        // ref to DrawText() in core/src/platform/Android/GFont.cpp
+        if (charcode != UCS4_COMBINING_ENCLOSING_KEYCAP) {
+            offsetX += gl.info.advanceX / context->mCurrentState->mscaleFontX;
+        }
+
+        GLuint textureId = InvalidateTextureId;
+        if (gl.info.texture != NULL) {
+            textureId = gl.info.texture->GetTextureID();
+        }
+
+        GGlyph &glyphInfo = gl.info;
+        float x0 = (float) (destPoint.x + gl.xpos + glyphInfo.offsetX / context->mCurrentState->mscaleFontX);
+        float y0 = (float) (destPoint.y - (glyphInfo.height / context->mCurrentState->mscaleFontY + glyphInfo.offsetY / context->mCurrentState->mscaleFontY));
+        float w = glyphInfo.width / context->mCurrentState->mscaleFontX;
+        float h = glyphInfo.height / context->mCurrentState->mscaleFontY;
+        float s0 = glyphInfo.s0;
+        float t0 = glyphInfo.t0;
+        float s1 = glyphInfo.s1;
+        float t1 = glyphInfo.t1;
+
+        // ref to drawGlyph() in core/src/platform/Android/GFont.cpp
+        if (glyphInfo.isPixelModeRgba)
+        {
+            int fontTextureWidth = treemap->GetWidth();
+            int fontTextureHeight = treemap->GetHeight();
+            context->Save();
+            context->DrawImage(textureId, fontTextureWidth, fontTextureHeight,
+                               s0 * fontTextureWidth, t1 * fontTextureHeight,
+                               (s1 - s0) * fontTextureWidth, (t0 - t1) * fontTextureHeight,
+                               x0, y0, w, h);
+            context->Restore();
+        } else {
+            GColorRGBA color = self.isStroke ? BlendStrokeColor(context) : BlendFillColor(context);
+            context->SetTexture(textureId);
+            context->PushRectangle(x0, y0, w, h, s0, t1, s1 - s0, t0 - t1, color);
+       }
+    }
+}
+
 - (void)drawString:(const unsigned int *)ucs
          ucsLength:(unsigned int)ucsLength
      withFontStyle:(NSString*)fontStyle
         withLayout:(GFontLayout*)fontLayout
       withPosition:(CGPoint)destPoint
 {
-    int offsetX = 0;
-    GColorRGBA color = self.isStroke ? BlendStrokeColor(context) : BlendFillColor(context);
-
-    NSInteger i;
-    for (i = 0; i < ucsLength; i++) {
-        //TODO fontSize
-        const GGlyph *pGlyph = glyphCache->GetGlyph([fontStyle UTF8String], ucs[i], fontStyle.UTF8String, self.isStroke);
-        if (pGlyph) {
-            GFontGlyphLayout gl;
-            
-            gl.info = *pGlyph;
-            gl.xpos = offsetX;
-            offsetX += gl.info.advanceX / context->mCurrentState->mscaleFontX;
-            
-            GLuint textureId = InvalidateTextureId;
-            if (gl.info.texture != NULL){
-                textureId = gl.info.texture->GetTextureID();
-            }
-            
-            GGlyph &glyphInfo = gl.info;
-            float x0 = (float) (destPoint.x + gl.xpos + glyphInfo.offsetX / context->mCurrentState->mscaleFontX);
-            float y0 = (float) (destPoint.y - (glyphInfo.height / context->mCurrentState->mscaleFontY + glyphInfo.offsetY / context->mCurrentState->mscaleFontY));
-            float w = glyphInfo.width / context->mCurrentState->mscaleFontX;
-            float h = glyphInfo.height / context->mCurrentState->mscaleFontY;
-            float s0 = glyphInfo.s0;
-            float t0 = glyphInfo.t0;
-            float s1 = glyphInfo.s1;
-            float t1 = glyphInfo.t1;
-
-            if (glyphInfo.isPixelModeRgba)
-            {
-                int fontTextureWidth = treemap->GetWidth();
-                int fontTextureHeight = treemap->GetHeight();
-                context->Save();
-                context->DrawImage(textureId, fontTextureWidth, fontTextureHeight,
-                                   s0 * fontTextureWidth, t1 * fontTextureHeight,
-                                   (s1 - s0) * fontTextureWidth, (t0 - t1) * fontTextureHeight,
-                                   x0, y0, w, h);
-                context->Restore();
-            } else {
-                context->SetTexture(textureId);
-                context->PushRectangle(x0, y0, w, h, s0, t1, s1 - s0, t0 - t1, color);
-           }
+    float offsetX = 0;
+    for (int i = 0; i < ucsLength; i++) {
+        if (i < ucsLength - 2 && ucs[i + 2] == UCS4_COMBINING_ENCLOSING_KEYCAP) {
+            // ref to (U+0031 U+FE0F U+20E3) in https://projects.iamcal.com/emoji-data/table.htm
+            [self FillTextInternal:EMOJI_FONT charcode:ucs[i + 2] offsetX:offsetX withPosition:destPoint];
+            [self FillTextInternal:EMOJI_FONT charcode:ucs[i] offsetX:offsetX withPosition:destPoint];
+            i += 2;
+        } else {
+            [self FillTextInternal:isCharcodeEmoji(ucs, ucsLength, i) ? EMOJI_FONT : fontStyle charcode:ucs[i] offsetX:offsetX withPosition:destPoint];
         }
     }
 }
@@ -308,7 +323,7 @@ static NSMutableDictionary *staticFontInstaceDict;
         isPixelModeRgba:(bool)isPixelModeRgba
           withFontStyle:(NSString *)fontStyle
          withFontLayout:(GFontLayout *)fontLayout
-            withOffsetX:(int *)offsetX
+            withOffsetX:(float *)offsetX
 {
     GTextMetrics metrics = fontLayout.metrics;
     NSMutableData *layoutData = fontLayout.glyphLayout;
@@ -319,7 +334,13 @@ static NSMutableDictionary *staticFontInstaceDict;
         
         gl.info = *pGlyph;
         gl.xpos = *offsetX;
-        *offsetX += gl.info.advanceX;
+        if (c == UCS4_EMOJI_SELECTOR ||
+            c == UCS4_TEXT_SELECTOR ||
+            c == UCS4_ZERO_WIDTH_JOINER ||
+            c == UCS4_COMBINING_ENCLOSING_KEYCAP
+        ) {} else {
+            *offsetX += gl.info.advanceX;
+        }
         metrics.ascent = MAX(metrics.ascent, gl.info.height + gl.info.offsetY - glyphPadding);
         metrics.descent = MAX(metrics.descent, -gl.info.offsetY - glyphPadding);
         
@@ -381,7 +402,13 @@ static NSMutableDictionary *staticFontInstaceDict;
             gl.xpos = positions[g].x + *offsetX;
             // NSLog(@"charcode: %x font: %@", c, fontStyle);
             [curFont createGlyph:glyph withFont:runFont withFontStyle:fontStyle glyphInfo:&gl.info];
-            *offsetX += gl.info.advanceX;
+            if (c == UCS4_EMOJI_SELECTOR ||
+                c == UCS4_TEXT_SELECTOR ||
+                c == UCS4_ZERO_WIDTH_JOINER ||
+                c == UCS4_COMBINING_ENCLOSING_KEYCAP
+            ) {} else {
+                *offsetX += gl.info.advanceX;
+            }
             metrics.ascent = MAX(metrics.ascent, gl.info.height + gl.info.offsetY - glyphPadding);
             metrics.descent = MAX(metrics.descent, -gl.info.offsetY - glyphPadding);
             layoutIndex++;
