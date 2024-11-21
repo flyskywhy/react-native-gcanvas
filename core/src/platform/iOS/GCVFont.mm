@@ -487,9 +487,12 @@ static NSMutableDictionary *staticFontInstaceDict;
     glyphInfo->width = bbRect.size.width + glyphPadding * 2;
     glyphInfo->height = bbRect.size.height + glyphPadding * 2;
     
+    // number e.g. 0 in 0️⃣ of Apple Color Emoji font need padding 2 not 1,
+    // otherwise the top row pixels of the number will missing
+    int padding = isPixelModeRgba ? 2 : 1;
     // Size needed for this glyph in pixels; must be a multiple of 8 for CG
-    int pxWidth = floorf((glyphInfo->width * contentScale) / 8 + 1) * 8;
-    int pxHeight = floorf((glyphInfo->height * contentScale) / 8 + 1) * 8;
+    int pxWidth = floorf((glyphInfo->width * contentScale) / 8 + padding) * 8;
+    int pxHeight = floorf((glyphInfo->height * contentScale) / 8 + padding) * 8;
     
     NSMutableData *pixels = [NSMutableData dataWithLength:pxWidth * pxHeight * (isPixelModeRgba ? 4 : 1)];
     CGColorSpaceRef colorSpace = isPixelModeRgba ? CGColorSpaceCreateDeviceRGB() : NULL;
