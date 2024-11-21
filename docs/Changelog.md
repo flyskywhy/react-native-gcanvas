@@ -2,6 +2,15 @@
 
 All notable changes of this project will be documented in.
 
+## [6.0.16] - 2024-11-21
+
+### Changed
+
+* React Native GCanvas Component
+    * feat: on iOS ctx.fillText() can display most color emoji
+    * fix: ctx.font can not support fontFamily with space e.g. `times new roman`
+
+
 ## [6.0.15] - 2024-11-04
 
 ### Changed
