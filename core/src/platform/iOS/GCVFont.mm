@@ -488,8 +488,10 @@ static NSMutableDictionary *staticFontInstaceDict;
     glyphInfo->height = bbRect.size.height + glyphPadding * 2;
     
     // number e.g. 0 in 0️⃣ of Apple Color Emoji font need padding 2 not 1,
-    // otherwise the top row pixels of the number will missing
-    int padding = isPixelModeRgba ? 2 : 1;
+    // otherwise the top row pixels of the number will missing, but if use 2,
+    // the bitmap is so big so that all emoji is cut many bottom row pixels
+    // with react-native-runescape-text , so still use 1
+    int padding = isPixelModeRgba ? 1 : 1;
     // Size needed for this glyph in pixels; must be a multiple of 8 for CG
     int pxWidth = floorf((glyphInfo->width * contentScale) / 8 + padding) * 8;
     int pxHeight = floorf((glyphInfo->height * contentScale) / 8 + padding) * 8;
