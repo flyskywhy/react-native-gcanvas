@@ -282,16 +282,16 @@ export default class GCanvasView extends Component {
 
   componentWillUnmount() {
     if (this.canvas !== null) {
+      let index = global.createCanvasElements.findIndex(canvas => canvas === this.canvas);
+      if (index >= 0) {
+        global.createCanvasElements.splice(index, 1);
+      }
+
+      if (global.createCanvasElementsObj && global.createCanvasElementsObj[this.canvas.id]) {
+        delete global.createCanvasElementsObj[this.canvas.id];
+      }
+
       disable(this.canvas);
-    }
-
-    let index = global.createCanvasElements.findIndex(canvas => canvas === this.canvas);
-    if (index >= 0) {
-      global.createCanvasElements.splice(index, 1);
-    }
-
-    if (global.createCanvasElementsObj && global.createCanvasElementsObj[this.canvas.id]) {
-      delete global.createCanvasElementsObj[this.canvas.id];
     }
 
     // if (Platform.OS === 'ios') {
