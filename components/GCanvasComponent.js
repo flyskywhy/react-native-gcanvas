@@ -251,6 +251,12 @@ export default class GCanvasView extends Component {
 
     if (this.props.offscreenCanvas && !global.createCanvasElements.includes(this.canvas)) {
       global.createCanvasElements.push(this.canvas);
+      if (global.createCanvasElementsObj) {
+        // ios release (RN0.71.6 JSC) createCanvasElements.push(canvas) in a class but still
+        // get [] means createCanvasElements.length is 0 in another class, so have to
+        // use createCanvasElementsObj below, and reserve createCanvasElements for compatible
+        global.createCanvasElementsObj[this.canvas.id] = this.canvas;
+      }
     }
 
     if (this.props.onCanvasCreate) {
@@ -282,6 +288,10 @@ export default class GCanvasView extends Component {
     let index = global.createCanvasElements.findIndex(canvas => canvas === this.canvas);
     if (index >= 0) {
       global.createCanvasElements.splice(index, 1);
+    }
+
+    if (global.createCanvasElementsObj && global.createCanvasElementsObj[this.canvas.id]) {
+      delete global.createCanvasElementsObj[this.canvas.id];
     }
 
     // if (Platform.OS === 'ios') {
