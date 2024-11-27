@@ -2,6 +2,14 @@
 
 All notable changes of this project will be documented in.
 
+## [6.0.17] - 2024-11-27
+
+### Changed
+
+* React Native GCanvas Component
+    * fix: global array bug on iOS release that cause `document.createElement('canvas')` (as offscreen canvas) not work
+
+
 ## [6.0.16] - 2024-11-21
 
 ### Changed
