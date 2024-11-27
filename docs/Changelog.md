@@ -2,6 +2,14 @@
 
 All notable changes of this project will be documented in.
 
+## [6.0.18] - 2024-11-27
+
+### Changed
+
+* React Native GCanvas Component
+    * fix: since v6.0.17 sometimes "TypeError: null is not an object (evaluating 'this.canvas.id')"
+
+
 ## [6.0.17] - 2024-11-27
 
 ### Changed
