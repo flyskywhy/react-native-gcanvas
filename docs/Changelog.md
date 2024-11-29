@@ -2,6 +2,14 @@
 
 All notable changes of this project will be documented in.
 
+## [6.0.19] - 2024-11-29
+
+### Changed
+
+* React Native GCanvas Component
+    * fix: on Android 15 can not display emoji
+
+
 ## [6.0.18] - 2024-11-27
 
 ### Changed
