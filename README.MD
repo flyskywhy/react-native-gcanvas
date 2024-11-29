@@ -534,6 +534,17 @@ console.log(getFontNames());
   }
 ```
 
+### emoji font on Android
+Ref to  <https://developer.android.com/about/versions/15/behavior-changes-all#png-emoji-font>, since Android 15 removed PNG-based emoji font `NotoColorEmojiLegacy.ttf`, you can
+
+    cd android/app/src/main/assets/fonts/
+    ln -s ../../../../../../node_modules/@flyskywhy/react-native-gcanvas/fonts/NotoColorEmoji.ttf ./
+    cd -
+
+then use `copyFileAssets()` in "custom fonts" above.
+
+`NotoColorEmoji.ttf` here is `adb pull` before Android 13.
+
 ### system fonts on Android
 Even if some font file in `/system/fonts/` on Android is not included in the return of `getFontNames()`, you can still use it by `registerFont()`! e.g.
 ```

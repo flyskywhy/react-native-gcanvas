@@ -71,15 +71,30 @@ GFontCache::GetOrCreateEmojiFont(GCanvasContext *context, std::string contextId,
 
     const char *defaultSystemFontLocation = "/system/fonts/";
 
-    auto systemFontLocation = SystemFontInformation::GetSystemFontInformation()
-            ->GetSystemFontLocation();
-    const char *currentFontLocation = (systemFontLocation != nullptr)
-                                      ? systemFontLocation
-                                      : defaultSystemFontLocation;
+    // ref to  https://developer.android.com/about/versions/15/behavior-changes-all#png-emoji-font
+    // since Android 15 removed PNG-based emoji font NotoColorEmojiLegacy.ttf,
+    // here need registerFont(fonts/NotoColorEmoji.ttf copied before Android 13)
+    // which use extraFontLocation as described in "emoji font on Android" of READEM.md
+    auto extraFontLocation = SystemFontInformation::GetSystemFontInformation()
+            ->GetExtraFontLocation();
+    const char *currentFontLocation = extraFontLocation;
 
     const char *currentFontFile = nullptr;
 
-    currentFontFile = TryDefaultEmojiFont(charCode, size, currentFontLocation);
+    if (currentFontLocation != nullptr) {
+        currentFontFile = TryDefaultEmojiFont(charCode, size, currentFontLocation);
+    }
+
+    if (nullptr == currentFontFile)
+    {
+        auto systemFontLocation = SystemFontInformation::GetSystemFontInformation()
+                ->GetSystemFontLocation();
+        currentFontLocation = (systemFontLocation != nullptr)
+                              ? systemFontLocation
+                              : defaultSystemFontLocation;
+
+        currentFontFile = TryDefaultEmojiFont(charCode, size, currentFontLocation);
+    }
 
     if (nullptr == currentFontFile)
     {
@@ -284,7 +299,7 @@ char *GFontCache::TryDefaultEmojiFont(const wchar_t charCode,
                                       const float size,
                                       const char *currentFontLocation)
 {
-    auto defaultFontFile = "NotoColorEmoji.ttf";
+    auto defaultFontFile = "NotoColorEmojiLegacy.ttf";
 
     std::string fontFileFullPath = currentFontLocation;
     fontFileFullPath += defaultFontFile;
@@ -296,7 +311,20 @@ char *GFontCache::TryDefaultEmojiFont(const wchar_t charCode,
     }
     else
     {
-        return nullptr;
+        defaultFontFile = "NotoColorEmoji.ttf";
+
+        fontFileFullPath = currentFontLocation;
+        fontFileFullPath += defaultFontFile;
+
+        exist = this->IsGlyphExistedInFont(charCode, size, fontFileFullPath);
+        if (exist)
+        {
+            return (char *) defaultFontFile;
+        }
+        else
+        {
+            return nullptr;
+        }
     }
 }
 
