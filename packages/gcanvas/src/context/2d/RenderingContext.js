@@ -7,31 +7,6 @@ import FillStyleRadialGradient from './FillStyleRadialGradient';
 export default class CanvasRenderingContext2D {
   _drawCommands = '';
 
-  _globalAlpha = 1.0;
-
-  _fillStyle = 'rgb(0,0,0)';
-  _strokeStyle = 'rgb(0,0,0)';
-
-  _shadowColor = 'rgb(0,0,0)';
-  _shadowBlur = 0;
-  _shadowOffsetX = 0;
-  _shadowOffsetY = 0;
-  _imageSmoothingEnabled = 1;
-  _lineWidth = 1;
-  _lineCap = 'butt';
-  _lineJoin = 'miter';
-  _lineDash = [];
-  _lineDashOffset = 0;
-
-  _miterLimit = 10;
-
-  _globalCompositeOperation = 'source-over';
-
-  _textAlign = 'start';
-  _textBaseline = 'alphabetic';
-
-  _font = '10px sans-serif';
-
   _savedGlobalAlpha = [];
 
   timer = null;
@@ -40,9 +15,64 @@ export default class CanvasRenderingContext2D {
   // _imageMap = new GHashMap();
   // _textureMap = new GHashMap();
 
+
+  _resetContextAttributes({
+    globalAlpha = 1.0,
+
+    fillStyle = 'rgb(0,0,0)',
+    strokeStyle = 'rgb(0,0,0)',
+
+    shadowColor = 'rgb(0,0,0)',
+    shadowBlur = 0,
+    shadowOffsetX = 0,
+    shadowOffsetY = 0,
+    imageSmoothingEnabled = 1,
+    lineWidth = 1,
+    lineCap = 'butt',
+    lineJoin = 'miter',
+    lineDash = [],
+    lineDashOffset = 0,
+
+    miterLimit = 10,
+
+    globalCompositeOperation = 'source-over',
+
+    textAlign = 'start',
+    textBaseline = 'alphabetic',
+
+    font = '10px sans-serif',
+  }) {
+    this.globalAlpha = globalAlpha;
+
+    this.fillStyle = fillStyle;
+    this.strokeStyle = strokeStyle;
+
+    this.shadowColor = shadowColor;
+    this.shadowBlur = shadowBlur;
+    this.shadowOffsetX = shadowOffsetX;
+    this.shadowOffsetY = shadowOffsetY;
+    this.imageSmoothingEnabled = imageSmoothingEnabled;
+    this.lineWidth = lineWidth;
+    this.lineCap = lineCap;
+    this.lineJoin = lineJoin;
+    this.setLineDash(lineDash);
+    this.lineDashOffset = lineDashOffset;
+
+    this.miterLimit = miterLimit;
+
+    this.globalCompositeOperation = globalCompositeOperation;
+
+    this.textAlign = textAlign;
+
+    this.textBaseline = textBaseline;
+
+    this.font = font;
+  }
+
   constructor(canvas) {
     this._canvas = canvas;
     this.className = 'CanvasRenderingContext2D';
+    this._resetContextAttributes({});
   }
 
   get canvas() {

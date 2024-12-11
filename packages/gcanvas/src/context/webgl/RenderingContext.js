@@ -56,6 +56,9 @@ export default class WebGLRenderingContext {
 
   componentId = null;
 
+
+  _resetContextAttributes({}) {}
+
   constructor(canvas, type, attrs) {
     this._canvas = canvas;
     this._type = type;
@@ -68,6 +71,8 @@ export default class WebGLRenderingContext {
           .forEach(name => Object.defineProperty(this, name, {
             value: GLenum[name]
           }));
+
+    this._resetContextAttributes({});
   }
 
   get canvas() {

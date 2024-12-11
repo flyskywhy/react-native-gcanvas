@@ -122,8 +122,10 @@ export default class GCanvas extends Element {
     }
   }
 
-  getContext(type) {
+  getContext(type, attributes = {}) {
     if (this._context) {
+      this._context._resetContextAttributes(attributes);
+
       return this._context;
     }
 
