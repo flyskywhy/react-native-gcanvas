@@ -2,6 +2,14 @@
 
 All notable changes of this project will be documented in.
 
+## [6.0.20] - 2024-12-11
+
+### Changed
+
+* React Native GCanvas Component
+    * fix: when (offscreen canvas multiply) call canvas.getContext('2d'), should reset contextAttributes(, because our offscreen canvas will not unmount)
+
+
 ## [6.0.19] - 2024-11-29
 
 ### Changed
