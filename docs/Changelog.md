@@ -2,6 +2,14 @@
 
 All notable changes of this project will be documented in.
 
+## [6.0.21] - 2025-11-18
+
+### Changed
+
+* React Native GCanvas Component
+    * fix: on Android in the New Architecture will crash `Attempt to invoke vitual method 'com.facebook.react.uimanager.events.EventDispatcher.com.facebook.react.uimanager.UiManagerModule.getEventDispatcher()' on a null object reference`, ref to [Supporting UIManager in the New Architecture](https://github.com/reactwg/react-native-new-architecture/discussions/201)
+
+
 ## [6.0.20] - 2024-12-11
 
 ### Changed

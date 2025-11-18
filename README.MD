@@ -89,6 +89,8 @@ Only support RN >= `0.62` as described in [android/gcanvas_library/build.gradle]
 
     npm install @flyskywhy/react-native-gcanvas --save
 
+In the New Architecture (with Bridgeless Mode comes from RN 0.74), the texture on 3D webgl has no effect but just black color, maybe you need [react-native-webgpu](https://github.com/wcandillon/react-native-webgpu) instead.
+
 #### Android
 Add below into `/android/settings.gradle`
 ```
