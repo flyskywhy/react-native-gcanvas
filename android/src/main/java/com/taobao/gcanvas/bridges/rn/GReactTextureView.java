@@ -8,6 +8,9 @@ import android.view.TextureView;
 
 import com.facebook.react.bridge.LifecycleEventListener;
 import com.facebook.react.bridge.ReactContext;
+import com.facebook.react.bridge.UIManager;
+import com.facebook.react.uimanager.common.UIManagerType;
+import com.facebook.react.uimanager.UIManagerHelper;
 import com.facebook.react.uimanager.UIManagerModule;
 import com.taobao.gcanvas.surface.GTextureView;
 
@@ -129,9 +132,16 @@ public class GReactTextureView extends GTextureView implements LifecycleEventLis
     }
 
     private void onIsReady() {
-        mContext
-            .getNativeModule(UIManagerModule.class)
-            .getEventDispatcher()
-            .dispatchEvent(new GReactViewEvent(getId(), mIsReady));
+        if(BuildConfig.IS_NEW_ARCHITECTURE_ENABLED) {
+            UIManager uiManager = UIManagerHelper.getUIManager(mContext, UIManagerType.FABRIC);
+            uiManager
+                .getEventDispatcher()
+                .dispatchEvent(new GReactViewEvent(getId(), mIsReady));
+        } else {
+            UIManagerModule uiManager = mContext.getNativeModule(UIManagerModule.class);
+            uiManager
+                .getEventDispatcher()
+                .dispatchEvent(new GReactViewEvent(getId(), mIsReady));
+        }
     }
 }
