@@ -22,7 +22,7 @@ class GCanvasContext;
 
 typedef std::tuple<std::string, wchar_t, std::string, bool> key_tuple;
 
-struct key_hash : public std::unary_function<key_tuple, std::size_t>
+struct key_hash
 {
     std::size_t operator()(const key_tuple &k) const
     {
@@ -31,7 +31,7 @@ struct key_hash : public std::unary_function<key_tuple, std::size_t>
     }
 };
 
-struct key_equal : public std::binary_function<key_tuple, key_tuple, bool>
+struct key_equal
 {
     bool operator()(const key_tuple &v0, const key_tuple &v1) const
     {
