@@ -2,6 +2,14 @@
 
 All notable changes of this project will be documented in.
 
+## [6.0.22] - 2025-11-25
+
+### Changed
+
+* React Native GCanvas Component
+    * fix: on iOS in RN 0.77 wil cause `No template named 'unary_function' in namespace 'std'; did you mean '__unary_function'?`, for std::unary_function is deprecated in C++11 and removed in C++17
+
+
 ## [6.0.21] - 2025-11-18
 
 ### Changed
