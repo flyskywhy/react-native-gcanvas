@@ -3,7 +3,7 @@
 
 # Sets the minimum version of CMake required to build the native library.
 
-cmake_minimum_required(VERSION 3.4.1)
+cmake_minimum_required(VERSION 3.22.1)
 
 set(CMAKE_CXX_VISIBILITY_PRESET hidden)
 set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -std=c++14 -fno-exceptions -fno-unwind-tables")
@@ -267,6 +267,12 @@ target_link_libraries( # Specifies the target library.
         # included in the NDK.
         ${log-lib})
 
+target_link_options(
+        gcanvas
+        PRIVATE
+        "-Wl,-z,max-page-size=16384"
+)
+
 
 # here use ${log-lib} to support logcat with e.g. LOGD in freetype source code by
 # add below #define code into ./android/freetype/include/freetype/internal/ftdebug.h
@@ -283,3 +289,9 @@ target_link_libraries(
         freetype
         png
         ${log-lib})
+
+target_link_options(
+        freetype
+        PRIVATE
+        "-Wl,-z,max-page-size=16384"
+)

@@ -21,8 +21,8 @@
 # For conditions of distribution and use, see the disclaimer
 # and license in png.h
 
-cmake_minimum_required(VERSION 3.1)
-cmake_policy(VERSION 3.1)
+cmake_minimum_required(VERSION 3.22.1)
+cmake_policy(VERSION 3.22.1)
 
 project(libpng C ASM)
 enable_testing()
@@ -541,6 +541,11 @@ if(PNG_SHARED)
     set_target_properties(png PROPERTIES IMPORT_PREFIX "lib")
   endif()
   target_link_libraries(png ${ZLIB_LIBRARIES} ${M_LIBRARY})
+  target_link_options(
+          png
+          PRIVATE
+          "-Wl,-z,max-page-size=16384"
+  )
 
   if(UNIX AND AWK AND NOT ANDROID AND NOT IOS)
     if(HAVE_LD_VERSION_SCRIPT)
@@ -576,6 +581,11 @@ if(PNG_STATIC)
     set_target_properties(png_static PROPERTIES PREFIX "lib")
   endif()
   target_link_libraries(png_static ${ZLIB_LIBRARIES} ${M_LIBRARY})
+  target_link_options(
+          png_static
+          PRIVATE
+          "-Wl,-z,max-page-size=16384"
+  )
 endif()
 
 if(PNG_FRAMEWORK)
@@ -593,6 +603,11 @@ if(PNG_FRAMEWORK)
                         PUBLIC_HEADER "${libpng_public_hdrs}"
                         OUTPUT_NAME png)
   target_link_libraries(png_framework ${ZLIB_LIBRARIES} ${M_LIBRARY})
+  target_link_options(
+          png_framework
+          PRIVATE
+          "-Wl,-z,max-page-size=16384"
+  )
 endif()
 
 if(NOT PNG_LIB_TARGETS)
@@ -644,6 +659,11 @@ if(PNG_TESTS AND PNG_SHARED)
 
   add_executable(pngtest ${pngtest_sources})
   target_link_libraries(pngtest png)
+  target_link_options(
+          pngtest
+          PRIVATE
+          "-Wl,-z,max-page-size=16384"
+  )
 
   png_add_test(NAME pngtest
                COMMAND pngtest
@@ -651,6 +671,11 @@ if(PNG_TESTS AND PNG_SHARED)
 
   add_executable(pngvalid ${pngvalid_sources})
   target_link_libraries(pngvalid png)
+  target_link_options(
+          pngvalid
+          PRIVATE
+          "-Wl,-z,max-page-size=16384"
+  )
 
   png_add_test(NAME pngvalid-gamma-16-to-8
                COMMAND pngvalid
@@ -697,6 +722,11 @@ if(PNG_TESTS AND PNG_SHARED)
 
   add_executable(pngstest ${pngstest_sources})
   target_link_libraries(pngstest png)
+  target_link_options(
+          pngstest
+          PRIVATE
+          "-Wl,-z,max-page-size=16384"
+  )
 
   foreach(gamma_type 1.8 linear none sRGB)
     foreach(alpha_type none alpha)
@@ -752,6 +782,11 @@ if(PNG_TESTS AND PNG_SHARED)
 
   add_executable(pngunknown ${pngunknown_sources})
   target_link_libraries(pngunknown png)
+  target_link_options(
+          pngunknown
+          PRIVATE
+          "-Wl,-z,max-page-size=16384"
+  )
 
   png_add_test(NAME pngunknown-discard
                COMMAND pngunknown
@@ -784,6 +819,11 @@ if(PNG_TESTS AND PNG_SHARED)
 
   add_executable(pngimage ${pngimage_sources})
   target_link_libraries(pngimage png)
+  target_link_options(
+          pngimage
+          PRIVATE
+          "-Wl,-z,max-page-size=16384"
+  )
 
   png_add_test(NAME pngimage-quick
                COMMAND pngimage
@@ -798,10 +838,20 @@ endif()
 if(PNG_SHARED AND PNG_EXECUTABLES)
   add_executable(pngfix ${pngfix_sources})
   target_link_libraries(pngfix png)
+  target_link_options(
+          pngfix
+          PRIVATE
+          "-Wl,-z,max-page-size=16384"
+  )
   set(PNG_BIN_TARGETS pngfix)
 
   add_executable(png-fix-itxt ${png_fix_itxt_sources})
   target_link_libraries(png-fix-itxt ${ZLIB_LIBRARIES} ${M_LIBRARY})
+  target_link_options(
+          png-fix-itxt
+          PRIVATE
+          "-Wl,-z,max-page-size=16384"
+  )
   list(APPEND PNG_BIN_TARGETS png-fix-itxt)
 endif()
 

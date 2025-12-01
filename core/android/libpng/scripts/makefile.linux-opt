@@ -53,8 +53,8 @@ CPPFLAGS += -DPNG_POWERPC_VSX
 CFLAGS=-W -Wall -O3 -funroll-loops # $(WARNMORE) -g
 CFLAGS += -ansi -pedantic
 
-LDFLAGS=-L. -Wl,-rpath,. -L$(ZLIBLIB) -Wl,-rpath,$(ZLIBLIB) -lpng16 -lz -lm
-LDFLAGS_A=-L$(ZLIBLIB) -Wl,-rpath,$(ZLIBLIB) libpng.a -lz -lm
+LDFLAGS=-L. -Wl,-rpath,. -L$(ZLIBLIB) -Wl,-rpath,$(ZLIBLIB) -lpng16 -lz -lm -Wl,-z,max-page-size=16384
+LDFLAGS_A=-L$(ZLIBLIB) -Wl,-rpath,$(ZLIBLIB) libpng.a -lz -lm -Wl,-z,max-page-size=16384
 
 INCPATH=$(prefix)/include
 LIBPATH=$(exec_prefix)/lib

@@ -40,7 +40,7 @@ RM_F=/bin/rm -f
 
 CPPFLAGS=-I$(ZLIBINC)
 CFLAGS=-W -Wall -O3 -funroll-loops
-LDFLAGS=-L. -L$(ZLIBLIB) -lpng16 -lz
+LDFLAGS=-L. -L$(ZLIBLIB) -lpng16 -lz -Wl,-z,max-page-size=16384
 
 INCPATH=$(prefix)/include
 LIBPATH=$(exec_prefix)/lib
