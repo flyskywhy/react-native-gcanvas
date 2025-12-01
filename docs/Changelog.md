@@ -2,6 +2,14 @@
 
 All notable changes of this project will be documented in.
 
+## [6.0.23] - 2025-12-01
+
+### Changed
+
+* React Native GCanvas Component
+    * feat: on Android support 16KB page size, ref to https://github.com/licheedev/Android-SerialPort-API/commit/0768a6b
+
+
 ## [6.0.22] - 2025-11-25
 
 ### Changed
